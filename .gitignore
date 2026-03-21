@@ -13,21 +13,29 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
 *.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
 .vscode/
+.settings/
+.classpath
+.project
+
+# Environment / Secretos
+.env
+bin/
+out/
+
+# Docker
+postgres_data/
+
+# OS
+.DS_Store
+Thumbs.db

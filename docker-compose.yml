@@ -1,0 +1,29 @@
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: precious-cms-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${}DB_PASSWORD
+      # Esta es la DB principal, las otras se crearán vía init.sql
+      - POSTGRES_DB=db_auth
+      # Forzamos el idioma y locale para evitar líos de acentos
+      - LANG=en_US.utf8
+      - LC_ALL=en_US.utf8
+    ports:
+      - "5432:5432"
+    volumes:
+      # Mapeamos tu carpeta local al entrypoint de Postgres
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+      # Volumen para persistencia de datos
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cms-network
+
+networks:
+  cms-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
