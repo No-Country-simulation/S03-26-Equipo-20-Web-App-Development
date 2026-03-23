@@ -1,4 +1,4 @@
-package org.precioustestimonials.cms;
+package org.testimonials.cms;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
