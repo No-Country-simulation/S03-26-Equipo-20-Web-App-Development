@@ -1,0 +1,32 @@
+spring:
+  # - Configuracion de PostgreSQL como base de datos principal (desarrollo)
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        format_sql: false
+  # - Configuracion de Flyway para migraciones de base de datos (desarrollo)
+  flyway:
+    enabled: false
+  # - Configuracion de H2 para pruebas en memoria (desarrollo)
+  #  datasource:
+  #    url: jdbc:h2:mem:dbcms
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    hibernate:
+#      ddl-auto: update
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
