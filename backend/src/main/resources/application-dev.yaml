@@ -1,0 +1,18 @@
+spring:
+  # - Configuracion de PostgreSQL como base de datos principal (desarrollo)
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+        format_sql: false
+  # - Configuracion de Flyway para migraciones de base de datos (desarrollo)
+  flyway:
+    enabled: false
