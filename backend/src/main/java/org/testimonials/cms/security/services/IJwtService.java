@@ -13,7 +13,7 @@ public interface IJwtService {
     String extractJwtTokenFromRequest(HttpServletRequest request);
     List<String> extractRolesFromJwt(String token) throws ParseException, JOSEException;
     boolean isValidJwt(String token);
-    String generateJwt(Map<String, Object> claims, String subject) throws JOSEException;
+    String generateJwt(Map<String, Object> claims, String subject);
 
     Optional<JWTClaimsSet> getValidClaims(String jwt);
 }

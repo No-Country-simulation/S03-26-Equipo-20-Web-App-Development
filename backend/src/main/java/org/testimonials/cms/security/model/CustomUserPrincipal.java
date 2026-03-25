@@ -1,6 +1,5 @@
 package org.testimonials.cms.security.model;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

@@ -7,10 +7,7 @@ import java.util.UUID;
 public record OrganizationResponseDTO(
         UUID id,
         String name,
-        String logo
+        String logo,
+        String jwt
     ) {
-
-    public OrganizationResponseDTO(Organization organization) {
-        this(organization.getId(), organization.getName(), organization.getLogo());
-    }
 }
