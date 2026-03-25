@@ -11,8 +11,8 @@ import com.nimbusds.jwt.SignedJWT;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.testimonials.cms.security.exception.SecurityCreateJwtException;
 import org.testimonials.cms.security.exception.SecurityInvalidJwtException;
 import org.testimonials.cms.security.services.IJwtService;
 
@@ -111,31 +111,35 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String generateJwt(Map<String, Object> claims, String subject) throws JOSEException {
-        Instant now = Instant.now();
-        Instant expiration = now.plus(expirationInMinutes, ChronoUnit.MINUTES);
+    public String generateJwt(Map<String, Object> claims, String subject) {
+        try {
+            Instant now = Instant.now();
+            Instant expiration = now.plus(expirationInMinutes, ChronoUnit.MINUTES);
 
-        JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
-                .subject(subject)
-                .issuer(jwtIssuer)
-                .issueTime(Date.from(now))
-                .expirationTime(Date.from(expiration));
-        if (claims != null) {
-            claims.forEach(claimsBuilder::claim);
+            JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder()
+                    .subject(subject)
+                    .issuer(jwtIssuer)
+                    .issueTime(Date.from(now))
+                    .expirationTime(Date.from(expiration));
+            if (claims != null) {
+                claims.forEach(claimsBuilder::claim);
+            }
+
+            JWTClaimsSet claimsSet = claimsBuilder.build();
+
+            SignedJWT signedJWT = new SignedJWT(
+                    new JWSHeader.Builder(JWSAlgorithm.ES256)
+                            .type(JOSEObjectType.JWT)
+                            .build(),
+                    claimsSet
+            );
+
+            signedJWT.sign(new ECDSASigner(ecSignerPrivateKey));
+
+            return signedJWT.serialize();
+        } catch (JOSEException _) {
+            throw new SecurityCreateJwtException("Error creating JWT");
         }
-
-        JWTClaimsSet claimsSet = claimsBuilder.build();
-
-        SignedJWT signedJWT = new SignedJWT(
-                new JWSHeader.Builder(JWSAlgorithm.ES256)
-                        .type(JOSEObjectType.JWT)
-                        .build(),
-                claimsSet
-        );
-
-        signedJWT.sign(new ECDSASigner(ecSignerPrivateKey));
-
-        return signedJWT.serialize();
     }
 
     private void validateBase64(String base64, String keyName) {
