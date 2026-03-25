@@ -3,3 +3,12 @@ spring:
     name: cms
   profiles:
     active: dev
+
+# JWT KEYS
+jwt:
+  key:
+    signer:
+      public: ${JWT_KEY_SIGNER_PUBLIC}
+      private: ${JWT_KEY_SIGNER_PRIVATE}
+  token:
+    expiration-in-minutes: ${JWT_TOKEN_EXPIRATION}

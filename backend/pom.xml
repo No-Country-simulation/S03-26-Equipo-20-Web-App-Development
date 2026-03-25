@@ -30,6 +30,7 @@
 		<java.version>25</java.version>
 		<spring-cloud.version>2025.1.1</spring-cloud.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+		<nimbus.jwt.version>10.8</nimbus.jwt.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -126,6 +127,11 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>${org.mapstruct.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>${nimbus.jwt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
