@@ -28,10 +28,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class JwtServiceImpl implements IJwtService {
@@ -66,20 +63,6 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public String extractUsernameFromJwt(String token) {
-        try {
-            SignedJWT signedJWT = parseAndValidate(token);
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-            return claims.getSubject();
-        }  catch (JOSEException e) {
-            throw new SecurityInvalidJwtException("Invalid JWT: " + e.getLocalizedMessage());
-        } catch (ParseException e) {
-            throw new SecurityInvalidJwtException("Invalid Parse JWT: " + e.getLocalizedMessage());
-        }
-
-    }
-
-    @Override
     public List<String> extractRolesFromJwt(String token) throws ParseException, JOSEException {
         SignedJWT signedJWT = parseAndValidate(token);
 
@@ -98,7 +81,7 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public boolean isValidJwt(String token, UserDetails userDetails) {
+    public boolean isValidJwt(String token) {
         try {
             SignedJWT signedJWT = parseAndValidate(token);
 
@@ -106,10 +89,6 @@ public class JwtServiceImpl implements IJwtService {
 
             String username = claims.getSubject();
             if (username == null || username.isEmpty()) {
-                return false;
-            }
-
-            if (!username.equals(userDetails.getUsername())) {
                 return false;
             }
 
@@ -123,9 +102,10 @@ public class JwtServiceImpl implements IJwtService {
             }
 
             Date now = new Date();
-            return claims.getIssueTime() == null || !claims.getIssueTime().after(now);
+            Date iat = claims.getIssueTime();
+            return iat != null && !iat.after(now);
 
-        } catch (Exception _) {
+        } catch (ParseException | JOSEException _) {
             return false;
         }
     }
@@ -200,6 +180,43 @@ public class JwtServiceImpl implements IJwtService {
             throw new SecurityInvalidJwtException("Invalid JWT signature");
         }
         return signedJWT;
+    }
+
+    public Optional<JWTClaimsSet> getValidClaims(String token) {
+        try {
+            SignedJWT signedJWT = parseAndValidate(token);
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+            String username = claims.getSubject();
+            if (username == null || username.isEmpty()) {
+                return Optional.empty();
+            }
+
+            Date now = new Date();
+
+            if (claims.getExpirationTime() == null ||
+                    claims.getExpirationTime().before(now)) {
+                return Optional.empty();
+            }
+
+            if (!jwtIssuer.equals(claims.getIssuer())) {
+                return Optional.empty();
+            }
+
+            Date iat = claims.getIssueTime();
+            if (iat == null || iat.after(now)) {
+                return Optional.empty();
+            }
+            Date notBefore = claims.getNotBeforeTime();
+            if (notBefore != null && notBefore.after(now)) {
+                return Optional.empty();
+            }
+
+            return Optional.of(claims);
+
+        } catch (Exception _) {
+            return Optional.empty();
+        }
     }
 
 }

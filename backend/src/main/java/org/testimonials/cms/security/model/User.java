@@ -1,22 +1,17 @@
 package org.testimonials.cms.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -24,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public class User implements UserDetails {
+public class User{
 
     @Id
     @GeneratedValue
@@ -38,41 +33,16 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    private String role;
-    private String organization;
-
-    @Column(name = "account_non_expired")
-    private boolean accountNonExpired = true;
-
-    @Column(name = "account_non_locked")
-    private boolean accountNonLocked = true;
-
-    @Column(name = "credentials_non_expired")
-    private boolean credentialsNonExpired = true;
-
-    @Column(name = "enabled")
-    private boolean enabled = true;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Membership> memberships;
 
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public @Nullable String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public @NonNull String getUsername() {
-        return this.email;
-    }
 }

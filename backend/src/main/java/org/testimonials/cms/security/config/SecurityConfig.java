@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.testimonials.cms.security.config.filter.JwtsAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +25,7 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtsAuthenticationFilter jwtAuthenticationFilter;
     private final AuthorizationManager<RequestAuthorizationContext> authorizationManager;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
