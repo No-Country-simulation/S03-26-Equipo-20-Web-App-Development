@@ -3,11 +3,13 @@ package org.testimonials.cms.testimonial.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 import org.testimonials.cms.testimonial.exceptions.TestimonialNotFound;
 import org.testimonials.cms.testimonial.mapper.TestimonialMapper;
 import org.testimonials.cms.testimonial.model.Testimonial;
+import org.testimonials.cms.testimonial.model.TestimonialStatus;
 import org.testimonials.cms.testimonial.repository.TestimonialRepository;
 import org.testimonials.cms.testimonial.service.TestimonialService;
 
@@ -26,6 +28,7 @@ public class TestimonialServiceImpl implements TestimonialService {
     @Transactional
     public TestimonialResponseDTO createTestimonial(TestimonialRequestDTO testimonialRequestDTO) {
         Testimonial testimonial = testimonialMapper.toTestimonial(testimonialRequestDTO);
+        testimonial.setStatus(TestimonialStatus.PENDING);
         Testimonial newTestimonial = testimonialRepository.save(testimonial);
         return testimonialMapper.toTestimonialDTO(newTestimonial);
     }
@@ -48,17 +51,17 @@ public class TestimonialServiceImpl implements TestimonialService {
 
     @Override
     @Transactional
-    public TestimonialResponseDTO updateTestimonial(UUID id, TestimonialRequestDTO testimonialRequestDTO) {
+    public TestimonialResponseDTO updateTestimonial(UUID id, EditTestimonialRequestDTO editTestimonialRequestDTO) {
         Optional<Testimonial> testimonialFound = testimonialRepository.findById(id);
 
         if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(id);
 
         Testimonial testimonialNotModified = testimonialRepository.getReferenceById(id);
 
-        if (testimonialRequestDTO.title() != null) testimonialNotModified.setTitle(testimonialRequestDTO.title());
-        if (testimonialRequestDTO.content() != null) testimonialNotModified.setContent(testimonialRequestDTO.content());
-        if (testimonialRequestDTO.visitorName() != null) testimonialNotModified.setVisitorName(testimonialRequestDTO.visitorName());
-        if (testimonialRequestDTO.status() != null) testimonialNotModified.setStatus(testimonialRequestDTO.status());
+        if (editTestimonialRequestDTO.title() != null) testimonialNotModified.setTitle(editTestimonialRequestDTO.title());
+        if (editTestimonialRequestDTO.content() != null) testimonialNotModified.setContent(editTestimonialRequestDTO.content());
+        if (editTestimonialRequestDTO.visitorName() != null) testimonialNotModified.setVisitorName(editTestimonialRequestDTO.visitorName());
+        if (editTestimonialRequestDTO.status() != null) testimonialNotModified.setStatus(editTestimonialRequestDTO.status());
 
         Testimonial testimonialModified = testimonialRepository.save(testimonialNotModified);
 

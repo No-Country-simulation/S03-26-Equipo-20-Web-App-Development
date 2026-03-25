@@ -1,5 +1,6 @@
 package org.testimonials.cms.testimonial.service;
 
+import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 
@@ -10,6 +11,6 @@ public interface TestimonialService {
     TestimonialResponseDTO createTestimonial(TestimonialRequestDTO testimonialRequestDTO);
     List<TestimonialResponseDTO> listAllTestimonials();
     TestimonialResponseDTO listTestimonial(UUID id);
-    TestimonialResponseDTO updateTestimonial(UUID id, TestimonialRequestDTO testimonialRequestDTO);
+    TestimonialResponseDTO updateTestimonial(UUID id, EditTestimonialRequestDTO editTestimonialRequestDTO);
     void deleteTestimonial(UUID id);
 }

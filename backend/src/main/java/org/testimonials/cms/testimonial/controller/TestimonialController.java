@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 import org.testimonials.cms.testimonial.service.TestimonialService;
@@ -40,8 +41,8 @@ public class TestimonialController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TestimonialResponseDTO> updateTestimonial(@PathVariable UUID id, @RequestBody @Valid TestimonialRequestDTO testimonialRequestDTO) {
-        TestimonialResponseDTO testimonialResponseDTO = testimonialService.updateTestimonial(id, testimonialRequestDTO);
+    public ResponseEntity<TestimonialResponseDTO> updateTestimonial(@PathVariable UUID id, @RequestBody @Valid EditTestimonialRequestDTO editTestimonialRequestDTO) {
+        TestimonialResponseDTO testimonialResponseDTO = testimonialService.updateTestimonial(id, editTestimonialRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
     }

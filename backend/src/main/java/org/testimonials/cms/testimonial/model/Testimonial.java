@@ -25,6 +25,7 @@ public class Testimonial {
     private String content;
     @Column(name = "visitor_name")
     private String visitorName;
+    @Enumerated(EnumType.STRING)
     private TestimonialStatus status;
     @Column(name = "approved_by")
     private String approvedBy;
