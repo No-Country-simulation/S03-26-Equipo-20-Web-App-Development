@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.net.URI;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class OrganizationExceptionHandler {
     @ExceptionHandler(OrganizationNotFound.class)
     ProblemDetail handleOrganizationNotFoundException(OrganizationNotFound e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
