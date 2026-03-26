@@ -44,7 +44,7 @@ public class Membership {
             joinColumns = @JoinColumn(name = "membership_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

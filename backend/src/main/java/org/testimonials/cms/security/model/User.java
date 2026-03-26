@@ -35,7 +35,7 @@ public class User{
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Membership> memberships;
+    private Set<Membership> memberships;
 
     @CreatedDate
     @Column(name = "created_at")

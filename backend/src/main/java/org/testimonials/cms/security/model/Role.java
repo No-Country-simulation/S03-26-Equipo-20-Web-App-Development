@@ -8,6 +8,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,7 +33,7 @@ public class Role {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "operation_id")
     )
-    private List<Operation> operations;
+    private Set<Operation> operations;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "roles")

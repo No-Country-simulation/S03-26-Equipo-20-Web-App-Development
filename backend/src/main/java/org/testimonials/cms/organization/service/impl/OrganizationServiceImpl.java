@@ -17,10 +17,7 @@ import org.testimonials.cms.security.services.IMembershipService;
 import org.testimonials.cms.security.services.IRoleService;
 import org.testimonials.cms.security.services.IUserService;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -48,7 +45,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         membership.setOrganization(newOrganization);
         membership.setUser(newUSer);
         Role role = roleService.findRoleByName("OWNER");
-        membership.setRoles(List.of(role));
+        membership.setRoles(new HashSet<>(List.of(role)));
         membership.setStatus(MembershipStatus.ACTIVE);
         membership.setType(MembershipType.OWNER);
         membershipService.createNewMembership(membership);

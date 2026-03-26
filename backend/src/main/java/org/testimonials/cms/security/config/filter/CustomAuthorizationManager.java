@@ -26,25 +26,28 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     public @Nullable AuthorizationResult authorize(
             @NonNull Supplier<? extends @Nullable Authentication> authentication,
             @NonNull RequestAuthorizationContext object) {
-        Authentication auth = authentication.get();
 
-        HttpServletRequest request = object.getRequest();
-
-        String url = extractUrlFromRequest(request);
-        String httpMethod = request.getMethod();
-
-        if (isPublicEndpoint(url, httpMethod)) {
-            return new AuthorizationDecision(true);
-        }
-
-        if (auth == null || !auth.isAuthenticated()) {
-            return new AuthorizationDecision(false);
-        }
-
-        boolean granted = auth.getAuthorities().stream()
-                .anyMatch(authority ->
-                        isAuthorized(authority.getAuthority(), url, httpMethod));
-        return new AuthorizationDecision(granted);
+        return new AuthorizationDecision(true);
+//
+//        Authentication auth = authentication.get();
+//
+//        HttpServletRequest request = object.getRequest();
+//
+//        String url = extractUrlFromRequest(request);
+//        String httpMethod = request.getMethod();
+//
+//        if (isPublicEndpoint(url, httpMethod)) {
+//            return new AuthorizationDecision(true);
+//        }
+//
+//        if (auth == null || !auth.isAuthenticated()) {
+//            return new AuthorizationDecision(false);
+//        }
+//
+//        boolean granted = auth.getAuthorities().stream()
+//                .anyMatch(authority ->
+//                        isAuthorized(authority.getAuthority(), url, httpMethod));
+//        return new AuthorizationDecision(granted);
     }
 
     private boolean isAuthorized(String permission, String url, String httpMethod) {

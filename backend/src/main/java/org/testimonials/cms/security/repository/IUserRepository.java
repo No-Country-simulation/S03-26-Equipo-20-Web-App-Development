@@ -13,6 +13,7 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
     @Query("""
                 SELECT DISTINCT u FROM User u
                 LEFT JOIN FETCH u.memberships m
+                LEFT JOIN FETCH m.organization
                 LEFT JOIN FETCH m.roles r
                 LEFT JOIN FETCH r.operations o
                 LEFT JOIN FETCH o.module

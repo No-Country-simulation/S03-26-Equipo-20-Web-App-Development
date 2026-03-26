@@ -1,6 +1,5 @@
 package org.testimonials.cms.security.model;
 
-import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,15 +11,11 @@ import java.util.Collections;
 import java.util.UUID;
 
 
-@RequiredArgsConstructor
-public class CustomUserPrincipal implements UserDetails {
-
-    private final User user;
-    private final UUID organizationId;
+public record CustomUserPrincipal(User user, UUID organizationId) implements UserDetails {
 
     @Override
     public @NonNull Collection<? extends GrantedAuthority> getAuthorities() {
-        if (organizationId == null){
+        if (organizationId == null) {
             return Collections.emptyList();
         }
         return user.getMemberships().stream()
