@@ -1,0 +1,40 @@
+name: Java CI con Maven (Backend)
+
+on:
+  push:
+    branches: [ "develop", "backend" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+  pull_request:
+    branches: [ "develop", "backend" ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v5
+
+      - name: Configurar JDK (Java 25)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Construir proyecto sin ejecutar pruebas
+        run: mvn -B package -DskipTests --file pom.xml
+
+      - name: Subir artefacto (JAR)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ministock-backend-jar
+          path: target/*.jar
