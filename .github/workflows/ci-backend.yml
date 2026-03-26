@@ -32,9 +32,9 @@ jobs:
       - name: Construir proyecto sin ejecutar pruebas
         run: mvn -B package -DskipTests --file pom.xml
 
-      - name: Subir artefacto (JAR)
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ministock-backend-jar
-          path: target/*.jar
+      # - name: Subir artefacto (JAR)
+      #   if: success()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ministock-backend-jar
+      #     path: target/*.jar
