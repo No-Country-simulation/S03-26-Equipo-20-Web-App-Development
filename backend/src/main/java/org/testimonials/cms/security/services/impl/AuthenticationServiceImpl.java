@@ -117,6 +117,24 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return new AuthResponseDTO(orgDto,token);
     }
 
+    @Override
+    public OrganizationAuthResponseDTO me(CustomUserPrincipal principal) {
+        User user = principal.user();
+
+        Membership membership = user.getMemberships().stream()
+                .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
+                .findFirst()
+                .orElseThrow(InvalidCredentialsException::of);
+
+        return new OrganizationAuthResponseDTO(
+                membership.getOrganization().getId(),
+                membership.getOrganization().getName(),
+                membership.getOrganization().getLogo(),
+                user.getEmail(),
+                user.getName()
+        );
+    }
+
     private CustomUserPrincipal authenticateCurrentUser(LoginRequestDTO loginRequestDTO) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password());
         Authentication authenticated = authenticationManager.authenticate(authentication);
