@@ -29,7 +29,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 request.getMethod(),
                 LocalDateTime.now()
         );
-        authException.printStackTrace();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

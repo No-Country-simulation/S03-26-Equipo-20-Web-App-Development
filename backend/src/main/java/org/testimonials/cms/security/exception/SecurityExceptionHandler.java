@@ -12,9 +12,18 @@ import java.net.URI;
 @Order(1)
 @RestControllerAdvice
 public class SecurityExceptionHandler {
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    ProblemDetail handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+        problemDetail.setTitle("Email already exists");
+        problemDetail.setType(URI.create("/errors/email-already-exists"));
+        problemDetail.setProperty("errorCategory", "Register");
+        return problemDetail;
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     ProblemDetail handleInvalidCredentialsException(InvalidCredentialsException e) {
-        e.printStackTrace();
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
         problemDetail.setTitle("Invalid credentials");
         problemDetail.setType(URI.create("/errors/invalid-credentials"));

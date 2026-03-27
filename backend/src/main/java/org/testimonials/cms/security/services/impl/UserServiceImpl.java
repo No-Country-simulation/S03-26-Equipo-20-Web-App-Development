@@ -16,4 +16,9 @@ public class UserServiceImpl implements IUserService {
     public User createUser(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

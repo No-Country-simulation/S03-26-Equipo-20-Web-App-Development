@@ -16,14 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/api/v1/organizations")
 public class OrganizationController {
+
     private final OrganizationService organizationService;
-
-    @PostMapping
-    public ResponseEntity<OrganizationResponseDTO> createOrganization(@RequestBody @Valid OrganizationRequestDTO organizationRequestDTO) {
-         OrganizationResponseDTO organizationResponseDTO = organizationService.createOrganization(organizationRequestDTO);
-
-         return ResponseEntity.status(HttpStatus.CREATED).body(organizationResponseDTO);
-    }
 
     @GetMapping
     public ResponseEntity<List<OrganizationResponseDTO>> listAllOrganizations() {
