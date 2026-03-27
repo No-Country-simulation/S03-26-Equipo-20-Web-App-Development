@@ -7,11 +7,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.security.dto.AuthResponseDTO;
 import org.testimonials.cms.security.dto.LoginRequestDTO;
 import org.testimonials.cms.security.dto.OrganizationAuthResponseDTO;
 import org.testimonials.cms.security.dto.OrganizationRegisterDTO;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.security.services.IAuthenticationService;
 
 @RestController
@@ -55,5 +57,10 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE,cookie.toString())
                 .body(authResponseDTO.organization());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<OrganizationAuthResponseDTO> me(@AuthenticationPrincipal CustomUserPrincipal userPrincipal){
+        return ResponseEntity.ok(authenticationService.me(userPrincipal));
     }
 }
