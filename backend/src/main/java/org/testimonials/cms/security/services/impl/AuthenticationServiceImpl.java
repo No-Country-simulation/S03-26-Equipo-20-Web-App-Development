@@ -4,15 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.testimonials.cms.organization.dtos.OrganizationResponseDTO;
+import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.organization.repository.OrganizationRepository;
+import org.testimonials.cms.security.dto.AuthResponseDTO;
 import org.testimonials.cms.security.dto.LoginRequestDTO;
+import org.testimonials.cms.security.dto.OrganizationAuthResponseDTO;
+import org.testimonials.cms.security.dto.OrganizationRegisterDTO;
+import org.testimonials.cms.security.exception.EmailAlreadyExistsException;
 import org.testimonials.cms.security.exception.InvalidCredentialsException;
 import org.testimonials.cms.security.model.*;
-import org.testimonials.cms.security.services.IAuthenticationService;
-import org.testimonials.cms.security.services.IJwtService;
+import org.testimonials.cms.security.services.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +28,25 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final IJwtService jwtService;
+    private final OrganizationRepository organizationRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final IUserService userService;
+    private final IRoleService roleService;
+    private final IMembershipService membershipService;
 
     @Override
     @Transactional
-    public OrganizationResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public AuthResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
         CustomUserPrincipal principal = authenticateCurrentUser(loginRequestDTO);
 
-        Membership activeMembership = principal.user().getMemberships().stream()
+        if (principal == null) {
+            throw new InvalidCredentialsException("Invalid credentials");
+        }
+
+        User user = principal.user();
+
+        Membership activeMembership = user.getMemberships().stream()
                 .filter(m -> m.getStatus() == MembershipStatus.ACTIVE)
                 .findFirst()
                 .orElseThrow(InvalidCredentialsException::of);
@@ -45,12 +62,59 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 ),
                 principal.getUsername()
         );
-
-        return new OrganizationResponseDTO(
+        OrganizationAuthResponseDTO dto = new OrganizationAuthResponseDTO(
                 activeMembership.getOrganization().getId(),
                 activeMembership.getOrganization().getName(),
                 activeMembership.getOrganization().getLogo(),
-                token);
+                user.getEmail(),
+                user.getName()
+        );
+
+        return new AuthResponseDTO(dto,token);
+    }
+
+    @Override
+    @Transactional
+    public AuthResponseDTO registerOrganization(OrganizationRegisterDTO dto) {
+
+        if (userService.existsByEmail(dto.email())) {
+            throw EmailAlreadyExistsException.of(dto.email());
+        }
+
+        Organization organization = new Organization();
+        organization.setName(dto.name());
+        organization.setLogo(dto.logo());
+        Organization newOrganization = organizationRepository.save(organization);
+
+        User user = new User();
+        user.setName(dto.username());
+        user.setEmail(dto.email());
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        User newUser = userService.createUser(user);
+
+        Membership membership = new Membership();
+        membership.setOrganization(newOrganization);
+        membership.setUser(newUser);
+        Role role = roleService.findRoleByName("OWNER");
+        membership.setRoles(new HashSet<>(List.of(role)));
+        membership.setStatus(MembershipStatus.ACTIVE);
+        membership.setType(MembershipType.OWNER);
+        membershipService.createNewMembership(membership);
+
+        String token = jwtService.generateJwt(
+                Map.of("orgID", newOrganization.getId(),
+                        "roles", membership.getRoles().stream().map(Role::getRoleName).toList()),
+                newUser.getEmail());
+
+        OrganizationAuthResponseDTO orgDto = new OrganizationAuthResponseDTO(
+                membership.getOrganization().getId(),
+                membership.getOrganization().getName(),
+                membership.getOrganization().getLogo(),
+                user.getEmail(),
+                user.getName()
+        );
+
+        return new AuthResponseDTO(orgDto,token);
     }
 
     private CustomUserPrincipal authenticateCurrentUser(LoginRequestDTO loginRequestDTO) {

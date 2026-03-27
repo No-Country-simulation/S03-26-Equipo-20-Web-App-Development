@@ -1,8 +1,11 @@
 package org.testimonials.cms.security.services;
 
-import org.testimonials.cms.organization.dtos.OrganizationResponseDTO;
+import org.testimonials.cms.security.dto.AuthResponseDTO;
 import org.testimonials.cms.security.dto.LoginRequestDTO;
+import org.testimonials.cms.security.dto.OrganizationRegisterDTO;
 
 public interface IAuthenticationService {
-    OrganizationResponseDTO login(LoginRequestDTO loginRequestDTO);
+    AuthResponseDTO login(LoginRequestDTO loginRequestDTO);
+
+    AuthResponseDTO registerOrganization(OrganizationRegisterDTO organizationRegisterDTO);
 }

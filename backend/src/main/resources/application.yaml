@@ -12,3 +12,6 @@ jwt:
       private: ${JWT_KEY_SIGNER_PRIVATE}
   token:
     expiration-in-minutes: ${JWT_TOKEN_EXPIRATION}
+cookie:
+  jwt:
+    expiration-in-days: ${COOKIE_JWT_EXPIRATION}
