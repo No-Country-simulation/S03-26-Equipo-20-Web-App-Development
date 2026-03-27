@@ -7,7 +7,7 @@ import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 import java.util.List;
 import java.util.UUID;
 
-public interface TestimonialService {
+public interface ITestimonialService {
     TestimonialResponseDTO createTestimonial(TestimonialRequestDTO testimonialRequestDTO);
     List<TestimonialResponseDTO> listAllTestimonials();
     TestimonialResponseDTO listTestimonial(UUID id);

@@ -1,4 +1,4 @@
-package org.testimonials.cms.testimonial.model;
+package org.testimonials.cms.review.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,34 +7,36 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.testimonials.cms.review.model.Review;
+import org.testimonials.cms.security.model.User;
+import org.testimonials.cms.testimonial.model.Testimonial;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "Testimonial")
-@Table(name = "testimonials")
+@Entity(name = "Review")
+@Table(name = "reviews")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Testimonial {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private String title;
-    private String content;
-    @Column(name = "visitor_name")
-    private String visitorName;
     @Enumerated(EnumType.STRING)
-    private TestimonialStatus status;
-    @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Review> reviews;
+    private ReviewStatus status;
+    private String comment;
+    @JoinColumn(name = "testimonial_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Testimonial testimonial;
+    @JoinColumn(name = "reviewer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User reviewer;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
 }

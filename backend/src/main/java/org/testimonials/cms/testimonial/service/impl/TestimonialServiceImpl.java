@@ -6,12 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
-import org.testimonials.cms.testimonial.exceptions.TestimonialNotFound;
+import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
 import org.testimonials.cms.testimonial.mapper.TestimonialMapper;
 import org.testimonials.cms.testimonial.model.Testimonial;
 import org.testimonials.cms.testimonial.model.TestimonialStatus;
-import org.testimonials.cms.testimonial.repository.TestimonialRepository;
-import org.testimonials.cms.testimonial.service.TestimonialService;
+import org.testimonials.cms.testimonial.repository.ITestimonialRepository;
+import org.testimonials.cms.testimonial.service.ITestimonialService;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +19,8 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class TestimonialServiceImpl implements TestimonialService {
-    private final TestimonialRepository testimonialRepository;
+public class TestimonialServiceImpl implements ITestimonialService {
+    private final ITestimonialRepository testimonialRepository;
 
     private final TestimonialMapper testimonialMapper;
 

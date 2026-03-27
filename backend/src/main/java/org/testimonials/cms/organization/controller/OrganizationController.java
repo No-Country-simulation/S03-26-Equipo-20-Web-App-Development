@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.organization.dtos.OrganizationRequestDTO;
 import org.testimonials.cms.organization.dtos.OrganizationResponseDTO;
-import org.testimonials.cms.organization.service.OrganizationService;
+import org.testimonials.cms.organization.service.IOrganizationService;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,39 +16,33 @@ import java.util.UUID;
 @AllArgsConstructor
 @RequestMapping("/api/v1/organizations")
 public class OrganizationController {
-    private final OrganizationService organizationService;
 
-    @PostMapping
-    public ResponseEntity<OrganizationResponseDTO> createOrganization(@RequestBody @Valid OrganizationRequestDTO organizationRequestDTO) {
-         OrganizationResponseDTO organizationResponseDTO = organizationService.createOrganization(organizationRequestDTO);
-
-         return ResponseEntity.status(HttpStatus.CREATED).body(organizationResponseDTO);
-    }
+    private final IOrganizationService IOrganizationService;
 
     @GetMapping
     public ResponseEntity<List<OrganizationResponseDTO>> listAllOrganizations() {
-        List<OrganizationResponseDTO> organizationResponseDTO = organizationService.listAllOrganizations();
+        List<OrganizationResponseDTO> organizationResponseDTO = IOrganizationService.listAllOrganizations();
 
         return ResponseEntity.status(HttpStatus.OK).body(organizationResponseDTO);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     public ResponseEntity<OrganizationResponseDTO> listOrganization(@PathVariable UUID id) {
-        OrganizationResponseDTO organizationResponseDTO = organizationService.listOrganization(id);
+        OrganizationResponseDTO organizationResponseDTO = IOrganizationService.listOrganization(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(organizationResponseDTO);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<OrganizationResponseDTO> updateOrganization(@PathVariable UUID id, @RequestBody @Valid OrganizationRequestDTO organizationRequestDTO) {
-        OrganizationResponseDTO organizationResponseDTO = organizationService.updateOrganization(id, organizationRequestDTO);
+        OrganizationResponseDTO organizationResponseDTO = IOrganizationService.updateOrganization(id, organizationRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(organizationResponseDTO);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteOrganization(@PathVariable UUID id) {
-        organizationService.deleteOrganization(id);
+        IOrganizationService.deleteOrganization(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
