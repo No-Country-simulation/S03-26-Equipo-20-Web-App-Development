@@ -5,7 +5,6 @@ import java.util.UUID;
 public record OrganizationResponseDTO(
         UUID id,
         String name,
-        String logo,
-        String jwt
+        String logo
     ) {
 }
