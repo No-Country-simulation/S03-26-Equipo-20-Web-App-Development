@@ -6,7 +6,7 @@
 // Base URL: http://localhost:8080/api/auth
 // ============================================================
 
-import type { AuthResponse, LoginPayload, RegisterPayload } from "../types/auth";
+import type { AuthResponse, LoginPayload, RegisterOrgPayload } from "../types/auth";
 
 const BASE_URL = "http://localhost:8080/api/auth";
 
@@ -48,17 +48,19 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
 // ─── Register ────────────────────────────────────────────────
 
 /**
- * Registra un nuevo usuario.
+ * Registra una nueva organización.
  * Endpoint real: POST /api/auth/register
  */
-export async function register(payload: RegisterPayload): Promise<AuthResponse> {
+export async function register(payload: RegisterOrgPayload): Promise<AuthResponse> {
   // TODO: descomentar y eliminar el bloque mock cuando el backend esté listo
   /*
   const res = await fetch(`${BASE_URL}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      name: payload.name,
+      name: payload.organizationName,
+      logo: payload.logo,
+      username: payload.username,
       email: payload.email,
       password: payload.password,
     }),
@@ -71,7 +73,7 @@ export async function register(payload: RegisterPayload): Promise<AuthResponse> 
   if (payload.email === "exists@test.com") {
     throw new Error("Ya existe una cuenta con ese email.");
   }
-  return mockAuthResponse(payload.email, payload.name);
+  return mockAuthResponse(payload.email, payload.organizationName);
 }
 
 // ─── Logout ──────────────────────────────────────────────────

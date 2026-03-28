@@ -1,21 +1,39 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
-import type { RegisterPayload } from "../../types/auth";
+import type { RegisterOrgPayload } from "../../types/auth";
 
 // ─── Tipos de errores de validación ──────────────────────────
 
-type RegisterErrors = Partial<Record<keyof RegisterPayload, string>>;
+type RegisterErrors = Partial<Record<keyof RegisterOrgPayload, string>>;
 
 // ─── Validación ───────────────────────────────────────────────
 
-function validate(form: RegisterPayload): RegisterErrors {
+function validate(form: RegisterOrgPayload): RegisterErrors {
   const errors: RegisterErrors = {};
 
-  if (!form.name.trim()) {
-    errors.name = "El nombre es requerido.";
-  } else if (form.name.trim().length < 2) {
-    errors.name = "El nombre debe tener al menos 2 caracteres.";
+  if (!form.organizationName.trim()) {
+    errors.organizationName = "El nombre de la organización es requerido.";
+  } else if (form.organizationName.trim().length < 2) {
+    errors.organizationName = "Debe tener al menos 2 caracteres.";
+  }
+
+  if (!form.username.trim()) {
+    errors.username = "El nombre de usuario es requerido.";
+  } else if (form.username.trim().length < 3) {
+    errors.username = "Debe tener al menos 3 caracteres.";
+  } else if (!/^[a-zA-Z0-9_-]+$/.test(form.username)) {
+    errors.username = "Solo letras, números, guiones y guiones bajos.";
+  }
+
+  if (!form.logo.trim()) {
+    errors.logo = "La URL del logo es requerida.";
+  } else {
+    try {
+      new URL(form.logo);
+    } catch {
+      errors.logo = "Ingresá una URL válida (ej: https://miempresa.com/logo.png).";
+    }
   }
 
   if (!form.email.trim()) {
@@ -41,8 +59,10 @@ function validate(form: RegisterPayload): RegisterErrors {
 
 // ─── Componente ───────────────────────────────────────────────
 
-const emptyForm: RegisterPayload = {
-  name: "",
+const emptyForm: RegisterOrgPayload = {
+  organizationName: "",
+  logo: "",
+  username: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -51,7 +71,7 @@ const emptyForm: RegisterPayload = {
 export default function RegisterForm() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState<RegisterPayload>(emptyForm);
+  const [form, setForm] = useState<RegisterOrgPayload>(emptyForm);
   const [fieldErrors, setFieldErrors] = useState<RegisterErrors>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -60,7 +80,7 @@ export default function RegisterForm() {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (fieldErrors[name as keyof RegisterPayload]) {
+    if (fieldErrors[name as keyof RegisterOrgPayload]) {
       setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   }
@@ -78,7 +98,7 @@ export default function RegisterForm() {
     setLoading(true);
     try {
       const response = await register(form);
-      // TODO: guardar token y usuario en contexto global / localStorage
+      // TODO: guardar token y organización en contexto global / localStorage
       localStorage.setItem("auth_token", response.token);
       localStorage.setItem("auth_user", JSON.stringify(response.user));
       setSuccess(true);
@@ -95,8 +115,8 @@ export default function RegisterForm() {
 
   return (
     <div className="auth-card">
-      <h1 className="auth-card-title">Crear cuenta</h1>
-      <p className="auth-card-subtitle">Completá tus datos para registrarte</p>
+      <h1 className="auth-card-title">Registrar organización</h1>
+      <p className="auth-card-subtitle">Completá los datos de tu empresa para comenzar</p>
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         {/* ── Error global ── */}
@@ -109,28 +129,70 @@ export default function RegisterForm() {
         {/* ── Éxito ── */}
         {success && (
           <div className="auth-alert auth-alert-success" role="status">
-            ✓ Cuenta creada exitosamente. Redirigiendo…
+            ✓ Organización registrada exitosamente. Redirigiendo…
           </div>
         )}
 
-        {/* ── Nombre ── */}
+        {/* ── Nombre de la organización ── */}
         <div className="auth-field">
-          <label className="auth-label" htmlFor="register-name">
-            Nombre completo
+          <label className="auth-label" htmlFor="register-org-name">
+            Nombre de la organización
           </label>
           <input
-            id="register-name"
-            name="name"
+            id="register-org-name"
+            name="organizationName"
             type="text"
-            autoComplete="name"
-            placeholder="Juan García"
-            value={form.name}
+            autoComplete="organization"
+            placeholder="Acme Corp"
+            value={form.organizationName}
             onChange={handleChange}
-            className={`auth-input${fieldErrors.name ? " error" : ""}`}
+            className={`auth-input${fieldErrors.organizationName ? " error" : ""}`}
             disabled={isDisabled}
           />
-          {fieldErrors.name && (
-            <span className="auth-field-error">{fieldErrors.name}</span>
+          {fieldErrors.organizationName && (
+            <span className="auth-field-error">{fieldErrors.organizationName}</span>
+          )}
+        </div>
+
+        {/* ── Username ── */}
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="register-username">
+            Nombre de usuario
+          </label>
+          <input
+            id="register-username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            placeholder="acme_corp"
+            value={form.username}
+            onChange={handleChange}
+            className={`auth-input${fieldErrors.username ? " error" : ""}`}
+            disabled={isDisabled}
+          />
+          {fieldErrors.username && (
+            <span className="auth-field-error">{fieldErrors.username}</span>
+          )}
+        </div>
+
+        {/* ── Logo URL ── */}
+        <div className="auth-field">
+          <label className="auth-label" htmlFor="register-logo">
+            URL del logo
+          </label>
+          <input
+            id="register-logo"
+            name="logo"
+            type="url"
+            autoComplete="off"
+            placeholder="https://miempresa.com/logo.png"
+            value={form.logo}
+            onChange={handleChange}
+            className={`auth-input${fieldErrors.logo ? " error" : ""}`}
+            disabled={isDisabled}
+          />
+          {fieldErrors.logo && (
+            <span className="auth-field-error">{fieldErrors.logo}</span>
           )}
         </div>
 
@@ -144,7 +206,7 @@ export default function RegisterForm() {
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="usuario@ejemplo.com"
+            placeholder="contacto@miempresa.com"
             value={form.email}
             onChange={handleChange}
             className={`auth-input${fieldErrors.email ? " error" : ""}`}
@@ -207,10 +269,10 @@ export default function RegisterForm() {
           {loading ? (
             <>
               <span className="auth-btn-spinner" aria-hidden="true" />
-              Creando cuenta…
+              Registrando organización…
             </>
           ) : (
-            "Crear cuenta"
+            "Registrar organización"
           )}
         </button>
       </form>

@@ -12,16 +12,16 @@ export default function RegisterPage() {
         </div>
 
         <h2 className="auth-brand-headline">
-          Sumarte al equipo es <span>muy simple</span>
+          Registrá tu empresa en <span>minutos</span>
         </h2>
 
         <p className="auth-brand-sub">
-          Creá tu cuenta y empezá a gestionar casos de éxito, moderar
-          contenido y publicar testimonios al instante.
+          Creá la cuenta de tu organización y empezá a gestionar casos de éxito,
+          moderar contenido y publicar testimonios al instante.
         </p>
 
         <ul className="auth-brand-features">
-          <li>Roles: Admin, Editor y Visitante</li>
+          <li>Panel de administración para tu equipo</li>
           <li>Integración con YouTube y Cloudinary</li>
           <li>Búsqueda inteligente con tags</li>
           <li>API REST documentada e integrable</li>
