@@ -102,7 +102,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         membershipService.createNewMembership(membership);
 
         String token = jwtService.generateJwt(
-                Map.of("orgID", newOrganization.getId(),
+                Map.of("orgId", newOrganization.getId(),
                         "roles", membership.getRoles().stream().map(Role::getRoleName).toList()),
                 newUser.getEmail());
 
