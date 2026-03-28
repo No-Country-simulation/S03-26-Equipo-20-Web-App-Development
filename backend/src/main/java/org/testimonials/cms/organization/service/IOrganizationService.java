@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IOrganizationService {
-    OrganizationResponseDTO createOrganization(OrganizationRequestDTO organizationRequestDTO);
     List<OrganizationResponseDTO> listAllOrganizations();
     OrganizationResponseDTO listOrganization(UUID id);
     OrganizationResponseDTO updateOrganization(UUID id, OrganizationRequestDTO organizationRequestDTO);
