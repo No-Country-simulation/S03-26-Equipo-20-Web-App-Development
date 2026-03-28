@@ -12,3 +12,48 @@ jwt:
       private: ${JWT_KEY_SIGNER_PRIVATE}
   token:
     expiration-in-minutes: ${JWT_TOKEN_EXPIRATION}
+
+# Cloudinary Config
+cloudinary:
+  api:
+    url: https://api.cloudinary.com/v1_1
+
+# Spring Cloud OpenFeign Resilience4j
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 2s
+    instances:
+      cloudinary-client:
+        baseConfig: default
