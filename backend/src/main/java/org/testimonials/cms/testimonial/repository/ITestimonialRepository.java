@@ -5,5 +5,5 @@ import org.testimonials.cms.testimonial.model.Testimonial;
 
 import java.util.UUID;
 
-public interface TestimonialRepository extends JpaRepository<Testimonial, UUID> {
+public interface ITestimonialRepository extends JpaRepository<Testimonial, UUID> {
 }

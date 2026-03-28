@@ -10,11 +10,10 @@ public record TestimonialResponseDTO(
         String title,
         String content,
         String visitorName,
-        TestimonialStatus status,
-        String approvedBy
+        TestimonialStatus status
     ) {
     public TestimonialResponseDTO(Testimonial testimonial) {
         this(testimonial.getId(), testimonial.getTitle(), testimonial.getContent(), testimonial.getVisitorName(),
-                testimonial.getStatus(), testimonial.getApprovedBy());
+                testimonial.getStatus());
     }
 }

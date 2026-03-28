@@ -1,4 +1,4 @@
-package org.testimonials.cms.organization.exceptions;
+package org.testimonials.cms.organization.exception;
 
 import java.util.UUID;
 

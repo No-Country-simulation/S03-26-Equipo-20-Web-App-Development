@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.organization.dtos.OrganizationRequestDTO;
 import org.testimonials.cms.organization.dtos.OrganizationResponseDTO;
-import org.testimonials.cms.organization.exceptions.OrganizationNotFound;
+import org.testimonials.cms.organization.exception.OrganizationNotFound;
 import org.testimonials.cms.organization.mapper.OrganizationMapper;
 import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.organization.repository.OrganizationRepository;
-import org.testimonials.cms.organization.service.OrganizationService;
+import org.testimonials.cms.organization.service.IOrganizationService;
 import org.testimonials.cms.security.model.*;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class OrganizationServiceImpl implements OrganizationService {
+public class OrganizationServiceImpl implements IOrganizationService {
     private final OrganizationRepository organizationRepository;
 
     private final OrganizationMapper organizationMapper;

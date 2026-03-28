@@ -6,7 +6,7 @@ import org.testimonials.cms.organization.dtos.OrganizationResponseDTO;
 import java.util.List;
 import java.util.UUID;
 
-public interface OrganizationService {
+public interface IOrganizationService {
     List<OrganizationResponseDTO> listAllOrganizations();
     OrganizationResponseDTO listOrganization(UUID id);
     OrganizationResponseDTO updateOrganization(UUID id, OrganizationRequestDTO organizationRequestDTO);
