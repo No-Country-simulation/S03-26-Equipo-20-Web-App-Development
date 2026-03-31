@@ -9,10 +9,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.testimonials.cms.security.dto.AuthResponseDTO;
-import org.testimonials.cms.security.dto.LoginRequestDTO;
-import org.testimonials.cms.security.dto.OrganizationAuthResponseDTO;
-import org.testimonials.cms.security.dto.OrganizationRegisterDTO;
+import org.testimonials.cms.security.dto.*;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.security.services.IAuthenticationService;
 
@@ -62,5 +59,13 @@ public class AuthenticationController {
     @GetMapping("/me")
     public ResponseEntity<OrganizationAuthResponseDTO> me(@AuthenticationPrincipal CustomUserPrincipal userPrincipal){
         return ResponseEntity.ok(authenticationService.me(userPrincipal));
+    }
+
+    @PostMapping("/register-members")
+    public ResponseEntity<AddMembersResponseDTO> addMembers(
+            @RequestBody @Valid AddMembersRequestDTO request,
+            @AuthenticationPrincipal CustomUserPrincipal principal) {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerMembers(request,principal));
     }
 }
