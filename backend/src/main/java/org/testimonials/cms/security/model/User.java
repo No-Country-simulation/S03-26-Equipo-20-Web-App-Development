@@ -9,6 +9,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.testimonials.cms.product.model.Product;
 import org.testimonials.cms.review.model.Review;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,9 @@ public class User{
 
     @OneToMany(mappedBy = "reviewer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Product> products;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

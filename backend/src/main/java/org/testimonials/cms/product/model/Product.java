@@ -1,4 +1,4 @@
-package org.testimonials.cms.organization.model;
+package org.testimonials.cms.product.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,26 +7,31 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.testimonials.cms.product.model.Product;
+import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.security.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "Organization")
-@Table(name = "organizations")
+@Entity(name = "Product")
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Organization {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
-    private String logo;
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Product> products;
+    private String description;
+    private String picture;
+    @JoinColumn(name = "created_by")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User createdBy;
+    @JoinColumn(name = "organization_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organization organization;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -34,7 +39,4 @@ public class Organization {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public Organization(UUID id) {
-        this.id = id;
-    }
 }
