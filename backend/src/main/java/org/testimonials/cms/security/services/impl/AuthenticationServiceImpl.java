@@ -9,18 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.organization.repository.OrganizationRepository;
-import org.testimonials.cms.security.dto.AuthResponseDTO;
-import org.testimonials.cms.security.dto.LoginRequestDTO;
-import org.testimonials.cms.security.dto.OrganizationAuthResponseDTO;
-import org.testimonials.cms.security.dto.OrganizationRegisterDTO;
+import org.testimonials.cms.security.dto.*;
 import org.testimonials.cms.security.exception.EmailAlreadyExistsException;
 import org.testimonials.cms.security.exception.InvalidCredentialsException;
 import org.testimonials.cms.security.model.*;
 import org.testimonials.cms.security.services.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -135,9 +130,66 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         );
     }
 
+    @Override
+    @Transactional
+    public AddMembersResponseDTO registerMembers(AddMembersRequestDTO membersRequestDTO, CustomUserPrincipal principal) {
+        List<MemberResponseDTO> successful = new ArrayList<>();
+        List<FailedMemberDTO> failed = new ArrayList<>();
+        List<MemberInputDTO> members = membersRequestDTO.members();
+        for (int i = 0; i < members.size(); i++) {
+            MemberInputDTO memberInput = members.get(i);
+            try {
+                MemberResponseDTO result = addSingleMember(new Organization(principal.organizationId()), memberInput);
+                successful.add(result);
+            } catch (EmailAlreadyExistsException e) {
+                failed.add(new FailedMemberDTO(i, memberInput.email(), "Email already exists"));
+            } catch (IllegalArgumentException e) {
+                failed.add(new FailedMemberDTO(i, memberInput.email(), e.getMessage()));
+            } catch (Exception e) {
+                failed.add(new FailedMemberDTO(i, memberInput.email(), "Unexpected error: " + e.getMessage()));
+            }
+        }
+        return new AddMembersResponseDTO(successful, failed);
+    }
+
     private CustomUserPrincipal authenticateCurrentUser(LoginRequestDTO loginRequestDTO) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequestDTO.email(), loginRequestDTO.password());
         Authentication authenticated = authenticationManager.authenticate(authentication);
         return (CustomUserPrincipal) authenticated.getPrincipal();
+    }
+
+    private MemberResponseDTO addSingleMember(Organization organization, MemberInputDTO memberInput) {
+        if (memberInput.type() == MembershipType.OWNER) {
+            throw new IllegalArgumentException("Cannot add owner members via this endpoint");
+        }
+
+        if (userService.existsByEmail(memberInput.email())) {
+            throw EmailAlreadyExistsException.of(memberInput.email());
+        }
+
+        User user = new User();
+        user.setName(memberInput.name());
+        user.setEmail(memberInput.email());
+        user.setPassword(passwordEncoder.encode(memberInput.password()));
+        User newUser = userService.createUser(user);
+
+        Role role = roleService.findRoleByName(memberInput.type().name());
+
+        Membership membership = new Membership();
+        membership.setOrganization(organization);
+        membership.setUser(newUser);
+        membership.setRoles(Set.of(role));
+        membership.setStatus(MembershipStatus.ACTIVE);
+        membership.setType(memberInput.type());
+
+        membershipService.createNewMembership(membership);
+
+        return new MemberResponseDTO(
+                newUser.getId(),
+                newUser.getName(),
+                newUser.getEmail(),
+                memberInput.type(),
+                MembershipStatus.ACTIVE
+        );
     }
 }
