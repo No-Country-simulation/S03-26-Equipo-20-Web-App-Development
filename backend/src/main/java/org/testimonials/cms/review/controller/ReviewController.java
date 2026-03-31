@@ -4,11 +4,13 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.review.dtos.EditReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewResponseDTO;
 import org.testimonials.cms.review.service.IReviewService;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,9 +21,9 @@ import java.util.UUID;
 public class ReviewController {
     private final IReviewService reviewService;
 
-    @PostMapping
-    public ResponseEntity<ReviewResponseDTO> createReview(@RequestBody @Valid ReviewRequestDTO reviewRequestDTO) {
-        ReviewResponseDTO reviewResponseDTO = reviewService.createReview(reviewRequestDTO);
+    @PostMapping("/register")
+    public ResponseEntity<ReviewResponseDTO> createReview(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal, @RequestBody @Valid ReviewRequestDTO reviewRequestDTO) {
+        ReviewResponseDTO reviewResponseDTO = reviewService.createReview(customUserPrincipal, reviewRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewResponseDTO);
     }

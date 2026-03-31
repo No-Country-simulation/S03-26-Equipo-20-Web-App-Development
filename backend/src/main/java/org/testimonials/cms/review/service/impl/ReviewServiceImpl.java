@@ -3,6 +3,7 @@ package org.testimonials.cms.review.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.review.dtos.EditReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewResponseDTO;
@@ -12,6 +13,7 @@ import org.testimonials.cms.review.mapper.ReviewMapper;
 import org.testimonials.cms.review.model.Review;
 import org.testimonials.cms.review.repository.IReviewRepository;
 import org.testimonials.cms.review.service.IReviewService;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.security.model.User;
 import org.testimonials.cms.security.repository.IUserRepository;
 import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
@@ -27,22 +29,19 @@ import java.util.UUID;
 public class ReviewServiceImpl implements IReviewService {
     private final IReviewRepository reviewRepository;
     private final ITestimonialRepository testimonialRepository;
-    private final IUserRepository iUserRepository;
 
     private final ReviewMapper reviewMapper;
 
     @Override
     @Transactional
-    public ReviewResponseDTO createReview(ReviewRequestDTO reviewRequestDTO) {
+    public ReviewResponseDTO createReview(CustomUserPrincipal customUserPrincipal, ReviewRequestDTO reviewRequestDTO) {
         Testimonial testimonial = testimonialRepository.findById(reviewRequestDTO.testimonial())
                 .orElseThrow(() -> TestimonialNotFound.of(reviewRequestDTO.testimonial()));
 
-        User reviewer = iUserRepository.findById(reviewRequestDTO.reviewer())
-                .orElseThrow(() -> UserNotFound.of(reviewRequestDTO.reviewer()));
-
         Review review = reviewMapper.toReview(reviewRequestDTO);
         review.setTestimonial(testimonial);
-        review.setReviewer(reviewer);
+        review.setReviewer(customUserPrincipal.user());
+        review.setOrganization(new Organization(customUserPrincipal.organizationId()));
         Review newReview = reviewRepository.save(review);
         return reviewMapper.toReviewDTO(newReview);
     }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.security.model.User;
 import org.testimonials.cms.testimonial.model.Testimonial;
 
@@ -32,6 +33,9 @@ public class Review {
     @JoinColumn(name = "reviewer_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User reviewer;
+    @JoinColumn(name = "organization_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organization organization;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;

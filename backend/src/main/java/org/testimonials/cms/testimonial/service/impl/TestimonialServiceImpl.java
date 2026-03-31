@@ -3,6 +3,8 @@ package org.testimonials.cms.testimonial.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
@@ -26,9 +28,10 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     @Override
     @Transactional
-    public TestimonialResponseDTO createTestimonial(TestimonialRequestDTO testimonialRequestDTO) {
+    public TestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal, TestimonialRequestDTO testimonialRequestDTO) {
         Testimonial testimonial = testimonialMapper.toTestimonial(testimonialRequestDTO);
         testimonial.setStatus(TestimonialStatus.PENDING);
+        testimonial.setOrganization(new Organization(customUserPrincipal.organizationId()));
         Testimonial newTestimonial = testimonialRepository.save(testimonial);
         return testimonialMapper.toTestimonialDTO(newTestimonial);
     }

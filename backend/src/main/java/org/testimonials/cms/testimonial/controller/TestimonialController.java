@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
@@ -19,9 +21,9 @@ import java.util.UUID;
 public class TestimonialController {
     private final ITestimonialService ITestimonialService;
 
-    @PostMapping
-    public ResponseEntity<TestimonialResponseDTO> createTestimonial(@RequestBody @Valid TestimonialRequestDTO testimonialRequestDTO) {
-        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.createTestimonial(testimonialRequestDTO);
+    @PostMapping("/register")
+    public ResponseEntity<TestimonialResponseDTO> createTestimonial(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal, @RequestBody @Valid TestimonialRequestDTO testimonialRequestDTO) {
+        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.createTestimonial(customUserPrincipal, testimonialRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(testimonialResponseDTO);
     }
