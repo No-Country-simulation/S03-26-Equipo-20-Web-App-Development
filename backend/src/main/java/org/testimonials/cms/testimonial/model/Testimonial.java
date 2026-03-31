@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.review.model.Review;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,9 @@ public class Testimonial {
     private TestimonialStatus status;
     @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Review> reviews;
+    @JoinColumn(name = "organization_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organization organization;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
