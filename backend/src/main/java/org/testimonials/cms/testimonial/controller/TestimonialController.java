@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
-import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
 import org.testimonials.cms.testimonial.service.ITestimonialService;
 
 import java.util.List;
@@ -22,8 +23,10 @@ public class TestimonialController {
     private final ITestimonialService ITestimonialService;
 
     @PostMapping("/register")
-    public ResponseEntity<TestimonialResponseDTO> createTestimonial(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal, @RequestBody @Valid TestimonialRequestDTO testimonialRequestDTO) {
-        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.createTestimonial(customUserPrincipal, testimonialRequestDTO);
+    public ResponseEntity<CreateTestimonialResponseDTO> createTestimonial(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal,
+                                                                          @RequestBody @Valid CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+        CreateTestimonialResponseDTO testimonialResponseDTO = ITestimonialService.createTestimonial(customUserPrincipal,
+                createTestimonialRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(testimonialResponseDTO);
     }

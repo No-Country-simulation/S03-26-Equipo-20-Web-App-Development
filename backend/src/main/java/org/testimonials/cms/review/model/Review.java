@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "Review")
-@Table(name = "reviews")
+@Table(name = "reviews", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"testimonial_id", "reviewer_id"})
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -26,6 +28,7 @@ public class Review {
     private UUID id;
     @Enumerated(EnumType.STRING)
     private ReviewStatus status;
+    @Column(columnDefinition = "TEXT")
     private String comment;
     @JoinColumn(name = "testimonial_id")
     @ManyToOne(fetch = FetchType.LAZY)

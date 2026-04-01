@@ -5,5 +5,5 @@ import org.testimonials.cms.product.model.Product;
 
 import java.util.UUID;
 
-public interface ProductRepository extends JpaRepository<Product, UUID> {
+public interface IProductRepository extends JpaRepository<Product, UUID> {
 }

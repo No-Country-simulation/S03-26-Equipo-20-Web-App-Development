@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.review.model.Review;
+import org.testimonials.cms.visitor.model.Visitor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +36,9 @@ public class Testimonial {
     @JoinColumn(name = "organization_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
+    @JoinColumn(name = "visitor_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Visitor visitor;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;

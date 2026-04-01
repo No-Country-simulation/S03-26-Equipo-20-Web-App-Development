@@ -36,4 +36,16 @@ public class ReviewExceptionHandler {
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
+
+    @ExceptionHandler(ReviewAlreadyExists.class)
+    ProblemDetail handleReviewAlreadyExistsException(ReviewAlreadyExists e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+        problemDetail.setTitle("Review already exists");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/review-already-exists"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setProperty("errorCategory", "Repository");
+        problemDetail.setProperty("errorCode", "REVIEW_ALREADY_EXISTS");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
 }

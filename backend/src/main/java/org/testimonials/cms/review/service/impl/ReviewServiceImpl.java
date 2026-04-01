@@ -7,6 +7,7 @@ import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.review.dtos.EditReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewRequestDTO;
 import org.testimonials.cms.review.dtos.ReviewResponseDTO;
+import org.testimonials.cms.review.exception.ReviewAlreadyExists;
 import org.testimonials.cms.review.exception.ReviewNotFound;
 import org.testimonials.cms.review.exception.UserNotFound;
 import org.testimonials.cms.review.mapper.ReviewMapper;
@@ -37,6 +38,8 @@ public class ReviewServiceImpl implements IReviewService {
     public ReviewResponseDTO createReview(CustomUserPrincipal customUserPrincipal, ReviewRequestDTO reviewRequestDTO) {
         Testimonial testimonial = testimonialRepository.findById(reviewRequestDTO.testimonial())
                 .orElseThrow(() -> TestimonialNotFound.of(reviewRequestDTO.testimonial()));
+        if (reviewRepository.existsByTestimonialAndReviewer(testimonial, customUserPrincipal.user()))
+            throw ReviewAlreadyExists.of(testimonial.getId());
 
         Review review = reviewMapper.toReview(reviewRequestDTO);
         review.setTestimonial(testimonial);
