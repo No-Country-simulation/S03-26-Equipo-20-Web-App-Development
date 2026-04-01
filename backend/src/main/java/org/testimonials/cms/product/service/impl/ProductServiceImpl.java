@@ -9,12 +9,9 @@ import org.testimonials.cms.product.dtos.ProductResponseDTO;
 import org.testimonials.cms.product.exception.ProductNotFound;
 import org.testimonials.cms.product.mapper.ProductMapper;
 import org.testimonials.cms.product.model.Product;
-import org.testimonials.cms.product.repository.ProductRepository;
+import org.testimonials.cms.product.repository.IProductRepository;
 import org.testimonials.cms.product.service.IProductService;
-import org.testimonials.cms.review.exception.UserNotFound;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
-import org.testimonials.cms.security.model.User;
-import org.testimonials.cms.security.repository.IUserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +20,7 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements IProductService {
-    private final ProductRepository productRepository;
+    private final IProductRepository IProductRepository;
 
     private final ProductMapper productMapper;
 
@@ -33,40 +30,40 @@ public class ProductServiceImpl implements IProductService {
         Product product = productMapper.toProduct(productRequestDTO);
         product.setCreatedBy(customUserPrincipal.user());
         product.setOrganization(new Organization(customUserPrincipal.organizationId()));
-        Product newProduct = productRepository.save(product);
+        Product newProduct = IProductRepository.save(product);
         return productMapper.toProductDTO(newProduct);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> listAllProducts() {
-        return productMapper.toProductDTO(productRepository.findAll());
+        return productMapper.toProductDTO(IProductRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductResponseDTO listProduct(UUID id) {
-        Optional<Product> productFound = productRepository.findById(id);
+        Optional<Product> productFound = IProductRepository.findById(id);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(id);
 
-        return productMapper.toProductDTO(productRepository.getReferenceById(id));
+        return productMapper.toProductDTO(IProductRepository.getReferenceById(id));
     }
 
     @Override
     @Transactional
     public ProductResponseDTO updateProduct(UUID id, ProductRequestDTO productRequestDTO) {
-        Optional<Product> productFound = productRepository.findById(id);
+        Optional<Product> productFound = IProductRepository.findById(id);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(id);
 
-        Product productNotModified = productRepository.getReferenceById(id);
+        Product productNotModified = IProductRepository.getReferenceById(id);
 
         if (productRequestDTO.name() != null) productNotModified.setName(productRequestDTO.name());
         if (productRequestDTO.description() != null) productNotModified.setDescription(productRequestDTO.description());
         if (productRequestDTO.picture() != null) productNotModified.setPicture(productRequestDTO.picture());
 
-        Product productModified = productRepository.save(productNotModified);
+        Product productModified = IProductRepository.save(productNotModified);
 
         return productMapper.toProductDTO(productModified);
     }
@@ -74,11 +71,11 @@ public class ProductServiceImpl implements IProductService {
     @Override
     @Transactional
     public void deleteProduct(UUID id) {
-        Optional<Product> productFound = productRepository.findById(id);
+        Optional<Product> productFound = IProductRepository.findById(id);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(id);
 
-        productRepository.deleteById(id);
+        IProductRepository.deleteById(id);
 
     }
 }

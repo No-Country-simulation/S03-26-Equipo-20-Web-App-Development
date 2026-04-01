@@ -8,8 +8,6 @@ public record TestimonialRequestDTO(
         @NotBlank
         String title,
         @NotBlank
-        String content,
-        @NotBlank
-        String visitorName
+        String content
     ) {
 }
