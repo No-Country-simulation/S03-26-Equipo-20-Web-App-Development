@@ -15,3 +15,25 @@ jwt:
 cookie:
   jwt:
     expiration-in-days: ${COOKIE_JWT_EXPIRATION}
+
+# - Configuración swagger
+springdoc:
+  swagger-ui:
+    path: /docs/swagger-ui.html
+    operationsSorter: method
+    display-request-duration: true
+  api-docs:
+    path: /docs/v3/api-docs
+
+# Información compartida para Actuator Info y Swagger
+info:
+  app:
+    name: Testimonial CMS API
+    version: 1.0.0
+    description: Backend para Gestión de Testimonios (Edtech)
+    server: ${server.servlet.context-path}
+  
+# Configuración del JWT (Para que coincida con tu filtro manual)
+auth:
+  cookie:
+    name: jwt
