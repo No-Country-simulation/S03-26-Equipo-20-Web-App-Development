@@ -3,15 +3,21 @@ package org.testimonials.cms.testimonial.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.security.model.CustomUserPrincipal;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
-import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
-import org.testimonials.cms.testimonial.exceptions.TestimonialNotFound;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
+import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
 import org.testimonials.cms.testimonial.mapper.TestimonialMapper;
 import org.testimonials.cms.testimonial.model.Testimonial;
 import org.testimonials.cms.testimonial.model.TestimonialStatus;
-import org.testimonials.cms.testimonial.repository.TestimonialRepository;
-import org.testimonials.cms.testimonial.service.TestimonialService;
+import org.testimonials.cms.testimonial.repository.ITestimonialRepository;
+import org.testimonials.cms.testimonial.service.ITestimonialService;
+import org.testimonials.cms.visitor.mapper.VisitorMapper;
+import org.testimonials.cms.visitor.model.Visitor;
+import org.testimonials.cms.visitor.repository.IVisitorRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +25,29 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class TestimonialServiceImpl implements TestimonialService {
-    private final TestimonialRepository testimonialRepository;
+public class TestimonialServiceImpl implements ITestimonialService {
+    private final ITestimonialRepository testimonialRepository;
+
+    private final IVisitorRepository visitorRepository;
 
     private final TestimonialMapper testimonialMapper;
 
+    private final VisitorMapper visitorMapper;
+
     @Override
     @Transactional
-    public TestimonialResponseDTO createTestimonial(TestimonialRequestDTO testimonialRequestDTO) {
-        Testimonial testimonial = testimonialMapper.toTestimonial(testimonialRequestDTO);
+    public CreateTestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal,
+                                                              CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+        Visitor visitor = visitorMapper.toVisitor(createTestimonialRequestDTO.visitor());
+        Visitor newVisitor = visitorRepository.save(visitor);
+
+        Testimonial testimonial = testimonialMapper.toTestimonial(createTestimonialRequestDTO.testimonial());
         testimonial.setStatus(TestimonialStatus.PENDING);
+        testimonial.setOrganization(new Organization(customUserPrincipal.organizationId()));
+        testimonial.setVisitor(newVisitor);
         Testimonial newTestimonial = testimonialRepository.save(testimonial);
-        return testimonialMapper.toTestimonialDTO(newTestimonial);
+
+        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor);
     }
 
     @Override

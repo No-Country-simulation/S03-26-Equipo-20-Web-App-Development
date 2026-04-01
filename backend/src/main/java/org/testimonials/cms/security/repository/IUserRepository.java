@@ -20,4 +20,6 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
                 WHERE u.email = :email
             """)
     Optional<User> findByEmailWithMemberships(String email);
+
+    boolean existsByEmail(String email);
 }
