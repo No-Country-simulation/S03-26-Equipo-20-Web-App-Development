@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IProductService {
     ProductResponseDTO createProduct(CustomUserPrincipal customUserPrincipal, ProductRequestDTO productRequestDTO);
     List<ProductResponseDTO> listAllProducts();
-    ProductResponseDTO listProduct(UUID id);
-    ProductResponseDTO updateProduct(UUID id, ProductRequestDTO productRequestDTO);
-    void deleteProduct(UUID id);
+    ProductResponseDTO listProduct(UUID idProduct);
+    ProductResponseDTO updateProduct(UUID idProduct, ProductRequestDTO productRequestDTO);
+    void deleteProduct(UUID idProduct);
 }

@@ -34,23 +34,23 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTOS);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> listProduct(@PathVariable UUID id) {
-        ProductResponseDTO productResponseDTO = productService.listProduct(id);
+    @GetMapping("/{idProduct}")
+    public ResponseEntity<ProductResponseDTO> listProduct(@PathVariable UUID idProduct) {
+        ProductResponseDTO productResponseDTO = productService.listProduct(idProduct);
 
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID id, @RequestBody @Valid ProductRequestDTO productRequestDTO) {
-        ProductResponseDTO productResponseDTO = productService.updateProduct(id, productRequestDTO);
+    @PutMapping("/{idProduct}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID idProduct, @RequestBody @Valid ProductRequestDTO productRequestDTO) {
+        ProductResponseDTO productResponseDTO = productService.updateProduct(idProduct, productRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
-        productService.deleteProduct(id);
+    @DeleteMapping("/{idProduct}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable UUID idProduct) {
+        productService.deleteProduct(idProduct);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

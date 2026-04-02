@@ -58,26 +58,25 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     @Override
     @Transactional(readOnly = true)
-    public TestimonialResponseDTO listTestimonial(UUID id) {
-        Optional<Testimonial> testimonialFound = testimonialRepository.findById(id);
+    public TestimonialResponseDTO listTestimonial(UUID idTestimonial) {
+        Optional<Testimonial> testimonialFound = testimonialRepository.findById(idTestimonial);
 
-        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(id);
+        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(idTestimonial);
 
-        return testimonialMapper.toTestimonialDTO(testimonialRepository.getReferenceById(id));
+        return testimonialMapper.toTestimonialDTO(testimonialRepository.getReferenceById(idTestimonial));
     }
 
     @Override
     @Transactional
-    public TestimonialResponseDTO updateTestimonial(UUID id, EditTestimonialRequestDTO editTestimonialRequestDTO) {
-        Optional<Testimonial> testimonialFound = testimonialRepository.findById(id);
+    public TestimonialResponseDTO updateTestimonial(UUID idTestimonial, EditTestimonialRequestDTO editTestimonialRequestDTO) {
+        Optional<Testimonial> testimonialFound = testimonialRepository.findById(idTestimonial);
 
-        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(id);
+        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(idTestimonial);
 
-        Testimonial testimonialNotModified = testimonialRepository.getReferenceById(id);
+        Testimonial testimonialNotModified = testimonialRepository.getReferenceById(idTestimonial);
 
         if (editTestimonialRequestDTO.title() != null) testimonialNotModified.setTitle(editTestimonialRequestDTO.title());
         if (editTestimonialRequestDTO.content() != null) testimonialNotModified.setContent(editTestimonialRequestDTO.content());
-        if (editTestimonialRequestDTO.visitorName() != null) testimonialNotModified.setVisitorName(editTestimonialRequestDTO.visitorName());
         if (editTestimonialRequestDTO.status() != null) testimonialNotModified.setStatus(editTestimonialRequestDTO.status());
 
         Testimonial testimonialModified = testimonialRepository.save(testimonialNotModified);
@@ -87,11 +86,11 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     @Override
     @Transactional
-    public void deleteTestimonial(UUID id) {
-        Optional<Testimonial> testimonialFound = testimonialRepository.findById(id);
+    public void deleteTestimonial(UUID idTestimonial) {
+        Optional<Testimonial> testimonialFound = testimonialRepository.findById(idTestimonial);
 
-        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(id);
+        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(idTestimonial);
 
-        testimonialRepository.deleteById(id);
+        testimonialRepository.deleteById(idTestimonial);
     }
 }

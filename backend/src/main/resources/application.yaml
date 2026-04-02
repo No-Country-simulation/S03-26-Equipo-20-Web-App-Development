@@ -3,6 +3,12 @@ spring:
     name: cms
   profiles:
     active: dev
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
 
 # JWT KEYS
 jwt:
@@ -44,14 +50,6 @@ cloudinary:
     url: https://api.cloudinary.com/v1_1
 
 # Spring Cloud OpenFeign Resilience4j
-spring:
-  cloud:
-    openfeign:
-      circuitbreaker:
-        enabled: true
-        alphanumeric-ids:
-          enabled: true
-
 resilience4j:
   circuitbreaker:
     configs:

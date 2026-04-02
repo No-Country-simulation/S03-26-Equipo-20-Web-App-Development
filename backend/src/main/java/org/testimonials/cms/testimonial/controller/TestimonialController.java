@@ -38,23 +38,23 @@ public class TestimonialController {
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TestimonialResponseDTO> listTestimonial(@PathVariable UUID id) {
-        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.listTestimonial(id);
+    @GetMapping("/{idTestimonial}")
+    public ResponseEntity<TestimonialResponseDTO> listTestimonial(@PathVariable UUID idTestimonial) {
+        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.listTestimonial(idTestimonial);
 
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TestimonialResponseDTO> updateTestimonial(@PathVariable UUID id, @RequestBody @Valid EditTestimonialRequestDTO editTestimonialRequestDTO) {
-        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.updateTestimonial(id, editTestimonialRequestDTO);
+    @PutMapping("/{idTestimonial}")
+    public ResponseEntity<TestimonialResponseDTO> updateTestimonial(@PathVariable UUID idTestimonial, @RequestBody @Valid EditTestimonialRequestDTO editTestimonialRequestDTO) {
+        TestimonialResponseDTO testimonialResponseDTO = ITestimonialService.updateTestimonial(idTestimonial, editTestimonialRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTestimonial(@PathVariable UUID id) {
-        ITestimonialService.deleteTestimonial(id);
+    @DeleteMapping("/{idTestimonial}")
+    public ResponseEntity<Void> deleteTestimonial(@PathVariable UUID idTestimonial) {
+        ITestimonialService.deleteTestimonial(idTestimonial);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

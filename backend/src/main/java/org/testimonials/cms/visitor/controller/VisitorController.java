@@ -18,13 +18,6 @@ import java.util.UUID;
 public class VisitorController {
     private final IVisitorService visitorService;
 
-//    @PostMapping
-//    public ResponseEntity<VisitorResponseDTO> createVisitor(@RequestBody @Valid VisitorRequestDTO visitorRequestDTO) {
-//        VisitorResponseDTO visitorResponseDTO = visitorService.createVisitor(visitorRequestDTO);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(visitorResponseDTO);
-//    }
-
     @GetMapping
     public ResponseEntity<List<VisitorResponseDTO>> listAllVisitors() {
         List<VisitorResponseDTO> visitorResponseDTO = visitorService.listAllVisitors();
@@ -32,23 +25,23 @@ public class VisitorController {
         return ResponseEntity.status(HttpStatus.OK).body(visitorResponseDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<VisitorResponseDTO> listVisitor(@PathVariable UUID id) {
-        VisitorResponseDTO visitorResponseDTO = visitorService.listVisitor(id);
+    @GetMapping("/{idVisitor}")
+    public ResponseEntity<VisitorResponseDTO> listVisitor(@PathVariable UUID idVisitor) {
+        VisitorResponseDTO visitorResponseDTO = visitorService.listVisitor(idVisitor);
 
         return ResponseEntity.status(HttpStatus.OK).body(visitorResponseDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<VisitorResponseDTO> updateVisitor(@PathVariable UUID id, @RequestBody @Valid VisitorRequestDTO visitorRequestDTO) {
-        VisitorResponseDTO visitorResponseDTO = visitorService.updateVisitor(id, visitorRequestDTO);
+    @PutMapping("/{idVisitor}")
+    public ResponseEntity<VisitorResponseDTO> updateVisitor(@PathVariable UUID idVisitor, @RequestBody @Valid VisitorRequestDTO visitorRequestDTO) {
+        VisitorResponseDTO visitorResponseDTO = visitorService.updateVisitor(idVisitor, visitorRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(visitorResponseDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<VisitorResponseDTO> deleteVisitor(@PathVariable UUID id) {
-        visitorService.deleteVisitor(id);
+    @DeleteMapping("/{idVisitor}")
+    public ResponseEntity<VisitorResponseDTO> deleteVisitor(@PathVariable UUID idVisitor) {
+        visitorService.deleteVisitor(idVisitor);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

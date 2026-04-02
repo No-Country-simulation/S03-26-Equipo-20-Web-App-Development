@@ -27,8 +27,6 @@ public class Testimonial {
     private UUID id;
     private String title;
     private String content;
-    @Column(name = "visitor_name")
-    private String visitorName;
     @Enumerated(EnumType.STRING)
     private TestimonialStatus status;
     @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

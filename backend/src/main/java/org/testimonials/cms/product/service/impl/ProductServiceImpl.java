@@ -42,22 +42,22 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProductResponseDTO listProduct(UUID id) {
-        Optional<Product> productFound = IProductRepository.findById(id);
+    public ProductResponseDTO listProduct(UUID idProduct) {
+        Optional<Product> productFound = IProductRepository.findById(idProduct);
 
-        if (productFound.isEmpty()) throw ProductNotFound.of(id);
+        if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
-        return productMapper.toProductDTO(IProductRepository.getReferenceById(id));
+        return productMapper.toProductDTO(IProductRepository.getReferenceById(idProduct));
     }
 
     @Override
     @Transactional
-    public ProductResponseDTO updateProduct(UUID id, ProductRequestDTO productRequestDTO) {
-        Optional<Product> productFound = IProductRepository.findById(id);
+    public ProductResponseDTO updateProduct(UUID idProduct, ProductRequestDTO productRequestDTO) {
+        Optional<Product> productFound = IProductRepository.findById(idProduct);
 
-        if (productFound.isEmpty()) throw ProductNotFound.of(id);
+        if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
-        Product productNotModified = IProductRepository.getReferenceById(id);
+        Product productNotModified = IProductRepository.getReferenceById(idProduct);
 
         if (productRequestDTO.name() != null) productNotModified.setName(productRequestDTO.name());
         if (productRequestDTO.description() != null) productNotModified.setDescription(productRequestDTO.description());
@@ -70,12 +70,12 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     @Transactional
-    public void deleteProduct(UUID id) {
-        Optional<Product> productFound = IProductRepository.findById(id);
+    public void deleteProduct(UUID idProduct) {
+        Optional<Product> productFound = IProductRepository.findById(idProduct);
 
-        if (productFound.isEmpty()) throw ProductNotFound.of(id);
+        if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
-        IProductRepository.deleteById(id);
+        IProductRepository.deleteById(idProduct);
 
     }
 }

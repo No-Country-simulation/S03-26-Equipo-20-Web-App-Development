@@ -30,22 +30,22 @@ public class VisitorServiceImpl implements IVisitorService {
 
     @Override
     @Transactional(readOnly = true)
-    public VisitorResponseDTO listVisitor(UUID id) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(id);
+    public VisitorResponseDTO listVisitor(UUID idVisitor) {
+        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
 
-        if (visitorFound.isEmpty()) throw VisitorNotFound.of(id);
+        if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        return visitorMapper.toVisitorDTO(IVisitorRepository.getReferenceById(id));
+        return visitorMapper.toVisitorDTO(IVisitorRepository.getReferenceById(idVisitor));
     }
 
     @Override
     @Transactional
-    public VisitorResponseDTO updateVisitor(UUID id, VisitorRequestDTO visitorRequestDTO) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(id);
+    public VisitorResponseDTO updateVisitor(UUID idVisitor, VisitorRequestDTO visitorRequestDTO) {
+        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
 
-        if (visitorFound.isEmpty()) throw VisitorNotFound.of(id);
+        if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        Visitor visitorNotModified = IVisitorRepository.getReferenceById(id);
+        Visitor visitorNotModified = IVisitorRepository.getReferenceById(idVisitor);
 
         if (visitorRequestDTO.name() != null) visitorNotModified.setName(visitorRequestDTO.name());
 
@@ -58,11 +58,11 @@ public class VisitorServiceImpl implements IVisitorService {
 
     @Override
     @Transactional
-    public void deleteVisitor(UUID id) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(id);
+    public void deleteVisitor(UUID idVisitor) {
+        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
 
-        if (visitorFound.isEmpty()) throw VisitorNotFound.of(id);
+        if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        IVisitorRepository.deleteById(id);
+        IVisitorRepository.deleteById(idVisitor);
     }
 }

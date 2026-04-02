@@ -13,7 +13,7 @@ public interface ITestimonialService {
     CreateTestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal,
                                                    CreateTestimonialRequestDTO createTestimonialRequestDTO);
     List<TestimonialResponseDTO> listAllTestimonials();
-    TestimonialResponseDTO listTestimonial(UUID id);
-    TestimonialResponseDTO updateTestimonial(UUID id, EditTestimonialRequestDTO editTestimonialRequestDTO);
-    void deleteTestimonial(UUID id);
+    TestimonialResponseDTO listTestimonial(UUID idTestimonial);
+    TestimonialResponseDTO updateTestimonial(UUID idTestimonial, EditTestimonialRequestDTO editTestimonialRequestDTO);
+    void deleteTestimonial(UUID idTestimonial);
 }
