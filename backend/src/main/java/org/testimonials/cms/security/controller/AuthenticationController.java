@@ -142,4 +142,20 @@ public class AuthenticationController implements DefaultApiResponses {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerMembers(request,principal));
     }
+
+    @Operation(
+            summary = "Cerrar sesión",
+            description = "Invalida el token JWT eliminando la cookie de autenticación"
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(){
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,cookie.toString()).build();
+    }
 }
