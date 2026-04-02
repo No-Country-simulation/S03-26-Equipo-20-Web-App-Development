@@ -4,7 +4,7 @@ spring:
   profiles:
     active: dev
   cloud:
-    open feign:
+    openfeign:
       circuitbreaker:
         enabled: true
         alphanumeric-ids:
@@ -50,7 +50,6 @@ cloudinary:
     url: https://api.cloudinary.com/v1_1
 
 # Spring Cloud OpenFeign Resilience4j
-
 resilience4j:
   circuitbreaker:
     configs:

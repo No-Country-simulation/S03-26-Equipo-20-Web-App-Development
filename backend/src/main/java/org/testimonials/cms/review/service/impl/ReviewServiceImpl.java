@@ -57,22 +57,22 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReviewResponseDTO listReview(UUID id) {
-        Optional<Review> reviewFound = reviewRepository.findById(id);
+    public ReviewResponseDTO listReview(UUID idReview) {
+        Optional<Review> reviewFound = reviewRepository.findById(idReview);
 
-        if (reviewFound.isEmpty()) throw ReviewNotFound.of(id);
+        if (reviewFound.isEmpty()) throw ReviewNotFound.of(idReview);
 
-        return reviewMapper.toReviewDTO(reviewRepository.getReferenceById(id));
+        return reviewMapper.toReviewDTO(reviewRepository.getReferenceById(idReview));
     }
 
     @Override
     @Transactional
-    public ReviewResponseDTO updateReview(UUID id, EditReviewRequestDTO editReviewRequestDTO) {
-        Optional<Review> reviewFound = reviewRepository.findById(id);
+    public ReviewResponseDTO updateReview(UUID idReview, EditReviewRequestDTO editReviewRequestDTO) {
+        Optional<Review> reviewFound = reviewRepository.findById(idReview);
 
-        if (reviewFound.isEmpty()) throw ReviewNotFound.of(id);
+        if (reviewFound.isEmpty()) throw ReviewNotFound.of(idReview);
 
-        Review reviewNotModified = reviewRepository.getReferenceById(id);
+        Review reviewNotModified = reviewRepository.getReferenceById(idReview);
 
         if (editReviewRequestDTO.comment() != null) reviewNotModified.setComment(editReviewRequestDTO.comment());
 
@@ -83,11 +83,11 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Override
     @Transactional
-    public void deleteReview(UUID id) {
-        Optional<Review> reviewFound = reviewRepository.findById(id);
+    public void deleteReview(UUID idReview) {
+        Optional<Review> reviewFound = reviewRepository.findById(idReview);
 
-        if (reviewFound.isEmpty()) throw ReviewNotFound.of(id);
+        if (reviewFound.isEmpty()) throw ReviewNotFound.of(idReview);
 
-        reviewRepository.deleteById(id);
+        reviewRepository.deleteById(idReview);
     }
 }

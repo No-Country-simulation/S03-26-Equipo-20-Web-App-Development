@@ -35,23 +35,23 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ReviewResponseDTO> listReview(@PathVariable UUID id) {
-        ReviewResponseDTO reviewResponseDTO = reviewService.listReview(id);
+    @GetMapping("/{idReview}")
+    public ResponseEntity<ReviewResponseDTO> listReview(@PathVariable UUID idReview) {
+        ReviewResponseDTO reviewResponseDTO = reviewService.listReview(idReview);
 
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable UUID id, @RequestBody @Valid EditReviewRequestDTO editReviewRequestDTO) {
-        ReviewResponseDTO reviewResponseDTO = reviewService.updateReview(id, editReviewRequestDTO);
+    @PutMapping("/{idReview}")
+    public ResponseEntity<ReviewResponseDTO> updateReview(@PathVariable UUID idReview, @RequestBody @Valid EditReviewRequestDTO editReviewRequestDTO) {
+        ReviewResponseDTO reviewResponseDTO = reviewService.updateReview(idReview, editReviewRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable UUID id) {
-        reviewService.deleteReview(id);
+    @DeleteMapping("/{idReview}")
+    public ResponseEntity<Void> deleteReview(@PathVariable UUID idReview) {
+        reviewService.deleteReview(idReview);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
