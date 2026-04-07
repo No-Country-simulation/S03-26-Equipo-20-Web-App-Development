@@ -32,7 +32,8 @@ function validate(form: RegisterOrgPayload): RegisterErrors {
     try {
       new URL(form.logo);
     } catch {
-      errors.logo = "Ingresá una URL válida (ej: https://miempresa.com/logo.png).";
+      errors.logo =
+        "Ingresá una URL válida (ej: https://miempresa.com/logo.png).";
     }
   }
 
@@ -99,13 +100,14 @@ export default function RegisterForm() {
     try {
       const response = await register(form);
       // TODO: guardar token y organización en contexto global / localStorage
-      localStorage.setItem("auth_token", response.token);
-      localStorage.setItem("auth_user", JSON.stringify(response.user));
+      localStorage.setItem("auth_user", JSON.stringify(response));
       setSuccess(true);
-      // TODO: redirigir al dashboard cuando exista
-      setTimeout(() => navigate("/"), 1200);
+      // TODO: redirigir al dashboard cuando exista (temporalmente en products)
+      setTimeout(() => navigate("/products"), 1200);
     } catch (err) {
-      setGlobalError(err instanceof Error ? err.message : "Error al crear la cuenta.");
+      setGlobalError(
+        err instanceof Error ? err.message : "Error al crear la cuenta.",
+      );
     } finally {
       setLoading(false);
     }
@@ -116,7 +118,9 @@ export default function RegisterForm() {
   return (
     <div className="auth-card">
       <h1 className="auth-card-title">Registrar organización</h1>
-      <p className="auth-card-subtitle">Completá los datos de tu empresa para comenzar</p>
+      <p className="auth-card-subtitle">
+        Completá los datos de tu empresa para comenzar
+      </p>
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         {/* ── Error global ── */}
@@ -150,7 +154,9 @@ export default function RegisterForm() {
             disabled={isDisabled}
           />
           {fieldErrors.organizationName && (
-            <span className="auth-field-error">{fieldErrors.organizationName}</span>
+            <span className="auth-field-error">
+              {fieldErrors.organizationName}
+            </span>
           )}
         </div>
 
@@ -255,7 +261,9 @@ export default function RegisterForm() {
             disabled={isDisabled}
           />
           {fieldErrors.confirmPassword && (
-            <span className="auth-field-error">{fieldErrors.confirmPassword}</span>
+            <span className="auth-field-error">
+              {fieldErrors.confirmPassword}
+            </span>
           )}
         </div>
 
@@ -278,8 +286,7 @@ export default function RegisterForm() {
       </form>
 
       <p className="auth-switch">
-        ¿Ya tenés cuenta?{" "}
-        <Link to="/login">Iniciar sesión</Link>
+        ¿Ya tenés cuenta? <Link to="/login">Iniciar sesión</Link>
       </p>
     </div>
   );

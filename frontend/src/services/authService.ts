@@ -6,9 +6,13 @@
 // Base URL: http://localhost:8080/api/auth
 // ============================================================
 
-import type { AuthResponse, LoginPayload, RegisterOrgPayload } from "../types/auth";
+import type {
+  AuthResponse,
+  LoginPayload,
+  RegisterOrgPayload,
+} from "../types/auth";
 
-const BASE_URL = "http://localhost:8080/api/auth";
+const BASE_URL = "http://localhost:8080/api/v1/auth";
 
 // ─── Helper ──────────────────────────────────────────────────
 
@@ -24,25 +28,17 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 /**
  * Inicia sesión con email y contraseña.
- * Endpoint real: POST /api/auth/login
+ * Endpoint real: POST /api/v1/auth/login
  */
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
-  // TODO: descomentar y eliminar el bloque mock cuando el backend esté listo
-  /*
   const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
+    credentials: "include",
   });
+  console.log("Login response:", res);
   return handleResponse<AuthResponse>(res);
-  */
-
-  // ── MOCK ──
-  await simulateDelay(1000);
-  if (payload.email === "error@test.com") {
-    throw new Error("Credenciales inválidas. Verificá tu email y contraseña.");
-  }
-  return mockAuthResponse(payload.email);
 }
 
 // ─── Register ────────────────────────────────────────────────
@@ -51,29 +47,25 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
  * Registra una nueva organización.
  * Endpoint real: POST /api/auth/register
  */
-export async function register(payload: RegisterOrgPayload): Promise<AuthResponse> {
-  // TODO: descomentar y eliminar el bloque mock cuando el backend esté listo
-  /*
-  const res = await fetch(`${BASE_URL}/register`, {
+export async function register(
+  payload: RegisterOrgPayload,
+): Promise<AuthResponse> {
+
+  const res = await fetch(`${BASE_URL}/register-org`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({
       name: payload.organizationName,
       logo: payload.logo,
       username: payload.username,
       email: payload.email,
       password: payload.password,
+      repeatPassword: payload.confirmPassword,
     }),
   });
-  return handleResponse<AuthResponse>(res);
-  */
 
-  // ── MOCK ──
-  await simulateDelay(1200);
-  if (payload.email === "exists@test.com") {
-    throw new Error("Ya existe una cuenta con ese email.");
-  }
-  return mockAuthResponse(payload.email, payload.organizationName);
+  return handleResponse<AuthResponse>(res);
 }
 
 // ─── Logout ──────────────────────────────────────────────────
@@ -87,25 +79,3 @@ export async function logout(): Promise<void> {
   localStorage.removeItem("auth_token");
   localStorage.removeItem("auth_user");
 }
-
-// ─── Mock helpers (eliminar cuando el backend esté listo) ────
-
-function simulateDelay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function mockAuthResponse(email: string, name?: string): AuthResponse {
-  return {
-    token: "mock-jwt-token-" + Math.random().toString(36).slice(2),
-    user: {
-      id: 1,
-      name: name ?? email.split("@")[0],
-      email,
-      role: "EDITOR",
-    },
-  };
-}
-
-// Suprime el warning de BASE_URL no usada en modo mock
-void BASE_URL;
-void handleResponse;

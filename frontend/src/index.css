@@ -3,22 +3,23 @@
    ============================================================ */
 
 /* ─── Design tokens ─────────────────────────────────────────── */
+@import "tailwindcss";
 :root {
-  --accent:        #aa3bff;
-  --accent-dim:    rgba(170, 59, 255, 0.15);
+  --accent: #aa3bff;
+  --accent-dim: rgba(170, 59, 255, 0.15);
   --accent-border: rgba(170, 59, 255, 0.5);
 
-  --bg:       #0d0e14;
-  --bg-card:  #121318;
-  --border:   rgba(255, 255, 255, 0.07);
+  --bg: #0d0e14;
+  --bg-card: #121318;
+  --border: rgba(255, 255, 255, 0.07);
 
-  --text:     #9ca3af;
-  --text-h:   #f3f4f6;
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
 
-  --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
-            rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
 
-  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font-family: var(--sans);
@@ -35,7 +36,9 @@
 }
 
 /* ─── Reset ─────────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -51,7 +54,12 @@ body {
   flex-direction: column;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--sans);
   color: var(--text-h);
   margin: 0;
@@ -75,7 +83,8 @@ button {
   font-family: var(--sans);
 }
 
-img, svg {
+img,
+svg {
   display: block;
   max-width: 100%;
 }
