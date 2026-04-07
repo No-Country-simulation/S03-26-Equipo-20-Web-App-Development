@@ -52,13 +52,14 @@ export default function LoginForm() {
     try {
       const response = await login(form);
       // TODO: guardar token y usuario en contexto global / localStorage
-      localStorage.setItem("auth_token", response.token);
-      localStorage.setItem("auth_user", JSON.stringify(response.user));
+      localStorage.setItem("auth_user", JSON.stringify(response));
       setSuccess(true);
-      // TODO: redirigir al dashboard cuando exista
-      setTimeout(() => navigate("/"), 1200);
+      // TODO: redirigir al dashboard cuando exista (temporalmente en products)
+      setTimeout(() => navigate("/products"), 1200);
     } catch (err) {
-      setGlobalError(err instanceof Error ? err.message : "Error al iniciar sesión.");
+      setGlobalError(
+        err instanceof Error ? err.message : "Error al iniciar sesión.",
+      );
     } finally {
       setLoading(false);
     }
@@ -145,8 +146,7 @@ export default function LoginForm() {
       </form>
 
       <p className="auth-switch">
-        ¿No tenés cuenta?{" "}
-        <Link to="/register">Crear cuenta</Link>
+        ¿No tenés cuenta? <Link to="/register">Crear cuenta</Link>
       </p>
     </div>
   );
