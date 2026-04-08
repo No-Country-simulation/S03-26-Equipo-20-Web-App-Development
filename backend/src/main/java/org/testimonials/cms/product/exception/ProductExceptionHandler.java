@@ -24,4 +24,16 @@ public class ProductExceptionHandler {
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
+
+    @ExceptionHandler(PictureError.class)
+    ProblemDetail handlePictureErrorException(PictureError e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Error al subir la imagen a Cloudinary");
+        problemDetail.setTitle("Picture error");
+        problemDetail.setType(URI.create("http://localhost:8080/errors/picture-error"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setProperty("errorCategory", "Repository");
+        problemDetail.setProperty("errorCode", "PICTURE_ERROR");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
 }

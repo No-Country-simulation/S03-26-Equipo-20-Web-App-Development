@@ -27,6 +27,8 @@ public class Product {
     private String name;
     private String description;
     private String picture;
+    @Column(name = "public_id")
+    private String publicId;
     @JoinColumn(name = "created_by")
     @ManyToOne(fetch = FetchType.LAZY)
     private User createdBy;

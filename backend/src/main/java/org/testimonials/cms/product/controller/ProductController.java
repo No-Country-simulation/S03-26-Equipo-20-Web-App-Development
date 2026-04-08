@@ -21,7 +21,7 @@ public class ProductController {
     private final IProductService productService;
 
     @PostMapping("/register")
-    public ResponseEntity<ProductResponseDTO> createProduct(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal, @RequestBody @Valid ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> createProduct(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal, @ModelAttribute @Valid ProductRequestDTO productRequestDTO) {
         ProductResponseDTO productResponseDTO = productService.createProduct(customUserPrincipal, productRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDTO);

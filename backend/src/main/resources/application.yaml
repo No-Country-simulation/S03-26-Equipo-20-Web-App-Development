@@ -46,10 +46,14 @@ auth:
 
 # Cloudinary Config
 cloudinary:
-  api:
-    url: https://api.cloudinary.com/v1_1
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
 
 # Spring Cloud OpenFeign Resilience4j
+feign:
+  circuitbreaker:
+    enabled: true
 resilience4j:
   circuitbreaker:
     configs:
@@ -59,7 +63,7 @@ resilience4j:
         minimumNumberOfCalls: 5
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 5s
+        waitDurationInOpenState: 10s
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
     instances:
