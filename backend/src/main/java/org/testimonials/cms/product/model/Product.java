@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -29,8 +30,11 @@ public class Product {
     @JoinColumn(name = "created_by")
     @ManyToOne(fetch = FetchType.LAZY)
     private User createdBy;
-    @JoinColumn(name = "organization_id")
+    @TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id", insertable = false, updatable = false)
     private Organization organization;
     @CreatedDate
     @Column(name = "created_at")

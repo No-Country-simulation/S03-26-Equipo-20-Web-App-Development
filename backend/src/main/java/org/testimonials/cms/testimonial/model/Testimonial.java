@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,8 +32,11 @@ public class Testimonial {
     private TestimonialStatus status;
     @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Review> reviews;
-    @JoinColumn(name = "organization_id")
+    @TenantId
+    @Column(name = "organization_id", nullable = false)
+    private UUID organizationId;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id", insertable = false, updatable = false)
     private Organization organization;
     @JoinColumn(name = "visitor_id")
     @ManyToOne(fetch = FetchType.LAZY)
