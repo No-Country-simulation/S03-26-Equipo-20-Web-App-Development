@@ -8,9 +8,11 @@ public record ProductResponseDTO(
         UUID id,
         String name,
         String description,
-        String picture
+        String picture,
+        String publicId
     ) {
     public ProductResponseDTO(Product product) {
-        this(product.getId(), product.getName(), product.getDescription(), product.getPicture());
+        this(product.getId(), product.getName(), product.getDescription(), product.getPicture(),
+                product.getPublicId());
     }
 }
