@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements IProductService {
-    private final IProductRepository IProductRepository;
+    private final IProductRepository productRepository;
 
     private final ProductMapper productMapper;
 
@@ -58,34 +58,34 @@ public class ProductServiceImpl implements IProductService {
         product.setCreatedBy(customUserPrincipal.user());
         product.setOrganization(new Organization(customUserPrincipal.organizationId()));
 
-        Product newProduct = IProductRepository.save(product);
+        Product newProduct = productRepository.save(product);
         return productMapper.toProductDTO(newProduct);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> listAllProducts() {
-        return productMapper.toProductDTO(IProductRepository.findAll());
+        return productMapper.toProductDTO(productRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductResponseDTO listProduct(UUID idProduct) {
-        Optional<Product> productFound = IProductRepository.findById(idProduct);
+        Optional<Product> productFound = productRepository.findById(idProduct);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
-        return productMapper.toProductDTO(IProductRepository.getReferenceById(idProduct));
+        return productMapper.toProductDTO(productRepository.getReferenceById(idProduct));
     }
 
     @Override
     @Transactional
     public ProductResponseDTO updateProduct(UUID idProduct, ProductRequestDTO productRequestDTO) {
-        Optional<Product> productFound = IProductRepository.findById(idProduct);
+        Optional<Product> productFound = productRepository.findById(idProduct);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
-        Product productNotModified = IProductRepository.getReferenceById(idProduct);
+        Product productNotModified = productRepository.getReferenceById(idProduct);
 
         if (productRequestDTO.name() != null) productNotModified.setName(productRequestDTO.name());
         if (productRequestDTO.description() != null) productNotModified.setDescription(productRequestDTO.description());
@@ -106,7 +106,7 @@ public class ProductServiceImpl implements IProductService {
             }
         }
 
-        Product productModified = IProductRepository.save(productNotModified);
+        Product productModified = productRepository.save(productNotModified);
 
         return productMapper.toProductDTO(productModified);
     }
@@ -114,7 +114,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     @Transactional
     public void deleteProduct(UUID idProduct) {
-        Optional<Product> productFound = IProductRepository.findById(idProduct);
+        Optional<Product> productFound = productRepository.findById(idProduct);
 
         if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
 
@@ -123,8 +123,7 @@ public class ProductServiceImpl implements IProductService {
         } catch (IOException e) {
             throw new RuntimeException("Error al eliminar la imagen de este producto: "+idProduct);
         }
-
-        IProductRepository.deleteById(idProduct);
+        productRepository.deleteById(idProduct);
 
     }
 }

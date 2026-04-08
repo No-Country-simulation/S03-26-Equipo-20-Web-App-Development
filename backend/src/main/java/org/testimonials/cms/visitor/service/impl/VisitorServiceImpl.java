@@ -18,40 +18,40 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class VisitorServiceImpl implements IVisitorService {
-    private final IVisitorRepository IVisitorRepository;
+    private final IVisitorRepository visitorRepository;
 
     private final VisitorMapper visitorMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<VisitorResponseDTO> listAllVisitors() {
-        return visitorMapper.toVisitorListDTOs(IVisitorRepository.findAll());
+        return visitorMapper.toVisitorListDTOs(visitorRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public VisitorResponseDTO listVisitor(UUID idVisitor) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
+        Optional<Visitor> visitorFound = visitorRepository.findById(idVisitor);
 
         if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        return visitorMapper.toVisitorDTO(IVisitorRepository.getReferenceById(idVisitor));
+        return visitorMapper.toVisitorDTO(visitorRepository.getReferenceById(idVisitor));
     }
 
     @Override
     @Transactional
     public VisitorResponseDTO updateVisitor(UUID idVisitor, VisitorRequestDTO visitorRequestDTO) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
+        Optional<Visitor> visitorFound = visitorRepository.findById(idVisitor);
 
         if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        Visitor visitorNotModified = IVisitorRepository.getReferenceById(idVisitor);
+        Visitor visitorNotModified = visitorRepository.getReferenceById(idVisitor);
 
         if (visitorRequestDTO.name() != null) visitorNotModified.setName(visitorRequestDTO.name());
 
         if (visitorRequestDTO.email() != null) visitorNotModified.setEmail(visitorRequestDTO.email());
 
-        Visitor visitorModified = IVisitorRepository.save(visitorNotModified);
+        Visitor visitorModified = visitorRepository.save(visitorNotModified);
 
         return visitorMapper.toVisitorDTO(visitorModified);
     }
@@ -59,10 +59,10 @@ public class VisitorServiceImpl implements IVisitorService {
     @Override
     @Transactional
     public void deleteVisitor(UUID idVisitor) {
-        Optional<Visitor> visitorFound = IVisitorRepository.findById(idVisitor);
+        Optional<Visitor> visitorFound = visitorRepository.findById(idVisitor);
 
         if (visitorFound.isEmpty()) throw VisitorNotFound.of(idVisitor);
 
-        IVisitorRepository.deleteById(idVisitor);
+        visitorRepository.deleteById(idVisitor);
     }
 }
