@@ -2,12 +2,16 @@ package org.testimonials.cms.swagger.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.HandlerMethod;
 
 @Configuration
 public class OpenApiConfig {
@@ -68,5 +72,16 @@ public class OpenApiConfig {
                         - Autenticación mediante **JWT** almacenado en Cookies HTTP-only.
                         - Roles: ADMIN, EDITOR y VISITANTE.
                         """.formatted(appDescription));
+    }
+
+    @Bean
+    public OperationCustomizer customizeActuatorSecurity() {
+        return (Operation operation, HandlerMethod handlerMethod) -> {
+            if (handlerMethod.getMethod().getDeclaringClass().getName().contains("Endpoint") ||
+                    handlerMethod.toString().contains("/actuator")) {
+                operation.addSecurityItem(new SecurityRequirement().addList("cookieAuth"));
+            }
+            return operation;
+        };
     }
 }

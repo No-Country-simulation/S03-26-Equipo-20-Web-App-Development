@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class VisitorController implements DefaultApiResponses {
     @Operation(
             summary = "Listar todos los visitantes",
             description = "Obtiene una lista de todos los visitantes",
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -50,6 +52,7 @@ public class VisitorController implements DefaultApiResponses {
     @Operation(
             summary = "Obtener un visitante",
             description = "Obtiene los detalles de un visitante por su ID",
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -71,6 +74,7 @@ public class VisitorController implements DefaultApiResponses {
     @Operation(
             summary = "Actualizar un visitante",
             description = "Actualiza los datos de un visitante existente",
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -92,6 +96,7 @@ public class VisitorController implements DefaultApiResponses {
     @Operation(
             summary = "Eliminar un visitante",
             description = "Elimina un visitante por su ID",
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "204",
