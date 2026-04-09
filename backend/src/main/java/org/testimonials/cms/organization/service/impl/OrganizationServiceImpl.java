@@ -10,7 +10,6 @@ import org.testimonials.cms.organization.mapper.OrganizationMapper;
 import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.organization.repository.OrganizationRepository;
 import org.testimonials.cms.organization.service.IOrganizationService;
-import org.testimonials.cms.security.model.*;
 
 import java.util.*;
 

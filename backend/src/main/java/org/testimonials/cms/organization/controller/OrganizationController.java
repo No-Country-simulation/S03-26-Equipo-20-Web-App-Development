@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,21 @@ public class OrganizationController implements DefaultApiResponses {
     private final IOrganizationService organizationService;
 
     @GetMapping("/getAll")
-    @Operation(summary = "Listar todas las organizaciones")
+    @Operation(
+            summary = "Listar todas las organizaciones",
+            description = "Obtiene la lista completa de organizaciones registradas",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de organizaciones obtenida exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OrganizationResponseDTO.class)
+                            )
+                    )
+            }
+    )
     public ResponseEntity<List<OrganizationResponseDTO>> listAllOrganizations() {
         List<OrganizationResponseDTO> organizationResponseDTO = organizationService.listAllOrganizations();
 
@@ -36,7 +51,21 @@ public class OrganizationController implements DefaultApiResponses {
     }
 
     @GetMapping("/getOnly")
-    @Operation(summary = "Obtener organización del usuario autenticado")
+    @Operation(
+            summary = "Obtener organización del usuario autenticado",
+            description = "Retorna la organización asociada al usuario autenticado",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Organización obtenida exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OrganizationResponseDTO.class)
+                            )
+                    )
+            }
+    )
     public ResponseEntity<OrganizationResponseDTO> listOrganization(@AuthenticationPrincipal CustomUserPrincipal userPrincipal) {
         OrganizationResponseDTO organizationResponseDTO = organizationService.listOrganization(userPrincipal.organizationId());
 
@@ -54,6 +83,7 @@ public class OrganizationController implements DefaultApiResponses {
                             schema = @Schema(implementation = OrganizationRequestDTO.class)
                     )
             ),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -74,7 +104,14 @@ public class OrganizationController implements DefaultApiResponses {
     @DeleteMapping
     @Operation(
             summary = "Eliminar organización",
-            description = "Elimina la organización del usuario autenticado y todos sus datos asociados"
+            description = "Elimina la organización del usuario autenticado y todos sus datos asociados",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Organización eliminada exitosamente"
+                    )
+            }
     )
     public ResponseEntity<Void> deleteOrganization(@AuthenticationPrincipal CustomUserPrincipal userPrincipal) {
         organizationService.deleteOrganization(userPrincipal.organizationId());

@@ -4,7 +4,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.testimonials.cms.testimonial.dtos.TestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
-import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
 import org.testimonials.cms.testimonial.model.Testimonial;
 import org.testimonials.cms.visitor.mapper.VisitorMapper;

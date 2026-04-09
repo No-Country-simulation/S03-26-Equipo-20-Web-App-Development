@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +109,8 @@ public class AuthenticationController implements DefaultApiResponses {
     @GetMapping("/me")
     @Operation(
             summary = "Obtener usuario autenticado",
-            description = "Retorna la información del usuario actualmente autenticado y su organización"
+            description = "Retorna la información del usuario actualmente autenticado y su organización",
+            security = @SecurityRequirement(name = "cookieAuth")
     )
     public ResponseEntity<OrganizationAuthResponseDTO> me(@AuthenticationPrincipal CustomUserPrincipal userPrincipal){
         return ResponseEntity.ok(authenticationService.me(userPrincipal));
@@ -125,6 +127,7 @@ public class AuthenticationController implements DefaultApiResponses {
                             schema = @Schema(implementation = AddMembersRequestDTO.class)
                     )
             ),
+            security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -145,7 +148,8 @@ public class AuthenticationController implements DefaultApiResponses {
 
     @Operation(
             summary = "Cerrar sesión",
-            description = "Invalida el token JWT eliminando la cookie de autenticación"
+            description = "Invalida el token JWT eliminando la cookie de autenticación",
+            security = @SecurityRequirement(name = "cookieAuth")
     )
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(){
