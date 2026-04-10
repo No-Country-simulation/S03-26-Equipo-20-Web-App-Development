@@ -17,10 +17,10 @@ function Sidebar() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-[#cc97ff] tracking-tighter leading-none">
-            Curator Admin
+            Panel de Gestión
           </h1>
           <p className="text-[10px] uppercase tracking-widest text-[#adaaad] font-bold">
-            Academic Institution
+            Institución académica
           </p>
         </div>
       </div>

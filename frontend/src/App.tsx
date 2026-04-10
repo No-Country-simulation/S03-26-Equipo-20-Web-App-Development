@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProductPage from "./pages/products/ProductsList";
+import SubmitTestimonyPage from "./pages/testimonials/SubmitTestimonyPage";
+import PendingTestimonialsPage from "./pages/testimonials/PendingTestimonialsPage";
 
 function App() {
   return (
@@ -13,9 +15,14 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* TODO: agregar aquí las rutas del dashboard/CMS cuando estén listas */}
+      {/* CMS */}
       <Route path="/products" element={<ProductPage />} />
-      {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+      <Route path="/testimonials/submit" element={<SubmitTestimonyPage />} />
+      <Route path="/moderation" element={<PendingTestimonialsPage />} />
+
+      {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
+      {/* TODO: <Route path="/testimonials" element={<TestimonialsListPage />} /> */}
+      {/* TODO: <Route path="/tags" element={<TagsPage />} /> */}
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />

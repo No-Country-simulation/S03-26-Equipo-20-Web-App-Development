@@ -7,27 +7,27 @@ import ProductCard from "../../components/products/ProductCard";
 const products = [
   {
     id: 1,
-    tag: "Premium Course",
-    title: "React Bootcamp: Zero to Hero",
+    tag: "Curso Premium",
+    title: "React Bootcamp: De Cero a Experto",
     description:
-      "A comprehensive 12-week intensive designed for career switchers looking to master modern React, Next.js, and the broader ecosystem.",
-    updateTime: "Updated 2 days ago",
+      "Un intensivo de 12 semanas diseñado para quienes quieren dominar React moderno, Next.js y el ecosistema completo.",
+    updateTime: "Actualizado hace 2 días",
   },
   {
     id: 2,
-    tag: "Design Track",
-    title: "UI Design Masterclass",
+    tag: "Diseño UX",
+    title: "Masterclass de Diseño UI",
     description:
-      "Advanced visual design principles focusing on typography, color theory, and high-fidelity prototyping for enterprise applications.",
-    updateTime: "Updated 5 days ago",
+      "Principios avanzados de diseño visual: tipografía, teoría del color y prototipado de alta fidelidad para aplicaciones empresariales.",
+    updateTime: "Actualizado hace 5 días",
   },
   {
     id: 3,
-    tag: "Backend Systems",
-    title: "Architecture & Microservices",
+    tag: "Sistemas Backend",
+    title: "Arquitectura y Microservicios",
     description:
-      "Deep dive into distributed systems, Docker orchestration, and high-availability server architecture.",
-    updateTime: "Updated 10 days ago",
+      "Inmersión profunda en sistemas distribuidos, orquestación con Docker y arquitecturas de alta disponibilidad.",
+    updateTime: "Actualizado hace 10 días",
   },
 ];
 
@@ -48,13 +48,13 @@ export default function ProductPage() {
                 className="text-[#cc97ff] font-bold uppercase tracking-widest text-xs"
                 style={{ fontFamily: "Manrope, sans-serif" }}
               >
-                Catalog Management
+                Gestión del catálogo
               </span>
               <h2
                 className="text-4xl md:text-5xl font-extrabold text-[#f9f5f8] tracking-tight"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Product Ecosystem
+                Productos disponibles
               </h2>
             </div>
             <button
@@ -76,7 +76,7 @@ export default function ProductPage() {
               flex items-center justify-center gap-2"
             >
               <CirclePlus />
-              Register New Product
+              Registrar nuevo producto
             </button>
           </section>
 
@@ -84,7 +84,7 @@ export default function ProductPage() {
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-[#131315] p-6 rounded-lg border-l-4 border-purple-300">
               <p className="text-sm text-[#f9f5f8]-variant mb-1">
-                Total Curriculums
+                Total de currículums
               </p>
               <p
                 className="text-4xl font-extrabold text-[#f9f5f8]"
@@ -95,24 +95,24 @@ export default function ProductPage() {
             </div>
             <div className="bg-[#131315] p-6 rounded-lg border-l-4 border-purple-600">
               <p className="text-sm text-[#f9f5f8]-variant mb-1">
-                Active testimonials
+                Testimonios activos
               </p>
               <p
                 className="text-4xl font-extrabold text-[#f9f5f8]"
                 style={{ fontFamily: "Manrope, sans-serif" }}
               >
-                1,284
+                1.284
               </p>
             </div>
             <div className="bg-[#131315] p-6 rounded-lg border-l-4 border-purple-400">
               <p className="text-sm text-[#f9f5f8]-variant mb-1">
-                Avg. Sentiment Score
+                Puntaje de sentimiento promedio
               </p>
               <p
                 className="text-4xl font-extrabold text-[#f9f5f8]"
                 style={{ fontFamily: "Manrope, sans-serif" }}
               >
-                98.2%
+                98,2%
               </p>
             </div>
           </section>
@@ -140,13 +140,13 @@ export default function ProductPage() {
 
             <label>Nombre</label>
             <input
-              placeholder="Product name"
+              placeholder="Nombre del producto"
               className="w-full mb-3 p-2 bg-[#1f1f22] rounded"
             />
 
             <label>Descripción</label>
             <textarea
-              placeholder="Description"
+              placeholder="Describí el producto"
               className="w-full mb-3 p-2 bg-[#1f1f22] rounded resize-none"
             />
 
@@ -155,7 +155,6 @@ export default function ProductPage() {
               type="file"
               name=""
               id=""
-              placeholder="Description"
               className="w-full mb-3 p-2 bg-[#1f1f22] rounded"
             />
 
@@ -164,9 +163,9 @@ export default function ProductPage() {
                 onClick={() => setIsModalOpen(false)}
                 className="flex-1 bg-gray-600 p-2 rounded"
               >
-                Cancel
+                Cancelar
               </button>
-              <button className="flex-1 bg-purple-600 p-2 rounded">Save</button>
+              <button className="flex-1 bg-purple-600 p-2 rounded">Guardar</button>
             </div>
           </div>
         </div>

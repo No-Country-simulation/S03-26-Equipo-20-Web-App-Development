@@ -39,7 +39,7 @@ function ProductCard({
       </div>
       <button className="bg-[#1f1f22] text-[#f9f5f8] w-60 px-6 py-3 rounded-lg font-bold flex items-center gap-2 shadow-[0_4px_18px_rgba(170,59,255,0.35)] transition-all duration-350 hover:bg-[#9333ea] hover:text-white">
         <Link />
-        Generate Link
+        Generar enlace
       </button>
     </div>
   );

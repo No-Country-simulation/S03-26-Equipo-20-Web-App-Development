@@ -7,7 +7,7 @@ function Header() {
         <div className="relative w-full max-w-md hidden sm:block">
           <input
             className="w-full pl-10 pr-4 py-2 bg-[#1f1f22] border-none rounded-lg text-sm text-[#f9f5f8] focus:ring-2 focus:ring-[#9333ea]/50 placeholder:text-[#adaaad]/50"
-            placeholder="Search products..."
+            placeholder="Buscar productos..."
             type="text"
           />
         </div>
@@ -16,9 +16,9 @@ function Header() {
         <div className="hidden lg:flex items-center gap-3 pl-2">
           <div className="text-right">
             <p className="text-xs font-bold text-[#f9f5f8] leading-none">
-              Admin User
+              Admin
             </p>
-            <p className="text-[10px] text-[#adaaad] font-medium">Owner</p>
+            <p className="text-[10px] text-[#adaaad] font-medium">Propietario</p>
           </div>
           <UserCheck />
         </div>
