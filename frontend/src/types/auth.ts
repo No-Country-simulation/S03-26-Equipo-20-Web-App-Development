@@ -36,6 +36,17 @@ export interface AuthResponse {
   userName: string;
 }
 
+export interface AuthMeUser {
+  userName: string;
+  userEmail: string;
+};
+
+export interface AuthUserResponse {
+  id: string;
+  userName: string;
+  userEmail: string;
+};
+
 export interface AuthError {
   message: string;
   field?: string; // campo específico que falló (ej: "email", "password")
