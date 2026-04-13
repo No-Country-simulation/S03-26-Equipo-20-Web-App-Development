@@ -45,7 +45,6 @@ export async function listAllProducts(): Promise<ListProducts[]> {
 
         if (response.ok) {
             const products = await response.json();
-            console.log("Respuesta del servidor:", products);
             return products;
         } else {
             console.error("Error al obtener los productos");
@@ -70,7 +69,6 @@ export async function getProductById(idProduct: string): Promise<Product | null>
 
         if (response.ok) {
             const product = await response.json();
-            console.log("Respuesta del servidor:", product);
             return product;
         } else {
             console.error("Error al obtener el producto con ID: ", idProduct);

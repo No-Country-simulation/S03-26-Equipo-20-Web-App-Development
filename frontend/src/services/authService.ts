@@ -36,7 +36,6 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
     body: JSON.stringify(payload),
     credentials: "include",
   });
-  console.log("Login response:", res);
   return handleResponse<AuthResponse>(res);
 }
 
@@ -79,7 +78,6 @@ export async function authMe(): Promise<AuthUserResponse | undefined> {
 
     if (response.ok) {
       const user = await response.json();
-      console.log("Usuario autenticado:", user);
       return user as AuthUserResponse;
     } else {
       console.error("No hay usuario autenticado");

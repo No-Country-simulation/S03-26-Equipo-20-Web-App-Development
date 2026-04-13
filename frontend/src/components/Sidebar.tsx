@@ -1,11 +1,4 @@
-import {
-  Archive,
-  Gavel,
-  MessageSquareMore,
-  LayoutDashboard,
-  Quote,
-  Tag,
-} from "lucide-react";
+import { Archive, Gavel, LayoutDashboard, Quote, Tag } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {

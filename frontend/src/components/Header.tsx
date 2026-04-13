@@ -1,7 +1,7 @@
 import { UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { AuthMeUser } from "../../types/auth";
-import { authMe } from "../../services/authService";
+import type { AuthMeUser } from "../types/auth";
+import { authMe } from "../services/authService";
 
 function Header() {
   const [user, setUser] = useState<AuthMeUser | undefined>(undefined);
@@ -11,7 +11,6 @@ function Header() {
     async function getMe() {
       try {
         const userAuth = await authMe();
-        console.log("Datos del usuario en Header:", userAuth);
         setUser(userAuth);
       } catch (error) {
         console.error("Error fetching user data:", error);
