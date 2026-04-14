@@ -12,7 +12,7 @@ import {
 } from "../../services/productService";
 import type { ListProducts } from "../../types/product";
 
-export default function ProductPage() {
+export default function ProductsListPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [listProducts, setListProducts] = useState<ListProducts[]>([]);
 

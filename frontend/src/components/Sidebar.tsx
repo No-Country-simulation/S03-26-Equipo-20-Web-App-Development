@@ -10,7 +10,7 @@ function Sidebar() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-[#cc97ff] tracking-tighter leading-none">
-            TestimonialCMS
+            Panel de Gestión
           </h1>
           <p className="text-[10px] uppercase tracking-widest text-[#adaaad] font-bold">
             Plataforma de Testimonios
