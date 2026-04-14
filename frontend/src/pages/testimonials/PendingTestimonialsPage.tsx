@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -81,7 +82,9 @@ function TestimonyCard({
 
           {/* Autor */}
           <p className="text-[#adaaad] text-xs">
-            <span className="font-semibold text-[#f9f5f8]/70">{testimony.fullName}</span>
+            <span className="font-semibold text-[#f9f5f8]/70">
+              {testimony.fullName}
+            </span>
             {" · "}
             {testimony.email}
           </p>
@@ -172,9 +175,10 @@ export default function PendingTestimonialsPage() {
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [moderatingId, setModeratingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ id: string; accion: "aprobado" | "rechazado" } | null>(
-    null
-  );
+  const [toast, setToast] = useState<{
+    id: string;
+    accion: "aprobado" | "rechazado";
+  } | null>(null);
 
   const [busqueda, setBusqueda] = useState("");
   const [filtroProd, setFiltroProd] = useState<string>("todos");
@@ -192,7 +196,11 @@ export default function PendingTestimonialsPage() {
       })
       .catch((err) => {
         if (!cancelado)
-          setFetchError(err instanceof Error ? err.message : "Error al cargar los testimonios.");
+          setFetchError(
+            err instanceof Error
+              ? err.message
+              : "Error al cargar los testimonios.",
+          );
       })
       .finally(() => {
         if (!cancelado) setLoading(false);
@@ -206,7 +214,7 @@ export default function PendingTestimonialsPage() {
   // ── Datos derivados ─────────────────────────────────────────────────────────
 
   const productos = Array.from(
-    new Set(testimonials.map((t) => t.productName).filter(Boolean))
+    new Set(testimonials.map((t) => t.productName).filter(Boolean)),
   ) as string[];
 
   const filtrados = testimonials.filter((t) => {
@@ -233,7 +241,10 @@ export default function PendingTestimonialsPage() {
     try {
       await moderateTestimony(id, { status: accion });
       setTestimonials((prev) => prev.filter((t) => t.id !== id));
-      setToast({ id, accion: accion === "APPROVED" ? "aprobado" : "rechazado" });
+      setToast({
+        id,
+        accion: accion === "APPROVED" ? "aprobado" : "rechazado",
+      });
       setTimeout(() => setToast(null), 3000);
     } catch (err) {
       console.error("Error al moderar:", err);
@@ -268,8 +279,8 @@ export default function PendingTestimonialsPage() {
                 Testimonios pendientes
               </h2>
               <p className="text-[#adaaad] max-w-xl">
-                Revisá y aprobá o rechazá los testimonios antes de que se publiquen. Los cambios
-                son inmediatos.
+                Revisá y aprobá o rechazá los testimonios antes de que se
+                publiquen. Los cambios son inmediatos.
               </p>
             </div>
 
@@ -289,15 +300,26 @@ export default function PendingTestimonialsPage() {
                 value: testimonials.length,
                 color: "border-yellow-400",
               },
-              { label: "Filtrados", value: filtrados.length, color: "border-purple-500" },
-              { label: "Productos", value: productos.length, color: "border-purple-300" },
+              {
+                label: "Filtrados",
+                value: filtrados.length,
+                color: "border-purple-500",
+              },
+              {
+                label: "Productos",
+                value: productos.length,
+                color: "border-purple-300",
+              },
               {
                 label: "Con video",
                 value: testimonials.filter((t) => t.videoUrl).length,
                 color: "border-blue-400",
               },
             ].map(({ label, value, color }) => (
-              <div key={label} className={`bg-[#131315] p-5 rounded-lg border-l-4 ${color}`}>
+              <div
+                key={label}
+                className={`bg-[#131315] p-5 rounded-lg border-l-4 ${color}`}
+              >
                 <p className="text-xs text-[#adaaad] mb-1">{label}</p>
                 <p
                   className="text-3xl font-extrabold text-[#f9f5f8]"
@@ -360,7 +382,9 @@ export default function PendingTestimonialsPage() {
           ) : filtrados.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
               <CheckCircle2 className="w-12 h-12 text-emerald-400/60" />
-              <h3 className="text-xl font-bold text-[#f9f5f8]">¡Todo al día!</h3>
+              <h3 className="text-xl font-bold text-[#f9f5f8]">
+                ¡Todo al día!
+              </h3>
               <p className="text-[#adaaad] max-w-sm">
                 {busqueda || filtroProd !== "todos"
                   ? "Ningún testimonio coincide con los filtros actuales."
@@ -389,9 +413,10 @@ export default function PendingTestimonialsPage() {
       {toast && (
         <div
           className={`fixed bottom-6 right-6 flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold z-50 animate-slide-up
-            ${toast.accion === "aprobado"
-              ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
-              : "bg-red-500/20 border border-red-500/40 text-red-300"
+            ${
+              toast.accion === "aprobado"
+                ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300"
+                : "bg-red-500/20 border border-red-500/40 text-red-300"
             }`}
         >
           {toast.accion === "aprobado" ? (

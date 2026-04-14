@@ -74,13 +74,13 @@ const MOCK_PENDING: Testimony[] = [
 
 // ─── Helper ──────────────────────────────────────────────────
 
-async function handleResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error((body as { message?: string }).message ?? `Error ${res.status}`);
-  }
-  return res.json() as Promise<T>;
-}
+// async function handleResponse<T>(res: Response): Promise<T> {
+//   if (!res.ok) {
+//     const body = await res.json().catch(() => ({}));
+//     throw new Error((body as { message?: string }).message ?? `Error ${res.status}`);
+//   }
+//   return res.json() as Promise<T>;
+// }
 
 // ─── Submit Testimony ────────────────────────────────────────
 
