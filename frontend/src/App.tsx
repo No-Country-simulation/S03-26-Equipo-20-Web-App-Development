@@ -1,9 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import ProductPage from "./pages/products/ProductsList";
 import SubmitTestimonyPage from "./pages/testimonials/SubmitTestimonyPage";
 import PendingTestimonialsPage from "./pages/testimonials/PendingTestimonialsPage";
+import ProductsListPage from "./pages/products/ProductsListPage";
+import DetailProductPage from "./pages/products/DetailProductPage";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
 
       {/* CMS */}
-      <Route path="/products" element={<ProductPage />} />
+      <Route path="/products" element={<ProductsListPage />} />
+      <Route path="/products/:idProduct" element={<DetailProductPage />} />
       <Route path="/testimonials/submit" element={<SubmitTestimonyPage />} />
       <Route path="/moderation" element={<PendingTestimonialsPage />} />
 
