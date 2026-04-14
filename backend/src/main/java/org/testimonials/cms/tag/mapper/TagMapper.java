@@ -14,4 +14,9 @@ public interface TagMapper {
     TagResponseDTO toTagDTO(Tag tag);
 
     List<TagResponseDTO> toTagDTO(List<Tag> tags);
+
+    default TagResponseDTO toTagDTO(Tag tag, int usageCount) {
+        tag.setUsageCount(usageCount);
+        return toTagDTO(tag);
+    }
 }

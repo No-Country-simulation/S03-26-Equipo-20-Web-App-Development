@@ -1,5 +1,6 @@
 package org.testimonials.cms.tag.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +9,11 @@ import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.testimonials.cms.product.model.Product;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Tag")
@@ -31,6 +35,13 @@ public class Tag {
     @TenantId
     @Column(name = "organization_id", nullable = false)
     private UUID organizationId;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tags")
+    private List<Product> products = new ArrayList<>();
+
+    @Transient
+    private int usageCount;
 
     @CreatedDate
     @Column(name = "created_at")

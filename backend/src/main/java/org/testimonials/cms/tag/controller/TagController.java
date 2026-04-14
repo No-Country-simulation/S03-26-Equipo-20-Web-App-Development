@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +21,6 @@ import org.testimonials.cms.tag.dto.TagRequestDTO;
 import org.testimonials.cms.tag.dto.TagResponseDTO;
 import org.testimonials.cms.tag.service.ITagService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -55,7 +57,7 @@ public class TagController implements DefaultApiResponses {
     @GetMapping
     @Operation(
             summary = "Listar todas las etiquetas",
-            description = "Obtiene una lista de todas las etiquetas",
+            description = "Obtiene una lista paginada de todas las etiquetas con su usageCount",
             security = @SecurityRequirement(name = "cookieAuth"),
             responses = {
                     @ApiResponse(
@@ -68,10 +70,12 @@ public class TagController implements DefaultApiResponses {
                     )
             }
     )
-    public ResponseEntity<List<TagResponseDTO>> listAllTags() {
-        List<TagResponseDTO> tagResponseDTOS = tagService.listAllTags();
+    public ResponseEntity<Page<TagResponseDTO>> listAllTags(
+            @AuthenticationPrincipal CustomUserPrincipal customUserPrincipal,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<TagResponseDTO> page = tagService.listAllTags(customUserPrincipal, pageable);
 
-        return ResponseEntity.status(HttpStatus.OK).body(tagResponseDTOS);
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
     @GetMapping("/{idTag}")
@@ -90,8 +94,10 @@ public class TagController implements DefaultApiResponses {
                     )
             }
     )
-    public ResponseEntity<TagResponseDTO> listTag(@PathVariable UUID idTag) {
-        TagResponseDTO tagResponseDTO = tagService.listTag(idTag);
+    public ResponseEntity<TagResponseDTO> listTag(
+            @PathVariable UUID idTag,
+            @AuthenticationPrincipal CustomUserPrincipal customUserPrincipal) {
+        TagResponseDTO tagResponseDTO = tagService.listTag(idTag, customUserPrincipal.organizationId());
 
         return ResponseEntity.status(HttpStatus.OK).body(tagResponseDTO);
     }
