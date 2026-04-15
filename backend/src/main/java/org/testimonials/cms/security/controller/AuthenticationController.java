@@ -112,7 +112,7 @@ public class AuthenticationController implements DefaultApiResponses {
             description = "Retorna la información del usuario actualmente autenticado y su organización",
             security = @SecurityRequirement(name = "cookieAuth")
     )
-    public ResponseEntity<OrganizationAuthResponseDTO> me(@AuthenticationPrincipal CustomUserPrincipal userPrincipal){
+    public ResponseEntity<OrganizationAuthRoleResponseDTO> me(@AuthenticationPrincipal CustomUserPrincipal userPrincipal){
         return ResponseEntity.ok(authenticationService.me(userPrincipal));
     }
 

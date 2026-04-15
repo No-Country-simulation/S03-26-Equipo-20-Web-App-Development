@@ -13,6 +13,7 @@ import org.testimonials.cms.security.dto.*;
 import org.testimonials.cms.security.exception.EmailAlreadyExistsException;
 import org.testimonials.cms.security.exception.InvalidCredentialsException;
 import org.testimonials.cms.security.model.*;
+import org.testimonials.cms.security.repository.IUserRepository;
 import org.testimonials.cms.security.services.*;
 
 import java.util.*;
@@ -24,6 +25,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final IJwtService jwtService;
     private final OrganizationRepository organizationRepository;
+    private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IUserService userService;
     private final IRoleService roleService;
@@ -113,7 +115,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public OrganizationAuthResponseDTO me(CustomUserPrincipal principal) {
+    public OrganizationAuthRoleResponseDTO me(CustomUserPrincipal principal) {
         User user = principal.user();
 
         Membership membership = user.getMemberships().stream()
@@ -121,12 +123,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 .findFirst()
                 .orElseThrow(InvalidCredentialsException::of);
 
-        return new OrganizationAuthResponseDTO(
+        String role = userRepository.findRoleByEmailWithMembership(principal.getUsername());
+
+        return new OrganizationAuthRoleResponseDTO(
                 membership.getOrganization().getId(),
                 membership.getOrganization().getName(),
                 membership.getOrganization().getLogo(),
                 user.getEmail(),
-                user.getName()
+                user.getName(),
+                role
         );
     }
 
