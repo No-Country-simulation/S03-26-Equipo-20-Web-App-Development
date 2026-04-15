@@ -96,6 +96,16 @@ export async function authMe(): Promise<AuthUserResponse | undefined> {
  */
 export async function logout(): Promise<void> {
   // TODO: llamar al endpoint real si el backend maneja sesiones server-side
-  localStorage.removeItem("auth_token");
-  localStorage.removeItem("auth_user");
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL_AUTH}/logout`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (res.ok) {
+    localStorage.removeItem("auth_user");
+    window.location.href = "/login";
+  }
 }
