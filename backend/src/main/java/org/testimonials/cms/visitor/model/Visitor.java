@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.testimonials.cms.testimonial.model.Testimonial;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Visitor")
@@ -24,7 +25,7 @@ public class Visitor {
     private String name;
     private String email;
     @OneToMany(mappedBy = "visitor", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private java.util.List<Testimonial> testimonials;
+    private List<Testimonial> testimonials;
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;

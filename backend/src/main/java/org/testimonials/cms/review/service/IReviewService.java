@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface IReviewService {
     ReviewResponseDTO createReview(CustomUserPrincipal customUserPrincipal, ReviewRequestDTO reviewRequestDTO);
     List<ReviewResponseDTO> listAllReviews();
-    ReviewResponseDTO listReview(UUID id);
-    ReviewResponseDTO updateReview(UUID id, EditReviewRequestDTO editReviewRequestDTO);
-    void deleteReview(UUID id);
+    ReviewResponseDTO listReview(UUID idReview);
+    ReviewResponseDTO updateReview(UUID idReview, EditReviewRequestDTO editReviewRequestDTO);
+    void deleteReview(UUID idReview);
 }

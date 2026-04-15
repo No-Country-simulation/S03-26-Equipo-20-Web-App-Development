@@ -3,6 +3,12 @@ spring:
     name: cms
   profiles:
     active: dev
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
 
 # JWT KEYS
 jwt:
@@ -37,3 +43,44 @@ info:
 auth:
   cookie:
     name: jwt
+
+# Cloudinary Config
+cloudinary:
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+
+# Spring Cloud OpenFeign Resilience4j
+feign:
+  circuitbreaker:
+    enabled: true
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 2s
+    instances:
+      cloudinary-client:
+        baseConfig: default
