@@ -25,6 +25,7 @@ public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(name = "name", nullable = false)
     private String name;
     private String logo;
     @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Testimonial")
-@Table(name = "testimonials")
+@Table(
+        name = "testimonials",
+        indexes = {
+                @Index(name = "idx_testimonials_org", columnList = "organization_id")
+        }
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,6 +32,7 @@ public class Testimonial {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(name = "title", nullable = false)
     private String title;
     private String content;
     @Enumerated(EnumType.STRING)

@@ -14,6 +14,10 @@ import java.util.*;
 
 @Entity
 @Table(name = "memberships",
+        indexes = {
+                @Index(name = "idx_memberships_user", columnList = "user_id"),
+                @Index(name = "idx_memberships_org", columnList = "organization_id")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"user_id", "organization_id"})
         })
@@ -42,9 +46,12 @@ public class Membership {
     @JoinTable(
             name = "membership_roles",
             joinColumns = @JoinColumn(name = "membership_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"membership_id", "role_id"})
+            }
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -55,7 +62,7 @@ public class Membership {
     private MembershipType type;
 
     @CreatedDate
-    @Column(name = "joined_at")
+    @Column(name = "joined_at", nullable = false, updatable = false)
     private LocalDateTime joinedAt;
 
     public Collection<GrantedAuthority> buildAuthorities() {

@@ -16,7 +16,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity(name = "Media")
-@Table(name = "medias")
+@Table(
+        name = "medias",
+        indexes = {
+                @Index(name = "idx_medias_org", columnList = "organization_id"),
+                @Index(name = "idx_medias_testimonial", columnList = "testimonial_id")
+        }
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
