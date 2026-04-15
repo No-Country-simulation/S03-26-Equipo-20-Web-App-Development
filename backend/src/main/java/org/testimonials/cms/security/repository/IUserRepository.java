@@ -2,6 +2,7 @@ package org.testimonials.cms.security.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.testimonials.cms.security.model.User;
 
@@ -22,4 +23,11 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmailWithMemberships(String email);
 
     boolean existsByEmail(String email);
+
+    @Query("""
+            SELECT m.type FROM User u
+            JOIN u.memberships m
+            WHERE u.email = :email
+        """)
+    String findRoleByEmailWithMembership(@Param("email") String email);
 }
