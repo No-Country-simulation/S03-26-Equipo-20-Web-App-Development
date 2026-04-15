@@ -47,9 +47,9 @@ public class VisitorServiceImpl implements IVisitorService {
 
         Visitor visitorNotModified = visitorRepository.getReferenceById(idVisitor);
 
-        if (visitorRequestDTO.name() != null) visitorNotModified.setName(visitorRequestDTO.name());
+        if (visitorRequestDTO.getName() != null) visitorNotModified.setName(visitorRequestDTO.getName());
 
-        if (visitorRequestDTO.email() != null) visitorNotModified.setEmail(visitorRequestDTO.email());
+        if (visitorRequestDTO.getEmail() != null) visitorNotModified.setEmail(visitorRequestDTO.getEmail());
 
         Visitor visitorModified = visitorRepository.save(visitorNotModified);
 

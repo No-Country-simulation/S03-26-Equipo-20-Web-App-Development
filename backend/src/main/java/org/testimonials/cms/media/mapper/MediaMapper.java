@@ -10,11 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface MediaMapper {
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "testimonial", ignore = true)
-    @Mapping(target = "organizationId", ignore = true)
-    @Mapping(target = "organization", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "url", ignore = true)
     Media toMedia(MediaRequestDTO mediaRequestDTO);
 
     MediaResponseDTO toMediaDTO(Media media);

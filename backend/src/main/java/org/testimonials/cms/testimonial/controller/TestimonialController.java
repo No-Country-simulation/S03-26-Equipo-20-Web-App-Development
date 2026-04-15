@@ -14,9 +14,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.swagger.docs.DefaultApiResponses;
-import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
 import org.testimonials.cms.testimonial.service.ITestimonialService;
 
@@ -47,7 +47,7 @@ public class TestimonialController implements DefaultApiResponses {
             }
     )
     public ResponseEntity<CreateTestimonialResponseDTO> createTestimonial(@AuthenticationPrincipal CustomUserPrincipal customUserPrincipal,
-                                                                          @RequestBody @Valid CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+                                                                          @ModelAttribute @Valid CreateTestimonialRequestDTO createTestimonialRequestDTO) {
         CreateTestimonialResponseDTO testimonialResponseDTO = testimonialService.createTestimonial(customUserPrincipal,
                 createTestimonialRequestDTO);
 
