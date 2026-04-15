@@ -5,6 +5,7 @@ import SubmitTestimonyPage from "./pages/testimonials/SubmitTestimonyPage";
 import PendingTestimonialsPage from "./pages/testimonials/PendingTestimonialsPage";
 import ProductsListPage from "./pages/products/ProductsListPage";
 import DetailProductPage from "./pages/products/DetailProductPage";
+import TagsPage from "./pages/tags/TagsPage";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
 
       {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
       {/* TODO: <Route path="/testimonials" element={<TestimonialsListPage />} /> */}
-      {/* TODO: <Route path="/tags" element={<TagsPage />} /> */}
+      <Route path="/tags" element={<TagsPage />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />

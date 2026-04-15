@@ -1,0 +1,42 @@
+spring:
+  # - Configuración de PostgreSQL como base de datos principal (desarrollo)
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: BackendConnectionPool
+      maximum-pool-size: 4
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+      leakDetectionThreshold: 15000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+  # - Configuración de Flyway para migraciones de base de datos (desarrollo)
+  flyway:
+    enabled: false
+
+# - Configuración swagger
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+  show-actuator: true
+# - Configuración de actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+    health:
+      show-details: never
