@@ -27,27 +27,25 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
             @NonNull Supplier<? extends @Nullable Authentication> authentication,
             @NonNull RequestAuthorizationContext object) {
 
-        return new AuthorizationDecision(true);
-//
-//        Authentication auth = authentication.get();
-//
-//        HttpServletRequest request = object.getRequest();
-//
-//        String url = extractUrlFromRequest(request);
-//        String httpMethod = request.getMethod();
-//
-//        if (isPublicEndpoint(url, httpMethod)) {
-//            return new AuthorizationDecision(true);
-//        }
-//
-//        if (auth == null || !auth.isAuthenticated()) {
-//            return new AuthorizationDecision(false);
-//        }
-//
-//        boolean granted = auth.getAuthorities().stream()
-//                .anyMatch(authority ->
-//                        isAuthorized(authority.getAuthority(), url, httpMethod));
-//        return new AuthorizationDecision(granted);
+        Authentication auth = authentication.get();
+
+        HttpServletRequest request = object.getRequest();
+
+        String url = extractUrlFromRequest(request);
+        String httpMethod = request.getMethod();
+
+        if (isPublicEndpoint(url, httpMethod)) {
+            return new AuthorizationDecision(true);
+        }
+
+        if (auth == null || !auth.isAuthenticated()) {
+            return new AuthorizationDecision(false);
+        }
+
+        boolean granted = auth.getAuthorities().stream()
+                .anyMatch(authority ->
+                        isAuthorized(authority.getAuthority(), url, httpMethod));
+        return new AuthorizationDecision(granted);
     }
 
     private boolean isAuthorized(String permission, String url, String httpMethod) {
@@ -64,11 +62,10 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private boolean isPublicEndpoint(String url, String httpMethod) {
 
         return operationService.getPublicOperations().stream()
-                .anyMatch(op -> {
-                    String fullPath = (op.basePath() + op.path());
-                    return pathMatcher.match(fullPath, url)
-                            && op.httpMethod().equalsIgnoreCase(httpMethod);
-                });
+                .anyMatch(op ->
+                        pathMatcher.match(op.fullPath(), url)
+                                && op.httpMethod().equalsIgnoreCase(httpMethod)
+                );
     }
 
     private String extractUrlFromRequest(HttpServletRequest request) {
