@@ -1,6 +1,7 @@
 package org.testimonials.cms.security.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,8 @@ public class MembershipController implements DefaultApiResponses {
     @GetMapping("/types")
     @Operation(
             summary = "Obtener tipos de membresía asignables",
-            description = "Retorna los tipos de membresía disponibles para asignar (ADMIN, STAFF). Excluye OWNER."
+            description = "Retorna los tipos de membresía disponibles para asignar (ADMIN, STAFF). Excluye OWNER.",
+            security = @SecurityRequirement(name = "cookieAuth")
     )
     public ResponseEntity<MembershipType[]> getMembershipTypes() {
         return ResponseEntity.ok(MembershipType.getAssignableTypes());

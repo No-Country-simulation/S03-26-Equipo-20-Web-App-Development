@@ -26,6 +26,7 @@ function App() {
       {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
       {/* TODO: <Route path="/testimonials" element={<TestimonialsListPage />} /> */}
       <Route path="/tags" element={<TagsPage />} />
+      {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />

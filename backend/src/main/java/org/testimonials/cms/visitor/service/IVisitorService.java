@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IVisitorService {
-//    VisitorResponseDTO createVisitor(VisitorRequestDTO visitorRequestDTO);
     List<VisitorResponseDTO> listAllVisitors();
-    VisitorResponseDTO listVisitor(UUID id);
-    VisitorResponseDTO updateVisitor(UUID id, VisitorRequestDTO visitorRequestDTO);
-    void deleteVisitor(UUID id);
+    VisitorResponseDTO listVisitor(UUID idVisitor);
+    VisitorResponseDTO updateVisitor(UUID idVisitor, VisitorRequestDTO visitorRequestDTO);
+    void deleteVisitor(UUID idVisitor);
 }

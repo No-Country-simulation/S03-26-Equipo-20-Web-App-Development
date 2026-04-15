@@ -1,13 +1,15 @@
 package org.testimonials.cms.product.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 public record ProductRequestDTO(
         @NotBlank(message = "El nombre es requerido")
         String name,
         @NotBlank(message = "El nombre es requerido")
         String description,
-        @NotBlank(message = "La foto es requerida")
-        String picture
+        @NotNull(message = "La foto es requerida")
+        MultipartFile picture
     ) {
 }
