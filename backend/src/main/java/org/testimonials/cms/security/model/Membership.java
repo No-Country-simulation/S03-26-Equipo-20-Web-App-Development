@@ -2,7 +2,9 @@ package org.testimonials.cms.security.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,12 +55,12 @@ public class Membership {
     )
     private Set<Role> roles = new HashSet<>();;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "membership_status", nullable = false)
     private MembershipStatus status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "type", columnDefinition = "membership_type", nullable = false)
     private MembershipType type;
 
     @CreatedDate
@@ -81,7 +83,7 @@ public class Membership {
                             ? operation.getPath()
                             : "";
 
-                    String fullPath = (basePath + path).toLowerCase().trim();
+                    String fullPath = (basePath + path).trim();
 
                     authorities.add(
                             new SimpleGrantedAuthority(

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.TenantId;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.testimonials.cms.media.enums.MediaProvider;
@@ -44,12 +46,12 @@ public class Media {
     @JoinColumn(name = "organization_id", insertable = false, updatable = false)
     private Organization organization;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "type", columnDefinition = "media_type", nullable = false)
     private MediaType type;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "provider",columnDefinition = "media_provider",nullable = false)
     private MediaProvider provider;
 
     @Column(nullable = false)
