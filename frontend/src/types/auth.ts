@@ -38,13 +38,13 @@ export interface AuthResponse {
 
 export interface AuthMeUser {
   userName: string;
-  userEmail: string;
+  role: string;
 };
 
 export interface AuthUserResponse {
   id: string;
   userName: string;
-  userEmail: string;
+  role: string;
 };
 
 export interface AuthError {
