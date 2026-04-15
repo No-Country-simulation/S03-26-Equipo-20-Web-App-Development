@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import LandingPage from "./pages/LandingPage";
 import SubmitTestimonyPage from "./pages/testimonials/SubmitTestimonyPage";
 import PendingTestimonialsPage from "./pages/testimonials/PendingTestimonialsPage";
 import WallOfLovePage from "./pages/testimonials/WallOfLovePage";
@@ -11,8 +12,9 @@ import TagsPage from "./pages/tags/TagsPage";
 function App() {
   return (
     <Routes>
-      {/* Redirige la raíz al login */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      {/* Landing page pública */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/landing" element={<LandingPage />} />
 
       {/* Auth */}
       <Route path="/login" element={<LoginPage />} />
