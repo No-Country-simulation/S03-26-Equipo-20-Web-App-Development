@@ -23,3 +23,9 @@ export const editProductValidationSchema = Yup.object().shape({
 
     picture: Yup.mixed().required("La imagen del producto es obligatoria")
 });
+
+export const tagValidationSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(2, "Mínimo 2 caracteres")
+        .required("El nombre es obligatorio"),
+});
