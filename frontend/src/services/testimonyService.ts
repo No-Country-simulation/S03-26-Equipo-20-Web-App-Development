@@ -5,9 +5,11 @@
 //   Base URL: http://localhost:8080/api/v1/testimonials
 //
 // Endpoints esperados:
-//   POST   /api/v1/testimonials          → submitTestimony
-//   GET    /api/v1/testimonials/pending  → getPendingTestimonials
-//   PATCH  /api/v1/testimonials/:id      → moderateTestimony
+//   POST   /api/v1/testimonials           → submitTestimony
+//   GET    /api/v1/testimonials/pending   → getPendingTestimonials
+//   PATCH  /api/v1/testimonials/:id       → moderateTestimony
+//   GET    /api/v1/testimonials/approved  → getApprovedTestimonials
+//   POST   /api/v1/testimonials/publish   → publishWallChanges
 // ============================================================
 
 import type {
@@ -18,7 +20,7 @@ import type {
 
 const BASE_URL = "http://localhost:8080/api/v1/testimonials";
 
-// ─── Mock data ───────────────────────────────────────────────
+// ─── Mock data — Pending ─────────────────────────────────────
 
 const MOCK_PENDING: Testimony[] = [
   {
@@ -69,6 +71,81 @@ const MOCK_PENDING: Testimony[] = [
     productId: "prod-003",
     productName: "BioData Analyzer",
     submittedAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+// ─── Mock data — Approved ─────────────────────────────────────
+
+const MOCK_APPROVED: Testimony[] = [
+  {
+    id: "a-001",
+    headline: "Transformó por completo el flujo de trabajo de nuestro laboratorio",
+    story:
+      "Después de integrar Advanced Analytics Suite 2.0 en nuestro laboratorio, el tiempo de procesamiento de datos se redujo un 60%. El panel intuitivo facilitó que incluso los miembros no técnicos del equipo pudieran extraer información valiosa.",
+    fullName: "Dra. Elena Rodríguez",
+    email: "elena@oxford.edu",
+    role: "Senior Fellow at Oxford",
+    status: "APPROVED",
+    productId: "prod-001",
+    productName: "Advanced Analytics Suite 2.0",
+    submittedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    rating: 5,
+  },
+  {
+    id: "a-002",
+    headline: "La mejor inversión de nuestra biblioteca este año",
+    story:
+      "Era escéptico sobre la curación automatizada, pero el filtro 'Wall of Love' es notablemente preciso. Identifica los mejores testimonios de nuestros usuarios de forma instantánea.",
+    fullName: "Jameson Brooks",
+    email: "j.brooks@library.org",
+    role: "Lead Librarian",
+    status: "APPROVED",
+    productId: "prod-002",
+    productName: "Growth Engine Pro",
+    submittedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    rating: 4,
+  },
+  {
+    id: "a-003",
+    headline: "Simple, elegante, y orientado a datos",
+    story:
+      "Es exactamente lo que nuestra facultad necesitaba para gestionar testimonios públicos sin un desarrollador dedicado. La interfaz es intuitiva y el panel de moderación es muy completo.",
+    fullName: "Marcus Kane",
+    email: "mkane@phd.edu",
+    role: "PhD Candidate",
+    status: "APPROVED",
+    productId: "prod-001",
+    productName: "Advanced Analytics Suite 2.0",
+    submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    rating: 5,
+  },
+  {
+    id: "a-004",
+    headline: "Resultados excepcionales en tiempo récord",
+    story:
+      "El onboarding fue muy rápido. En menos de una semana ya teníamos el sistema integrado con nuestro flujo de publicaciones. El equipo de soporte respondió todas nuestras dudas.",
+    fullName: "Laura Sánchez",
+    email: "l.sanchez@mediainstitute.com",
+    role: "Head of Content",
+    status: "APPROVED",
+    productId: "prod-003",
+    productName: "BioData Analyzer",
+    submittedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+    rating: 5,
+  },
+  {
+    id: "a-005",
+    headline: "Superó todas nuestras expectativas de integración",
+    story:
+      "Pudimos conectar la API en menos de dos horas gracias a la documentación clara. El sistema de moderación automática nos ahorra horas de trabajo manual cada semana.",
+    fullName: "Tomás Aguirre",
+    email: "tomas@devteam.io",
+    role: "CTO",
+    status: "APPROVED",
+    productId: "prod-002",
+    productName: "Growth Engine Pro",
+    submittedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    rating: 4,
   },
 ];
 
@@ -152,6 +229,49 @@ export async function moderateTestimony(
   //   body: JSON.stringify(payload),
   // });
   // return handleResponse<Testimony>(res);
+}
+
+// ─── Approved Testimonials ────────────────────────────────────
+
+/**
+ * Obtiene la lista de testimonios con estado APPROVED (para el Wall of Love).
+ * Endpoint real: GET /api/v1/testimonials/approved
+ *
+ * TODO: Descomentar el bloque fetch y eliminar el mock cuando el backend esté listo.
+ * TODO (backend): El campo `rating` (1–5) debe ser incluido en la respuesta del servidor.
+ */
+export async function getApprovedTestimonials(): Promise<Testimony[]> {
+  // ── Mock ──────────────────────────────────────────────────
+  await new Promise((r) => setTimeout(r, 700));
+  return [...MOCK_APPROVED];
+
+  // ── Real (uncomment when backend is ready) ───────────────
+  // const res = await fetch(`${BASE_URL}/approved`, {
+  //   credentials: "include",
+  // });
+  // return handleResponse<Testimony[]>(res);
+}
+
+// ─── Publish Wall Changes ─────────────────────────────────────
+
+/**
+ * Publica los cambios de configuración del Wall of Love.
+ * Endpoint real: POST /api/v1/testimonials/publish
+ *
+ * TODO: Descomentar el bloque fetch y eliminar el mock cuando el backend esté listo.
+ */
+export async function publishWallChanges(): Promise<{ success: boolean }> {
+  // ── Mock ──────────────────────────────────────────────────
+  await new Promise((r) => setTimeout(r, 800));
+  console.log("[MOCK] publishWallChanges");
+  return { success: true };
+
+  // ── Real (uncomment when backend is ready) ───────────────
+  // const res = await fetch(`${BASE_URL}/publish`, {
+  //   method: "POST",
+  //   credentials: "include",
+  // });
+  // return handleResponse<{ success: boolean }>(res);
 }
 
 // Re-export BASE_URL for reference (unused in mock mode)
