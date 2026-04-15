@@ -34,12 +34,12 @@ const HOW_IT_WORKS = [
   },
   {
     icon: "✏️",
-    title: "Curate",
+    title: "Moderá",
     desc: "Revisá los testimonios en tu dashboard privado, editálos y organizálos con análisis de feedback impulsado por IA.",
   },
   {
     icon: "🔗",
-    title: "Embedí",
+    title: "Integrá",
     desc: "Compartí colecciones o links individuales e integrálos en tu sitio para mostrar el éxito de tus clientes en cualquier parte.",
   },
 ];
