@@ -23,3 +23,34 @@ export const editProductValidationSchema = Yup.object().shape({
 
     picture: Yup.mixed().required("La imagen del producto es obligatoria")
 });
+
+export const testimonialValidationSchema = Yup.object().shape({
+    title: Yup.string()
+        .min(3, "El titular es demasiado corto")
+        .required("El titular es requerido"),
+
+    content: Yup.string()
+        .min(30, "El contenido debe tener al menos 30 caracteres")
+        .required("Escribí al menos 30 caracteres")
+});
+
+export const visitorValidationSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(3, "El nombre completo es demasiado corto")
+        .required("El nombre completo es requerido"),
+
+    email: Yup.string()
+        .min(10, "La descripción debe tener al menos 30 caracteres")
+        .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Ingresá un email válido")
+        .required("El correo es requerido")
+});
+
+export const mediaValidationSchema = Yup.object().shape({
+    url: Yup.mixed().required("La imagen del producto es obligatoria")
+});
+
+export const createTestimonialValidationSchema = Yup.object().shape({
+    testimonial: testimonialValidationSchema,
+    visitor: visitorValidationSchema,
+    media: mediaValidationSchema
+});

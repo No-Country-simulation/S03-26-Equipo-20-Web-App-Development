@@ -12,6 +12,8 @@
 
 import type {
   ModerateTestimonyPayload,
+  //ShowTestimonial,
+  SubmitTestimonial,
   SubmitTestimonyPayload,
   Testimony,
 } from "../types/testimony";
@@ -99,13 +101,40 @@ export async function submitTestimony(
   return { success: true, id: `t-mock-${Date.now()}` };
 
   // ── Real (uncomment when backend is ready) ───────────────
-  // const res = await fetch(BASE_URL, {
+  // const res = await fetch(`${import.meta.env.VITE_BASE_URL}/testimonials/register`, {
   //   method: "POST",
   //   headers: { "Content-Type": "application/json" },
   //   credentials: "include",
   //   body: JSON.stringify(payload),
   // });
   // return handleResponse<{ success: boolean; id: string }>(res);
+}
+
+export async function createTestimonial(
+  value: SubmitTestimonial): Promise<void> {
+  const formData = new FormData();
+  formData.append("testimonial.title", value.testimonial.title);
+  formData.append("testimonial.content", value.testimonial.content);
+  if (value.media.url) {
+    formData.append("media.url", value.media.url);
+  }
+  formData.append("visitor.name", value.visitor.name);
+  formData.append("visitor.mail", value.visitor.email);
+
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/testimonials/register`, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    console.error("Respuesta del servidor:", errorData);
+    alert(
+      "Error en el servidor: " +
+      (errorData.message || "No se pudo registrar el testimonio"),
+    );
+  }
 }
 
 // ─── Pending Testimonials ────────────────────────────────────

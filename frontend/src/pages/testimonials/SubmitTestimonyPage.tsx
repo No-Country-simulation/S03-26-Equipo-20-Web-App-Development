@@ -1,107 +1,150 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
-  FileVideo,
+  //FileVideo,
   Mail,
   Quote,
   User,
   CheckCircle2,
   AlertCircle,
+  FileImage,
 } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import { submitTestimony } from "../../services/testimonyService";
-import type { SubmitTestimonyPayload } from "../../types/testimony";
+import {
+  createTestimonial,
+  // submitTestimony,
+} from "../../services/testimonyService";
+// import type { SubmitTestimonyPayload } from "../../types/testimony";
+import { useFormik } from "formik";
+import { createTestimonialValidationSchema } from "../../utils/validationSchemas";
 
 // ─── Tipos locales ─────────────────────────────────────────────────────────────
 
-interface FormState {
-  headline: string;
-  story: string;
-  videoUrl: string;
-  fullName: string;
-  email: string;
-}
+// interface FormState {
+//   headline: string;
+//   story: string;
+//   videoUrl: string;
+//   fullName: string;
+//   email: string;
+// }
 
-interface FormErrors {
-  headline?: string;
-  story?: string;
-  email?: string;
-  fullName?: string;
-}
+// interface FormErrors {
+//   headline?: string;
+//   story?: string;
+//   email?: string;
+//   fullName?: string;
+// }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
-function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+// function validateEmail(email: string): boolean {
+//   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// }
 
-function validate(form: FormState): FormErrors {
-  const errors: FormErrors = {};
-  if (!form.headline.trim()) errors.headline = "El titular es requerido.";
-  if (!form.story.trim() || form.story.trim().length < 30)
-    errors.story = "Escribí al menos 30 caracteres.";
-  if (!form.fullName.trim()) errors.fullName = "El nombre completo es requerido.";
-  if (!form.email.trim()) errors.email = "El email es requerido.";
-  else if (!validateEmail(form.email)) errors.email = "Ingresá un email válido.";
-  return errors;
-}
+// function validate(form: FormState): FormErrors {
+//   const errors: FormErrors = {};
+//   if (!form.headline.trim()) errors.headline = "El titular es requerido.";
+//   if (!form.story.trim() || form.story.trim().length < 30)
+//     errors.story = "Escribí al menos 30 caracteres.";
+//   if (!form.fullName.trim())
+//     errors.fullName = "El nombre completo es requerido.";
+//   if (!form.email.trim()) errors.email = "El email es requerido.";
+//   else if (!validateEmail(form.email))
+//     errors.email = "Ingresá un email válido.";
+//   return errors;
+// }
 
 // ─── Componente ────────────────────────────────────────────────────────────────
 
 export default function SubmitTestimonyPage() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const [form, setForm] = useState<FormState>({
-    headline: "",
-    story: "",
-    videoUrl: "",
-    fullName: "",
-    email: "",
-  });
+  // const [form, setForm] = useState<FormState>({
+  //   headline: "",
+  //   story: "",
+  //   videoUrl: "",
+  //   fullName: "",
+  //   email: "",
+  // });
 
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  // const [errors, setErrors] = useState<FormErrors>({});
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const formik = useFormik({
+    initialValues: {
+      testimonial: {
+        title: "",
+        content: "",
+      },
+      visitor: {
+        name: "",
+        email: "",
+      },
+      media: {
+        url: null,
+      },
+    },
+    validationSchema: createTestimonialValidationSchema,
+    onSubmit: async (values) => {
+      setStatus("loading");
+      setServerError(null);
+
+      try {
+        await createTestimonial(values);
+        setStatus("success");
+      } catch (error) {
+        setServerError(
+          error instanceof Error
+            ? error.message
+            : "Ocurrió un error inesperado.",
+        );
+        setStatus("error");
+      }
+    },
+  });
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  }
+  // function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  //   const { name, value } = e.target;
+  //   setForm((prev) => ({ ...prev, [name]: value }));
+  //   if (errors[name as keyof FormErrors]) {
+  //     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  //   }
+  // }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const validationErrors = validate(form);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+  // async function handleSubmit(e: React.FormEvent) {
+  //   e.preventDefault();
+  //   const validationErrors = validate(form);
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //     return;
+  //   }
 
-    setStatus("loading");
-    setServerError(null);
+  //   setStatus("loading");
+  //   setServerError(null);
 
-    try {
-      const payload: SubmitTestimonyPayload = {
-        headline: form.headline.trim(),
-        story: form.story.trim(),
-        fullName: form.fullName.trim(),
-        email: form.email.trim(),
-        videoUrl: form.videoUrl.trim() || undefined,
-      };
-      await submitTestimony(payload);
-      setStatus("success");
-    } catch (err) {
-      setStatus("error");
-      setServerError(err instanceof Error ? err.message : "Ocurrió un error inesperado.");
-    }
-  }
+  //   try {
+  //     const payload: SubmitTestimonyPayload = {
+  //       headline: form.headline.trim(),
+  //       story: form.story.trim(),
+  //       fullName: form.fullName.trim(),
+  //       email: form.email.trim(),
+  //       videoUrl: form.videoUrl.trim() || undefined,
+  //     };
+  //     await submitTestimony(payload);
+  //     setStatus("success");
+  //   } catch (err) {
+  //     setStatus("error");
+  //     setServerError(err instanceof Error ? err.message : "Ocurrió un error inesperado.");
+  //   }
+  // }
 
   // ── Estado de éxito ───────────────────────────────────────────────────────────
 
@@ -115,16 +158,24 @@ export default function SubmitTestimonyPage() {
               <CheckCircle2 className="w-10 h-10 text-[#9333ea]" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-3xl font-extrabold text-[#f9f5f8]">¡Testimonio enviado!</h2>
+              <h2 className="text-3xl font-extrabold text-[#f9f5f8]">
+                ¡Testimonio enviado!
+              </h2>
               <p className="text-[#adaaad]">
-                Gracias por compartir tu experiencia. Tu testimonio está en revisión y se
-                publicará una vez que sea aprobado.
+                Gracias por compartir tu experiencia. Tu testimonio está en
+                revisión y se publicará una vez que sea aprobado.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            {/* <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
               <button
                 onClick={() => {
-                  setForm({ headline: "", story: "", videoUrl: "", fullName: "", email: "" });
+                  setForm({
+                    headline: "",
+                    story: "",
+                    videoUrl: "",
+                    fullName: "",
+                    email: "",
+                  });
                   setStatus("idle");
                 }}
                 className="px-5 py-2.5 bg-[#1f1f22] text-[#f9f5f8] rounded-lg font-semibold hover:bg-[#2a2a2e] transition-colors"
@@ -137,7 +188,7 @@ export default function SubmitTestimonyPage() {
               >
                 Ver pendientes
               </button>
-            </div>
+            </div> */}
           </div>
         </main>
       </div>
@@ -169,8 +220,9 @@ export default function SubmitTestimonyPage() {
               Enviar testimonio
             </h2>
             <p className="text-[#adaaad] max-w-xl">
-              Tu opinión ayuda a miles de investigadores y profesionales a encontrar las
-              herramientas correctas. Compartí tu experiencia con la comunidad académica global.
+              Tu opinión ayuda a miles de investigadores y profesionales a
+              encontrar las herramientas correctas. Compartí tu experiencia con
+              la comunidad académica global.
             </p>
           </section>
 
@@ -178,8 +230,7 @@ export default function SubmitTestimonyPage() {
             {/* ── Formulario ──────────────────────────────────────────── */}
             <form
               id="submit-testimony-form"
-              onSubmit={handleSubmit}
-              noValidate
+              onSubmit={formik.handleSubmit}
               className="space-y-6"
             >
               {/* Banner de error del servidor */}
@@ -201,26 +252,36 @@ export default function SubmitTestimonyPage() {
                 <div className="relative">
                   <Quote className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
                   <input
-                    id="headline"
-                    name="headline"
+                    // id="headline"
+                    // name="headline"
                     type="text"
-                    value={form.headline}
-                    onChange={handleChange}
+                    name="testimonial.title"
+                    // value={form.headline}
+                    // onChange={handleChange}
+                    value={formik.values.testimonial.title}
+                    onChange={formik.handleChange}
                     placeholder="Ej: Transformó por completo nuestro laboratorio de investigación"
-                    className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all
-                      ${errors.headline
-                        ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                        : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                      }`}
+                    className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all`}
                   />
                 </div>
-                {errors.headline && (
+                {/* {errors.headline && (
                   <p className="text-red-400 text-xs flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" />
                     {errors.headline}
                   </p>
-                )}
+                )} */}
+                {formik.touched.testimonial?.title &&
+                  formik.errors.testimonial?.title && (
+                    <div className="bg-red-500 text-white p-2 rounded mb-3">
+                      <span>{formik.errors.testimonial?.title}</span>
+                    </div>
+                  )}
               </div>
+              {/*${
+                        errors.headline
+                          ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                          : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                      }*/}
 
               {/* Historia */}
               <div className="space-y-2">
@@ -231,44 +292,59 @@ export default function SubmitTestimonyPage() {
                   Tu historia
                 </label>
                 <textarea
-                  id="story"
-                  name="story"
-                  value={form.story}
-                  onChange={handleChange}
+                  // id="story"
+                  // name="story"
+                  // value={form.story}
+                  // onChange={handleChange}
+                  name="testimonial.content"
+                  value={formik.values.testimonial.content}
+                  onChange={formik.handleChange}
                   rows={6}
                   placeholder="¿Cómo impactó este producto en tu flujo de trabajo? Sé lo más específico posible: incluí números, plazos y resultados concretos."
-                  className={`w-full px-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none resize-none transition-all leading-relaxed
-                    ${errors.story
-                      ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                      : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                    }`}
+                  className={`w-full px-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none resize-none transition-all leading-relaxed`}
                 />
                 <div className="flex items-center justify-between">
-                  {errors.story ? (
+                  {/* {errors.story ? (
                     <p className="text-red-400 text-xs flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" />
                       {errors.story}
                     </p>
                   ) : (
                     <span />
-                  )}
+                  )} */}
+                  {formik.touched.testimonial?.content &&
+                    formik.errors.testimonial?.content && (
+                      <div className="bg-red-500 text-white p-2 rounded mb-3">
+                        <span>{formik.errors.testimonial?.content}</span>
+                      </div>
+                    )}
                   <span
-                    className={`text-xs tabular-nums ${form.story.length < 30 ? "text-[#adaaad]/50" : "text-[#9333ea]"
-                      }`}
+                    className={`text-xs tabular-nums ${
+                      formik.values.testimonial.content.length < 30
+                        ? "text-[#adaaad]/50"
+                        : "text-[#9333ea]"
+                    }`}
                   >
-                    {form.story.length} caracteres
+                    {formik.values.testimonial.content.length} caracteres
                   </span>
                 </div>
               </div>
+              {/*${
+                      errors.story
+                        ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                        : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                    }*/}
 
               {/* Video URL */}
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label
                   htmlFor="videoUrl"
                   className="text-xs font-bold uppercase tracking-widest text-[#adaaad]"
                 >
                   Experiencia en video{" "}
-                  <span className="normal-case font-normal text-[#adaaad]/50">(opcional)</span>
+                  <span className="normal-case font-normal text-[#adaaad]/50">
+                    (opcional)
+                  </span>
                 </label>
                 <div className="relative">
                   <FileVideo className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
@@ -282,6 +358,41 @@ export default function SubmitTestimonyPage() {
                     className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
                   />
                 </div>
+              </div> */}
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="imagen"
+                  className="text-xs font-bold uppercase tracking-widest text-[#adaaad]"
+                >
+                  Experiencia en imagen{" "}
+                  <span className="normal-case font-normal text-[#adaaad]/50">
+                    (opcional)
+                  </span>
+                </label>
+                <div className="relative">
+                  <FileImage className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                  <input
+                    // id="videoUrl"
+                    // name="videoUrl"
+                    type="file"
+                    // value={form.videoUrl}
+                    // onChange={handleChange}
+                    onChange={(event) => {
+                      const file = event.currentTarget.files
+                        ? event.currentTarget.files[0]
+                        : null;
+                      formik.setFieldValue("media.url", file);
+                    }}
+                    placeholder="Pegá una imagen"
+                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                  />
+                </div>
+                {formik.touched.media?.url && formik.errors.media?.url && (
+                  <div className="bg-red-500 text-white p-2 rounded mb-3">
+                    <span>{formik.errors.media?.url}</span>
+                  </div>
+                )}
               </div>
 
               {/* Nombre + Email */}
@@ -296,26 +407,36 @@ export default function SubmitTestimonyPage() {
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
                     <input
-                      id="fullName"
-                      name="fullName"
+                      // id="fullName"
+                      // name="fullName"
                       type="text"
-                      value={form.fullName}
-                      onChange={handleChange}
+                      // value={form.fullName}
+                      // onChange={handleChange}
+                      name="visitor.name"
+                      value={formik.values.visitor.name}
+                      onChange={formik.handleChange}
                       placeholder="Dra. Ana García"
-                      className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all
-                        ${errors.fullName
-                          ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                          : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                        }`}
+                      className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all`}
                     />
                   </div>
-                  {errors.fullName && (
+                  {/* {errors.fullName && (
                     <p className="text-red-400 text-xs flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" />
                       {errors.fullName}
                     </p>
-                  )}
+                  )} */}
+                  {formik.touched.visitor?.name &&
+                    formik.errors.visitor?.name && (
+                      <div className="bg-red-500 text-white p-2 rounded mb-3">
+                        <span>{formik.errors.visitor?.name}</span>
+                      </div>
+                    )}
                 </div>
+                {/*${
+                          errors.fullName
+                            ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                            : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                        }*/}
 
                 <div className="space-y-2">
                   <label
@@ -328,26 +449,35 @@ export default function SubmitTestimonyPage() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
                     <input
                       id="email"
-                      name="email"
+                      name="visitor.email"
                       type="email"
-                      value={form.email}
-                      onChange={handleChange}
+                      // value={form.email}
+                      // onChange={handleChange}
+                      value={formik.values.visitor.email}
+                      onChange={formik.handleChange}
                       placeholder="ana.garcia@universidad.edu.ar"
-                      className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all
-                        ${errors.email
-                          ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                          : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                        }`}
+                      className={`w-full pl-10 pr-4 py-3 bg-[#131315] border rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all`}
                     />
                   </div>
-                  {errors.email && (
+                  {/* {errors.email && (
                     <p className="text-red-400 text-xs flex items-center gap-1">
                       <AlertCircle className="w-3 h-3" />
                       {errors.email}
                     </p>
-                  )}
+                  )} */}
+                  {formik.touched.visitor?.email &&
+                    formik.errors.visitor?.email && (
+                      <div className="bg-red-500 text-white p-2 rounded mb-3">
+                        <span>{formik.errors.visitor?.email}</span>
+                      </div>
+                    )}
                 </div>
               </div>
+              {/*${
+                          errors.email
+                            ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                            : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                        }*/}
 
               {/* Botón de envío */}
               <button
@@ -390,7 +520,9 @@ export default function SubmitTestimonyPage() {
                 <div className="h-36 bg-gradient-to-br from-[#1a1025] via-[#0e0e10] to-[#0d0c15] flex items-center justify-center relative">
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(147,51,234,0.15),transparent_60%)]" />
                   <div className="text-center px-6 relative">
-                    <p className="text-[#adaaad] text-xs mb-1">Producto destacado</p>
+                    <p className="text-[#adaaad] text-xs mb-1">
+                      Producto destacado
+                    </p>
                     <h3 className="text-xl font-extrabold text-[#cc97ff] leading-tight">
                       Advanced Analytics Suite 2.0
                     </h3>
@@ -404,8 +536,9 @@ export default function SubmitTestimonyPage() {
                     </span>
                   </div>
                   <p className="text-[#adaaad] text-sm leading-relaxed">
-                    Tu opinión ayuda a miles de investigadores a encontrar las herramientas
-                    adecuadas. Compartí tu experiencia con la comunidad académica global.
+                    Tu opinión ayuda a miles de investigadores a encontrar las
+                    herramientas adecuadas. Compartí tu experiencia con la
+                    comunidad académica global.
                   </p>
                   <div className="flex items-center gap-2 pt-1">
                     <div className="flex -space-x-2">
@@ -438,17 +571,21 @@ export default function SubmitTestimonyPage() {
                   },
                   {
                     tip: "Contá una historia",
-                    detail: "Describí el antes y el después en tu flujo de trabajo.",
+                    detail:
+                      "Describí el antes y el después en tu flujo de trabajo.",
                   },
                   {
                     tip: "Sé auténtico",
-                    detail: "Las experiencias reales impactan más que los elogios genéricos.",
+                    detail:
+                      "Las experiencias reales impactan más que los elogios genéricos.",
                   },
                 ].map(({ tip, detail }) => (
                   <div key={tip} className="flex gap-3">
                     <div className="w-1 rounded-full bg-[#9333ea]/60 shrink-0" />
                     <div>
-                      <p className="text-[#f9f5f8] text-xs font-semibold">{tip}</p>
+                      <p className="text-[#f9f5f8] text-xs font-semibold">
+                        {tip}
+                      </p>
                       <p className="text-[#adaaad] text-xs">{detail}</p>
                     </div>
                   </div>
