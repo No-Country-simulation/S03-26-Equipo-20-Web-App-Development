@@ -1,4 +1,4 @@
-import { Archive, Gavel, LayoutDashboard, Quote, Tag } from "lucide-react";
+import { Archive, Gavel, Heart, LayoutDashboard, Quote, Tag } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {
@@ -30,6 +30,7 @@ function Sidebar() {
           route="/testimonials"
           label="Testimonials"
         />
+        <SidebarItem icon={<Heart />} route="/wall-of-love" label="Wall of Love" />
         <SidebarItem icon={<Gavel />} route="/moderation" label="Moderation" />
         <SidebarItem icon={<Tag />} route="/tags" label="Tags" />
       </nav>

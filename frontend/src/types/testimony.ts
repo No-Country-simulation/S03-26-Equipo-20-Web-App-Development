@@ -15,6 +15,10 @@ export interface Testimony {
   productId?: string;
   productName?: string;
   submittedAt: string; // ISO date string
+  // TODO (backend): Agregar campo `rating` (1–5) al modelo de Testimonial
+  // y exponerlo en GET /api/v1/testimonials/approved
+  rating?: number; // 1–5 estrellas
+  role?: string;   // Cargo o titulo del autor (ej: "Senior Fellow at Oxford")
 }
 
 // Payload para crear un nuevo testimonio
