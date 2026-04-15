@@ -1,5 +1,6 @@
 package org.testimonials.cms.product.service.impl;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +56,7 @@ public class ProductServiceImpl implements IProductService {
         }
 
         // 4. Seteamos createdBy y organization_id, y los guardamos
+        product.setShareCode(NanoIdUtils.randomNanoId());
         product.setCreatedBy(customUserPrincipal.user());
         product.setOrganization(new Organization(customUserPrincipal.organizationId()));
 
@@ -81,9 +83,8 @@ public class ProductServiceImpl implements IProductService {
     @Override
     @Transactional
     public ProductResponseDTO updateProduct(UUID idProduct, ProductRequestDTO productRequestDTO) {
-        Optional<Product> productFound = productRepository.findById(idProduct);
-
-        if (productFound.isEmpty()) throw ProductNotFound.of(idProduct);
+        Product productFound = productRepository.findById(idProduct)
+                .orElseThrow(() -> ProductNotFound.of(idProduct));
 
         Product productNotModified = productRepository.getReferenceById(idProduct);
 
@@ -92,11 +93,17 @@ public class ProductServiceImpl implements IProductService {
 
         if (productRequestDTO.picture() != null && !productRequestDTO.picture().isEmpty()) {
             try {
+
+                if (productFound.getPicture() != null) {
+                    cloudinaryService.deleteFile(productFound.getPublicId());
+                }
+
                 // Usamos el nuevo CloudinaryService inyectado
                 CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(productRequestDTO.picture());
 
                 // 3. Asignamos la URL a la entidad
                 productNotModified.setPicture(response.secureUrl());
+                productNotModified.setPublicId(response.publicId());
             } catch (IOException e) {
                 // Manejo de error de entrada/salida de bytes
                 throw new RuntimeException("Error técnico al procesar los bytes de la imagen", e);

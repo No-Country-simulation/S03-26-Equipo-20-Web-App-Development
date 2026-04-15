@@ -3,11 +3,18 @@ package org.testimonials.cms.testimonial.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.cloudinary.dto.CloudinaryUploadResponseDTO;
+import org.testimonials.cms.cloudinary.service.CloudinaryService;
+import org.testimonials.cms.media.enums.MediaProvider;
+import org.testimonials.cms.media.enums.MediaType;
+import org.testimonials.cms.media.mapper.MediaMapper;
+import org.testimonials.cms.media.model.Media;
+import org.testimonials.cms.media.repository.IMediaRepository;
 import org.testimonials.cms.organization.model.Organization;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
-import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
+import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
 import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
 import org.testimonials.cms.testimonial.mapper.TestimonialMapper;
@@ -30,24 +37,50 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     private final IVisitorRepository visitorRepository;
 
+    private final IMediaRepository mediaRepository;
+
     private final TestimonialMapper testimonialMapper;
 
     private final VisitorMapper visitorMapper;
 
+    private final MediaMapper mediaMapper;
+
+    private final CloudinaryService cloudinaryService;
+
     @Override
     @Transactional
     public CreateTestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal,
-                                                              CreateTestimonialRequestDTO createTestimonialRequestDTO) {
-        Visitor visitor = visitorMapper.toVisitor(createTestimonialRequestDTO.visitor());
+                                                          CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+        Visitor visitor = visitorMapper.toVisitor(createTestimonialRequestDTO.getVisitor());
         Visitor newVisitor = visitorRepository.save(visitor);
 
-        Testimonial testimonial = testimonialMapper.toTestimonial(createTestimonialRequestDTO.testimonial());
+        Testimonial testimonial = testimonialMapper.toTestimonial(createTestimonialRequestDTO.getTestimonial());
         testimonial.setStatus(TestimonialStatus.PENDING);
         testimonial.setOrganization(new Organization(customUserPrincipal.organizationId()));
         testimonial.setVisitor(newVisitor);
         Testimonial newTestimonial = testimonialRepository.save(testimonial);
 
-        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor);
+        Media media = mediaMapper.toMedia(createTestimonialRequestDTO.getMedia());
+        media.setTestimonial(newTestimonial);
+        media.setOrganizationId(customUserPrincipal.organizationId());
+        media.setOrganization(new Organization(customUserPrincipal.organizationId()));
+        media.setType(MediaType.IMAGE);
+        media.setProvider(MediaProvider.CLOUDINARY);
+
+        if (createTestimonialRequestDTO.getMedia().getUrl() != null && !createTestimonialRequestDTO.getMedia().getUrl().isEmpty()) {
+            try {
+                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(createTestimonialRequestDTO.getMedia().getUrl());
+
+                media.setUrl(response.secureUrl());
+                media.setPublicId(response.publicId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Media newMedia = mediaRepository.save(media);
+
+        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor, newMedia);
     }
 
     @Override

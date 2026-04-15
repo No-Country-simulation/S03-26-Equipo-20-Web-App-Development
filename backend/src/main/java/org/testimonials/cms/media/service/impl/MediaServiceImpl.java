@@ -3,18 +3,18 @@ package org.testimonials.cms.media.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testimonials.cms.cloudinary.dto.CloudinaryUploadResponseDTO;
 import org.testimonials.cms.cloudinary.service.CloudinaryService;
 import org.testimonials.cms.media.dto.MediaRequestDTO;
 import org.testimonials.cms.media.dto.MediaResponseDTO;
 import org.testimonials.cms.media.enums.MediaProvider;
+import org.testimonials.cms.media.enums.MediaType;
 import org.testimonials.cms.media.exception.MediaNotFound;
 import org.testimonials.cms.media.mapper.MediaMapper;
 import org.testimonials.cms.media.model.Media;
 import org.testimonials.cms.media.repository.IMediaRepository;
 import org.testimonials.cms.media.service.IMediaService;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
-import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
-import org.testimonials.cms.testimonial.model.Testimonial;
 import org.testimonials.cms.testimonial.repository.ITestimonialRepository;
 
 import java.io.IOException;
@@ -32,11 +32,13 @@ public class MediaServiceImpl implements IMediaService {
     @Override
     @Transactional
     public MediaResponseDTO createMedia(CustomUserPrincipal customUserPrincipal, MediaRequestDTO mediaRequestDTO) {
-        Testimonial testimonial = testimonialRepository.findById(mediaRequestDTO.testimonialId())
-                .orElseThrow(() -> TestimonialNotFound.of(mediaRequestDTO.testimonialId()));
+//        Testimonial testimonial = testimonialRepository.findById(mediaRequestDTO.testimonialId())
+//                .orElseThrow(() -> TestimonialNotFound.of(mediaRequestDTO.testimonialId()));
 
         Media media = mediaMapper.toMedia(mediaRequestDTO);
-        media.setTestimonial(testimonial);
+        media.setProvider(MediaProvider.CLOUDINARY);
+        media.setType(MediaType.IMAGE);
+//        media.setTestimonial(testimonial);
         media.setOrganizationId(customUserPrincipal.organizationId());
 
         Media newMedia = mediaRepository.save(media);
@@ -59,15 +61,30 @@ public class MediaServiceImpl implements IMediaService {
 
     @Override
     @Transactional
-    public MediaResponseDTO updateMedia(UUID idMedia, MediaRequestDTO mediaRequestDTO) {
+    public MediaResponseDTO updateMedia(UUID idMedia, MediaRequestDTO mediaRequestclassDTO) {
         Media media = mediaRepository.findById(idMedia)
                 .orElseThrow(() -> MediaNotFound.of(idMedia));
 
-        if (mediaRequestDTO.type() != null) media.setType(mediaRequestDTO.type());
-        if (mediaRequestDTO.provider() != null) media.setProvider(mediaRequestDTO.provider());
-        if (mediaRequestDTO.url() != null) media.setUrl(mediaRequestDTO.url());
-        if (mediaRequestDTO.thumbnailUrl() != null) media.setThumbnailUrl(mediaRequestDTO.thumbnailUrl());
-        if (mediaRequestDTO.duration() != null) media.setDuration(mediaRequestDTO.duration());
+//        if (mediaRequestDTO.type() != null) media.setType(mediaRequestDTO.type());
+//        if (mediaRequestDTO.provider() != null) media.setProvider(mediaRequestDTO.provider());
+
+        if (mediaRequestclassDTO.getUrl() != null && mediaRequestclassDTO.getUrl().isEmpty()) {
+            try {
+                if (media.getPublicId() != null) {
+                    cloudinaryService.deleteFile(media.getPublicId());
+                }
+
+                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(mediaRequestclassDTO.getUrl());
+
+                media.setUrl(response.secureUrl());
+                media.setPublicId(response.publicId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+//        if (mediaRequestDTO.thumbnailUrl() != null) media.setThumbnailUrl(mediaRequestDTO.thumbnailUrl());
+//        if (mediaRequestDTO.duration() != null) media.setDuration(mediaRequestDTO.duration());
 
         Media updatedMedia = mediaRepository.save(media);
         return mediaMapper.toMediaDTO(updatedMedia);

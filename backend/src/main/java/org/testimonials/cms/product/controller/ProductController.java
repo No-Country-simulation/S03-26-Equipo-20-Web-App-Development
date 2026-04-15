@@ -111,7 +111,7 @@ public class ProductController implements DefaultApiResponses {
                     )
             }
     )
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID idProduct, @RequestBody @Valid ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID idProduct, @ModelAttribute @Valid ProductRequestDTO productRequestDTO) {
         ProductResponseDTO productResponseDTO = productService.updateProduct(idProduct, productRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTO);
