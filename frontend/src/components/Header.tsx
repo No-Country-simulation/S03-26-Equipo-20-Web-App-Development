@@ -26,7 +26,7 @@ function Header() {
         <div className="relative w-full max-w-md hidden sm:block">
           <input
             className="w-full pl-10 pr-4 py-2 bg-[#1f1f22] border-none rounded-lg text-sm text-[#f9f5f8] focus:ring-2 focus:ring-[#9333ea]/50 placeholder:text-[#adaaad]/50"
-            placeholder="Search products..."
+            placeholder="Buscar productos..."
             type="text"
           />
         </div>
