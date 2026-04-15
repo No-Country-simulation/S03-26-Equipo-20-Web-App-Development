@@ -54,3 +54,9 @@ export const createTestimonialValidationSchema = Yup.object().shape({
     visitor: visitorValidationSchema,
     media: mediaValidationSchema
 });
+
+export const tagValidationSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(2, "Mínimo 2 caracteres")
+        .required("El nombre es obligatorio"),
+});
