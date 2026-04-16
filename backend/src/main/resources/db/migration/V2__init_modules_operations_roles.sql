@@ -45,50 +45,52 @@ FROM (
              -- ORGANIZATION
              ('organization-getAll','GET','/getAll',false,'organization'),
              ('organization-getOnly','GET','/getOnly',false,'organization'),
-             ('organization-update','PUT','/',false,'organization'),
-             ('organization-delete','DELETE','/',false,'organization'),
+             ('organization-update','PUT','',false,'organization'),
+             ('organization-delete','DELETE','',false,'organization'),
 
              -- PRODUCT
              ('product-create','POST','/register',false,'product'),
-             ('product-list','GET','/',false,'product'),
+             ('product-list','GET','',false,'product'),
              ('product-get','GET','/*',false,'product'),
              ('product-update','PUT','/*',false,'product'),
              ('product-delete','DELETE','/*',false,'product'),
 
              -- TAG
              ('tag-create','POST','/register',false,'tag'),
-             ('tag-list','GET','/',false,'tag'),
+             ('tag-list','GET','',false,'tag'),
              ('tag-get','GET','/*',false,'tag'),
              ('tag-update','PUT','/*',false,'tag'),
              ('tag-delete','DELETE','/*',false,'tag'),
 
              -- TESTIMONIAL
              ('testimonial-create','POST','/register',false,'testimonial'),
-             ('testimonial-list','GET','/',false,'testimonial'),
+             ('testimonial-list','GET','',false,'testimonial'),
              ('testimonial-get','GET','/*',false,'testimonial'),
              ('testimonial-update','PUT','/*',false,'testimonial'),
              ('testimonial-delete','DELETE','/*',false,'testimonial'),
 
              -- REVIEW
              ('review-create','POST','/register',false,'review'),
-             ('review-list','GET','/',false,'review'),
+             ('review-list','GET','',false,'review'),
              ('review-get','GET','/*',false,'review'),
              ('review-update','PUT','/*',false,'review'),
              ('review-delete','DELETE','/*',false,'review'),
 
              -- MEDIA
-             ('media-list','GET','/',false,'media'),
+             ('media-list','GET','',false,'media'),
              ('media-get','GET','/*',false,'media'),
 
              -- VISITOR
-             ('visitor-list','GET','/',false,'visitor'),
+             ('visitor-list','GET','',false,'visitor'),
              ('visitor-get','GET','/*',false,'visitor'),
              ('visitor-update','PUT','/*',false,'visitor'),
              ('visitor-delete','DELETE','/*',false,'visitor'),
 
              -- SWAGGER (all permit_all = true)
+             ('swagger-ui-init','GET','/swagger-ui.html',true,'swagger'),
              ('swagger-ui-html','GET','/swagger-ui/index.html',true,'swagger'),
              ('swagger-ui-css','GET','/swagger-ui/swagger-ui.css',true,'swagger'),
+             ('swagger-ui-css-2','GET','/swagger-ui/index.css',true,'swagger'),
              ('swagger-ui-favicon','GET','/swagger-ui/favicon-32x32.png',true,'swagger'),
              ('swagger-ui-bundle','GET','/swagger-ui/swagger-ui-bundle.js',true,'swagger'),
              ('swagger-ui-standalone','GET','/swagger-ui/swagger-ui-standalone-preset.js',true,'swagger'),
@@ -97,7 +99,7 @@ FROM (
              ('api-docs','GET','/v3/api-docs',true,'swagger'),
 
              -- ACTUATOR (permit_all = false)
-             ('actuator-root','GET','/',false,'actuator'),
+             ('actuator-root','GET','',false,'actuator'),
              ('actuator-info','GET','/info',false,'actuator'),
              ('actuator-health','GET','/health',false,'actuator')
 
