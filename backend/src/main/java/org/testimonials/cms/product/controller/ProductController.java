@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.testimonials.cms.product.dtos.ProductRequestDTO;
 import org.testimonials.cms.product.dtos.ProductResponseDTO;
+import org.testimonials.cms.product.dtos.ProductUpdateDTO;
 import org.testimonials.cms.product.service.IProductService;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.swagger.docs.DefaultApiResponses;
@@ -111,7 +112,7 @@ public class ProductController implements DefaultApiResponses {
                     )
             }
     )
-    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID idProduct, @ModelAttribute @Valid ProductRequestDTO productRequestDTO) {
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable UUID idProduct, @ModelAttribute @Valid ProductUpdateDTO productRequestDTO) {
         ProductResponseDTO productResponseDTO = productService.updateProduct(idProduct, productRequestDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(productResponseDTO);

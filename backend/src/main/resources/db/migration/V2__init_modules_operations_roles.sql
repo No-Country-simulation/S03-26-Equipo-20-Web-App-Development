@@ -61,6 +61,7 @@ FROM (
              ('tag-get','GET','/*',false,'tag'),
              ('tag-update','PUT','/*',false,'tag'),
              ('tag-delete','DELETE','/*',false,'tag'),
+             ('tag-top','GET','/top',false,'tag'),
 
              -- TESTIMONIAL
              ('testimonial-create','POST','/register',false,'testimonial'),
@@ -138,7 +139,7 @@ FROM (
                  'membership-types',
                  'organization-getAll','organization-getOnly','organization-update','organization-delete',
                  'product-create','product-list','product-get','product-update','product-delete',
-                 'tag-create','tag-list','tag-get','tag-update','tag-delete',
+                 'tag-create','tag-list','tag-get','tag-update','tag-delete','tag-top',
                  'testimonial-create','testimonial-list','testimonial-get','testimonial-update','testimonial-delete',
                  'review-create','review-list','review-get','review-update','review-delete',
                  'media-list','media-get',
@@ -152,7 +153,7 @@ FROM (
                  'membership-types',
                  'organization-getOnly','organization-update','organization-delete',
                  'product-create','product-list','product-get','product-update','product-delete',
-                 'tag-create','tag-list','tag-get','tag-update','tag-delete',
+                 'tag-create','tag-list','tag-get','tag-update','tag-delete','tag-top',
                  'testimonial-create','testimonial-list','testimonial-get','testimonial-update','testimonial-delete',
                  'review-create','review-list','review-get','review-update','review-delete',
                  'media-list','media-get',
@@ -166,7 +167,7 @@ FROM (
                  'membership-types',
                  'organization-getOnly','organization-update',
                  'product-create','product-list','product-get','product-update','product-delete',
-                 'tag-create','tag-list','tag-get','tag-update','tag-delete',
+                 'tag-create','tag-list','tag-get','tag-update','tag-delete','tag-top',
                  'testimonial-create','testimonial-list','testimonial-get','testimonial-update','testimonial-delete',
                  'review-create','review-list','review-get','review-update','review-delete',
                  'media-list','media-get',
@@ -178,7 +179,7 @@ FROM (
              ('STAFF', ARRAY[
                  'auth-me','auth-logout',
                  'product-create','product-list','product-get',
-                 'tag-create','tag-list','tag-get',
+                 'tag-create','tag-list','tag-get','tag-top',
                  'testimonial-create','testimonial-list','testimonial-get',
                  'review-create','review-list','review-get',
                  'media-list','media-get',

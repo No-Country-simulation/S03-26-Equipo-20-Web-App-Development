@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface ITagService {
     TagResponseDTO createTag(CustomUserPrincipal customUserPrincipal, TagRequestDTO tagRequestDTO);
     Page<TagResponseDTO> listAllTags(CustomUserPrincipal customUserPrincipal, Pageable pageable);
+    List<TagResponseDTO> findTopTags(UUID organizationId, int limit);
     TagResponseDTO listTag(UUID idTag, UUID organizationId);
     TagResponseDTO updateTag(UUID idTag, TagRequestDTO tagRequestDTO);
     void deleteTag(UUID idTag);
