@@ -14,6 +14,7 @@ import org.testimonials.cms.tag.model.Tag;
 import org.testimonials.cms.tag.repository.ITagRepository;
 import org.testimonials.cms.tag.service.ITagService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,6 +48,13 @@ public class TagServiceImpl implements ITagService {
     @Transactional(readOnly = true)
     public Page<TagResponseDTO> listAllTags(CustomUserPrincipal customUserPrincipal, Pageable pageable) {
         return tagRepository.findAllWithCount(customUserPrincipal.organizationId(),pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TagResponseDTO> findTopTags(UUID organizationId, int limit) {
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+        return tagRepository.findTopTagsOrderedByCount(organizationId, pageable);
     }
 
     @Override
