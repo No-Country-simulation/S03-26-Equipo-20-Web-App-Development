@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.testimonials.cms.product.repository.IProductRepository;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.tag.dto.TagRequestDTO;
 import org.testimonials.cms.tag.dto.TagResponseDTO;
@@ -15,8 +14,6 @@ import org.testimonials.cms.tag.model.Tag;
 import org.testimonials.cms.tag.repository.ITagRepository;
 import org.testimonials.cms.tag.service.ITagService;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,17 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TagServiceImpl implements ITagService {
     private final ITagRepository tagRepository;
-    private final IProductRepository productRepository;
     private final TagMapper tagMapper;
-
-    private Map<UUID, Integer> buildUsageCountMap(UUID organizationId) {
-        List<Object[]> results = productRepository.countProductsByTagIdGrouped(organizationId);
-        Map<UUID, Integer> map = new HashMap<>();
-        for (Object[] row : results) {
-            map.put((UUID) row[0], ((Number) row[1]).intValue());
-        }
-        return map;
-    }
 
     private TagResponseDTO toTagDTO(Tag tag, Map<UUID, Integer> countMap) {
         int count = countMap.getOrDefault(tag.getId(), 0);
@@ -43,53 +30,46 @@ public class TagServiceImpl implements ITagService {
 
     @Override
     @Transactional
-    public TagResponseDTO createTag(CustomUserPrincipal customUserPrincipal, TagRequestDTO tagRequestDTO) {
-        UUID orgId = customUserPrincipal.organizationId();
-        Map<UUID, Integer> countMap = buildUsageCountMap(orgId);
+    public TagResponseDTO createTag(CustomUserPrincipal user, TagRequestDTO dto) {
+        UUID orgId = user.organizationId();
 
-        return tagRepository.findByNameAndOrganizationId(tagRequestDTO.name(), orgId)
-                .map(tag -> toTagDTO(tag, countMap))
+        return tagRepository.findByNameWithCount(dto.name(), orgId)
                 .orElseGet(() -> {
-                    Tag tag = tagMapper.toTag(tagRequestDTO);
+                    Tag tag = tagMapper.toTag(dto);
                     tag.setOrganizationId(orgId);
                     Tag saved = tagRepository.save(tag);
-                    return toTagDTO(saved, countMap);
+
+                    return tagMapper.toTagDTO(saved, 0);
                 });
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<TagResponseDTO> listAllTags(CustomUserPrincipal customUserPrincipal, Pageable pageable) {
-        UUID orgId = customUserPrincipal.organizationId();
-        Page<Tag> tagPage = tagRepository.findAll(pageable);
-        Map<UUID, Integer> countMap = buildUsageCountMap(orgId);
-        return tagPage.map(tag -> toTagDTO(tag, countMap));
+        return tagRepository.findAllWithCount(customUserPrincipal.organizationId(),pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public TagResponseDTO listTag(UUID idTag, UUID organizationId) {
-        Tag tag = tagRepository.findById(idTag)
+        return tagRepository.findByIdWithCount(idTag, organizationId)
                 .orElseThrow(() -> TagNotFound.of(idTag));
-        Map<UUID, Integer> countMap = buildUsageCountMap(organizationId);
-        return toTagDTO(tag, countMap);
     }
 
     @Override
     @Transactional
-    public TagResponseDTO updateTag(UUID idTag, TagRequestDTO tagRequestDTO) {
+    public TagResponseDTO updateTag(UUID idTag, TagRequestDTO dto) {
+
         Tag tag = tagRepository.findById(idTag)
                 .orElseThrow(() -> TagNotFound.of(idTag));
         UUID orgId = tag.getOrganizationId();
-        Map<UUID, Integer> countMap = buildUsageCountMap(orgId);
-
-        return tagRepository.findByNameAndOrganizationId(tagRequestDTO.name(), orgId)
-                .filter(existing -> !existing.getId().equals(idTag))
-                .map(t -> toTagDTO(t, countMap))
+        return tagRepository.findByNameWithCount(dto.name(), orgId)
+                .filter(existing -> !existing.id().equals(idTag))
                 .orElseGet(() -> {
-                    tag.setName(tagRequestDTO.name());
+                    tag.setName(dto.name());
                     Tag saved = tagRepository.save(tag);
-                    return toTagDTO(saved, countMap);
+                    return tagRepository.findByIdWithCount(saved.getId(), orgId)
+                            .orElseThrow();
                 });
     }
 

@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.TenantId;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,7 +20,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Testimonial")
-@Table(name = "testimonials")
+@Table(
+        name = "testimonials",
+        indexes = {
+                @Index(name = "idx_testimonials_org", columnList = "organization_id")
+        }
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,9 +34,11 @@ public class Testimonial {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(name = "title", nullable = false)
     private String title;
     private String content;
-    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "testimonial_status")
     private TestimonialStatus status;
     @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Review> reviews;
