@@ -17,9 +17,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Tag")
-@Table(name = "tags", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_tag_name_organization", columnNames = {"name", "organization_id"})
-})
+@Table(
+        name = "tags",
+        indexes = {
+                @Index(name = "idx_tags_org", columnList = "organization_id")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_tag_org_name", columnNames = {"organization_id", "name"})
+        }
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
