@@ -1,10 +1,10 @@
 import { UserCheck, LogOut, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { AuthMeUser } from "../types/auth";
+import type { AuthResponse } from "../types/auth";
 import { authMe, logout } from "../services/authService";
 
 function Header() {
-  const [user, setUser] = useState<AuthMeUser | undefined>(undefined);
+  const [user, setUser] = useState<AuthResponse | undefined>(undefined);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +61,7 @@ function Header() {
           >
             <div className="hidden lg:text-right lg:block">
               <p className="text-xs font-bold text-[#f9f5f8] leading-none">
-                {user ? user.userName : "Loading..."}
+                {user ? user.name : "Loading..."}
               </p>
               <p className="text-[10px] text-[#adaaad] font-medium mt-1 uppercase tracking-tighter">
                 {user ? user.role : "Loading..."}

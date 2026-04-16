@@ -29,11 +29,12 @@ export interface AuthUser {
 }
 
 export interface AuthResponse {
-  id: string;
+  id?: string;
   name: string;
   logo: string;
   userEmail: string;
   userName: string;
+  role: string;
 }
 
 export interface AuthMeUser {
@@ -42,7 +43,7 @@ export interface AuthMeUser {
 };
 
 export interface AuthUserResponse {
-  id: string;
+  id?: string;
   userName: string;
   role: string;
 };
