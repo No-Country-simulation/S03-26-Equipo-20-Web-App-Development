@@ -8,33 +8,42 @@ import WallOfLovePage from "./pages/testimonials/WallOfLovePage";
 import ProductsListPage from "./pages/products/ProductsListPage";
 import DetailProductPage from "./pages/products/DetailProductPage";
 import TagsPage from "./pages/tags/TagsPage";
+import AppProvider from "./provider/AppProvider";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+import { ProtectedRouteOwner } from "./routes/ProtectedRouteOwner";
 
 function App() {
   return (
-    <Routes>
-      {/* Landing page pública */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/landing" element={<LandingPage />} />
+    <AppProvider>
+      <Routes>
+        {/* Landing page pública */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/landing" element={<LandingPage />} />
+        {/* Auth */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
-      {/* Auth */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+        {/* CMS */}
+        <Route element={<ProtectedRouteOwner />}>
+          <Route path="/products" element={<ProductsListPage />} />
+          <Route path="/products/:idProduct" element={<DetailProductPage />} />
+          <Route
+            path="/testimonials/submit"
+            element={<SubmitTestimonyPage />}
+          />
+          <Route path="/moderation" element={<PendingTestimonialsPage />} />
+          <Route path="/wall-of-love" element={<WallOfLovePage />} />
 
-      {/* CMS */}
-      <Route path="/products" element={<ProductsListPage />} />
-      <Route path="/products/:idProduct" element={<DetailProductPage />} />
-      <Route path="/testimonials/submit" element={<SubmitTestimonyPage />} />
-      <Route path="/moderation" element={<PendingTestimonialsPage />} />
-      <Route path="/wall-of-love" element={<WallOfLovePage />} />
+          {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
+          {/* TODO: <Route path="/testimonials" element={<TestimonialsListPage />} /> */}
+          <Route path="/tags" element={<TagsPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
 
-      {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
-      {/* TODO: <Route path="/testimonials" element={<TestimonialsListPage />} /> */}
-      <Route path="/tags" element={<TagsPage />} />
-      {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </AppProvider>
   );
 }
 
