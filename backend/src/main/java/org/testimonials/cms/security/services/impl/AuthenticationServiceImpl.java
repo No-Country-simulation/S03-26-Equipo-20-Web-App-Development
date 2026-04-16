@@ -59,12 +59,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 ),
                 principal.getUsername()
         );
+        String role = userRepository.findRoleByEmailWithMembership(principal.getUsername());
         OrganizationAuthResponseDTO dto = new OrganizationAuthResponseDTO(
                 activeMembership.getOrganization().getId(),
                 activeMembership.getOrganization().getName(),
                 activeMembership.getOrganization().getLogo(),
                 user.getEmail(),
-                user.getName()
+                user.getName(),
+                role
         );
 
         return new AuthResponseDTO(dto,token);
@@ -103,12 +105,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                         "roles", membership.getRoles().stream().map(Role::getRoleName).toList()),
                 newUser.getEmail());
 
+        String userWithrole = userRepository.findRoleByEmailWithMembership(membership.getRoles().toString());
+
         OrganizationAuthResponseDTO orgDto = new OrganizationAuthResponseDTO(
                 membership.getOrganization().getId(),
                 membership.getOrganization().getName(),
                 membership.getOrganization().getLogo(),
                 user.getEmail(),
-                user.getName()
+                user.getName(),
+                userWithrole
         );
 
         return new AuthResponseDTO(orgDto,token);
