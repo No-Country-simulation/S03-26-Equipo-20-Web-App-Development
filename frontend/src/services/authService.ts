@@ -8,7 +8,7 @@
 
 import type {
   AuthResponse,
-  AuthUserResponse,
+  //AuthUserResponse,
   LoginPayload,
   RegisterOrgPayload,
 } from "../types/auth";
@@ -66,7 +66,7 @@ export async function register(
   return handleResponse<AuthResponse>(res);
 }
 
-export async function authMe(): Promise<AuthUserResponse | undefined> {
+export async function authMe(): Promise<AuthResponse | undefined> {
   try {
     const response = await fetch(`${import.meta.env.VITE_BASE_URL_AUTH}/me`, {
       method: "GET",
@@ -77,8 +77,7 @@ export async function authMe(): Promise<AuthUserResponse | undefined> {
     });
 
     if (response.ok) {
-      const user = await response.json();
-      return user as AuthUserResponse;
+      return handleResponse<AuthResponse>(response);
     } else {
       console.error("No hay usuario autenticado");
     };

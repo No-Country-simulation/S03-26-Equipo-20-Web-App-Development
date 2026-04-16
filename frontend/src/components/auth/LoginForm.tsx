@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
+import { Link } from "react-router-dom";
 import type { LoginPayload } from "../../types/auth";
+import { useOwner } from "../../context/owner/CreateUseOwner";
 
 // ─── Validación ───────────────────────────────────────────────
 
@@ -21,13 +21,13 @@ function validate(form: LoginPayload): Partial<LoginPayload> {
 // ─── Componente ───────────────────────────────────────────────
 
 export default function LoginForm() {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState<LoginPayload>({ email: "", password: "" });
   const [fieldErrors, setFieldErrors] = useState<Partial<LoginPayload>>({});
   const [globalError, setGlobalError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { signup } = useOwner();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -50,12 +50,7 @@ export default function LoginForm() {
 
     setLoading(true);
     try {
-      const response = await login(form);
-      // TODO: guardar token y usuario en contexto global / localStorage
-      localStorage.setItem("auth_user", JSON.stringify(response));
-      setSuccess(true);
-      // TODO: redirigir al dashboard cuando exista (temporalmente en products)
-      setTimeout(() => navigate("/products"), 1200);
+      await signup(form, setSuccess);
     } catch (err) {
       setGlobalError(
         err instanceof Error ? err.message : "Error al iniciar sesión.",
