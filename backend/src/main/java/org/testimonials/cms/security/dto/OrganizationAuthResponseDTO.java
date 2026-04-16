@@ -7,6 +7,7 @@ public record OrganizationAuthResponseDTO(
         String name,
         String logo,
         String userEmail,
-        String userName
+        String userName,
+        String role
 ) {
 }

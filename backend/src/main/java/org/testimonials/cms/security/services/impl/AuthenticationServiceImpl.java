@@ -59,12 +59,16 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 ),
                 principal.getUsername()
         );
+
+        String role = userRepository.findRoleByEmailWithMembership(principal.getUsername());
+
         OrganizationAuthResponseDTO dto = new OrganizationAuthResponseDTO(
                 activeMembership.getOrganization().getId(),
                 activeMembership.getOrganization().getName(),
                 activeMembership.getOrganization().getLogo(),
                 user.getEmail(),
-                user.getName()
+                user.getName(),
+                role
         );
 
         return new AuthResponseDTO(dto,token);
@@ -103,19 +107,22 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                         "roles", membership.getRoles().stream().map(Role::getRoleName).toList()),
                 newUser.getEmail());
 
+        String userWithrole = userRepository.findRoleByEmailWithMembership(membership.getUser().getEmail());
+
         OrganizationAuthResponseDTO orgDto = new OrganizationAuthResponseDTO(
                 membership.getOrganization().getId(),
                 membership.getOrganization().getName(),
                 membership.getOrganization().getLogo(),
                 user.getEmail(),
-                user.getName()
+                user.getName(),
+                userWithrole
         );
 
         return new AuthResponseDTO(orgDto,token);
     }
 
     @Override
-    public OrganizationAuthRoleResponseDTO me(CustomUserPrincipal principal) {
+    public OrganizationAuthResponseDTO me(CustomUserPrincipal principal) {
         User user = principal.user();
 
         Membership membership = user.getMemberships().stream()
@@ -125,7 +132,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         String role = userRepository.findRoleByEmailWithMembership(principal.getUsername());
 
-        return new OrganizationAuthRoleResponseDTO(
+        return new OrganizationAuthResponseDTO(
                 membership.getOrganization().getId(),
                 membership.getOrganization().getName(),
                 membership.getOrganization().getLogo(),
