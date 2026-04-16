@@ -1,12 +1,18 @@
+import { toast } from "react-hot-toast";
 import type { ListProducts, Product } from "../types/product";
 
 // Servicio para crear un nuevo producto
-export async function createProduct(values: Product, setIsModalOpen: (isOpen: boolean) => void, resetForm: () => void): Promise<void> {
+export async function createProduct(values: Product, setIsModalOpen: (isOpen: boolean) => void, resetForm: () => void): Promise<ListProducts> {
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("description", values.description);
     if (values.picture) {
         formData.append("picture", values.picture);
+    }
+    if (values.tags && values.tags.length > 0) {
+        values.tags.forEach(tag => {
+            formData.append("tags", tag);
+        });
     }
 
     const response = await fetch(
@@ -19,16 +25,16 @@ export async function createProduct(values: Product, setIsModalOpen: (isOpen: bo
     );
 
     if (response.ok) {
-        alert("Producto registrado exitosamente");
+        const product = await response.json();
+        toast.success("Producto registrado exitosamente");
         setIsModalOpen(false);
         resetForm();
+        return product;
     } else {
         const errorData = await response.json();
         console.error("Respuesta del servidor:", errorData);
-        alert(
-            "Error en el servidor: " +
-            (errorData.message || "No se pudo registrar"),
-        );
+        toast.error("Error en el servidor: " + (errorData.message || "No se pudo registrar"));
+        throw new Error("Error al crear producto");
     }
 }
 
@@ -81,12 +87,17 @@ export async function getProductById(idProduct: string): Promise<Product | null>
 }
 
 // Servicio para actualizar un producto por su ID
-export async function updateProduct(idProduct: string, values: Product, setIsModalOpen: (isOpen: boolean) => void, resetForm: () => void, navigate: (path: string) => void): Promise<void> {
+export async function updateProduct(idProduct: string, values: Product, setIsModalOpen: (isOpen: boolean) => void, resetForm: () => void): Promise<void> {
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("description", values.description);
     if (values.picture) {
         formData.append("picture", values.picture);
+    }
+    if (values.tags && values.tags.length > 0) {
+        values.tags.forEach(tag => {
+            formData.append("tags", tag);
+        });
     }
 
     const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products/${idProduct}`, {
@@ -96,17 +107,14 @@ export async function updateProduct(idProduct: string, values: Product, setIsMod
     });
 
     if (response.ok) {
-        alert("Producto actualizado exitosamente");
+        toast.success("Producto actualizado exitosamente");
         setIsModalOpen(false);
         resetForm();
-        navigate("/products");
     } else {
         const errorData = await response.json();
         console.error("Respuesta del servidor:", errorData);
-        alert(
-            "Producto actualizado exitosamente",
-        );
-    };
+        toast.error("Error al actualizar el producto");
+    }
 }
 
 // Servicio para eliminar un producto por su ID

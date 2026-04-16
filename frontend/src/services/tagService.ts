@@ -66,3 +66,15 @@ export async function deleteTag(idTag: string): Promise<void> {
     throw new Error(body.message ?? `Error ${res.status}`);
   }
 }
+
+export async function getTopTags(limit: number = 10): Promise<Tag[]> {
+  const res = await fetch(
+    `${import.meta.env.VITE_BASE_URL}/tags/top?limit=${limit}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  );
+  return handleResponse<Tag[]>(res);
+}
