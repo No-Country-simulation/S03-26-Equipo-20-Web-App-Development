@@ -2,42 +2,49 @@ import type { ProductDetailCardProps } from "../../types/product";
 
 function ProductDetailCard({ product }: ProductDetailCardProps) {
   return (
-    <div className="group bg-[#131315] p-8 rounded-lg relative overflow-hidden flex flex-col justify-center min-h-[320px] transition-all hover:bg-[#1f1f22]">
-      <div className="space-y-4 relative">
-        {/* <div className="flex items-center gap-3">
-          <span
-            className={`text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-              tag.includes("Premium")
-                ? "bg-[#9333ea]/20 text-[#9333ea]"
-                : "bg-[#cc97ff]/20 text-[#cc97ff]"
-            }`}
-          >
-            {tag}
-          </span>
-          <span className="text-[#adaaad] text-xs font-medium">
-            {updateTime}
-          </span>
-        </div> */}
-        <div>
-          <h3
-            className="text-3xl font-extrabold text-[#cc97ff] leading-tight"
-            style={{ fontFamily: "Manrope, sans-serif" }}
-          >
-            {product.name}
-          </h3>
+    <div
+      className="relative rounded-lg overflow-hidden"
+      style={{ height: "50vh", minHeight: "300px" }}
+    >
+      {product.picture && (
+        <div className="absolute inset-0 z-0">
+          <img
+            src={product.picture}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#131315] via-[#131315]/70 to-transparent" />
+        </div>
+      )}
+
+      <div className="relative z-10 h-full flex flex-col justify-end p-8">
+        {product.tags && product.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {product.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="px-3 py-1 bg-[#9333ea]/30 text-[#cc97ff] rounded-full text-sm font-medium border border-[#9333ea]/30"
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <h3
+          className="text-4xl md:text-5xl font-extrabold text-[#f9f5f8] leading-tight"
+          style={{ fontFamily: "Manrope, sans-serif" }}
+        >
+          {product.name}
+        </h3>
+
+        {product.description && (
           <p
-            className="text-[#adaaad] text-base leading-relaxed max-w-md"
+            className="text-[#adaaad] text-base leading-relaxed mt-4 max-w-2xl"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             {product.description}
           </p>
-        </div>
-        {product.picture && (
-          <img
-            src={product.picture}
-            alt={product.name}
-            className="w-full h-auto object-cover rounded-lg mt-4"
-          />
         )}
       </div>
     </div>

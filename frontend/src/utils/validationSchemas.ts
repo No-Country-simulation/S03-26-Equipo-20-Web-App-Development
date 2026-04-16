@@ -21,7 +21,7 @@ export const editProductValidationSchema = Yup.object().shape({
         .min(10, "La descripción debe tener al menos 10 caracteres")
         .required("La descripción del producto es obligatoria"),
 
-    picture: Yup.mixed().required("La imagen del producto es obligatoria")
+    picture: Yup.mixed().notRequired()
 });
 
 export const testimonialValidationSchema = Yup.object().shape({

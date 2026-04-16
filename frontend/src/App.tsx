@@ -11,6 +11,7 @@ import TagsPage from "./pages/tags/TagsPage";
 import AppProvider from "./provider/AppProvider";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { ProtectedRouteOwner } from "./routes/ProtectedRouteOwner";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -43,6 +44,31 @@ function App() {
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#1f1f22",
+            color: "#f9f5f8",
+            border: "1px solid #262528",
+            borderRadius: "0.75rem",
+            padding: "1rem",
+          },
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "#f9f5f8",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#f9f5f8",
+            },
+          },
+        }}
+      />
     </AppProvider>
   );
 }

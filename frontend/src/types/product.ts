@@ -1,14 +1,16 @@
 export interface Product {
   name: string;
   description: string;
-  picture: null;
+  picture: File | null;
+  tags: string[];
 };
 
 export interface EditProduct {
   id: string;
   name: string;
   description: string;
-  picture: null;
+  picture: File | null;
+  tags: string[];
 };
 
 export interface ListProducts {
@@ -16,6 +18,7 @@ export interface ListProducts {
   name: string;
   description: string;
   picture: string;
+  tags: { id: string; name: string; usageCount: number }[];
 };
 
 export interface ProductDetail {
@@ -41,5 +44,10 @@ export interface ListProductsCardProps {
 };
 
 export interface ProductDetailCardProps {
-  product: Product;
+  product: {
+    name: string;
+    description: string;
+    picture: string | null;
+    tags: { id: string; name: string; usageCount: number }[];
+  };
 };
