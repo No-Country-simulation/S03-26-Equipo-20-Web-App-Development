@@ -9,15 +9,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.testimonials.cms.testimonial.model.Testimonial;
 
-import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface ITestimonialRepository extends JpaRepository<Testimonial, UUID> {
-    @Query("SELECT t FROM Testimonial t " +
-            "JOIN FETCH t.visitor v " +
-            "LEFT JOIN FETCH t.medias m")
-    List<Testimonial> findAllWithRelations();
+    @Query("""
+        SELECT t FROM Testimonial t
+        JOIN FETCH t.visitor v
+        LEFT JOIN FETCH t.medias m
+        WHERE t.id = :idTestimonio
+    """)
+    Testimonial findAllWithRelations(@Param("idTestimonial") String idTestimonial);
 
     // Versión con Paginación
     @Query(value = "SELECT t FROM Testimonial t " +

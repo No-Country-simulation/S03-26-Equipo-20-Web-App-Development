@@ -204,6 +204,18 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     @Override
     @Transactional(readOnly = true)
+    public ListTestimonialsDTO getAllTestimonialsById(UUID idTestimonial) {
+
+        Optional<Testimonial> testimonialFound = testimonialRepository.findById(idTestimonial);
+
+        if (testimonialFound.isEmpty()) throw TestimonialNotFound.of(idTestimonial);
+
+        // Mapeamos cada entidad al DTO que espera el frontend
+        return testimonialMapper.toListTestimonialDTO(testimonialRepository.getReferenceById(idTestimonial));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public TestimonialResponseDTO listTestimonial(UUID idTestimonial) {
         Optional<Testimonial> testimonialFound = testimonialRepository.findById(idTestimonial);
 

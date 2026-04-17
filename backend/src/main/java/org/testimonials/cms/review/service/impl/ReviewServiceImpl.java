@@ -11,11 +11,13 @@ import org.testimonials.cms.review.exception.ReviewAlreadyExists;
 import org.testimonials.cms.review.exception.ReviewNotFound;
 import org.testimonials.cms.review.mapper.ReviewMapper;
 import org.testimonials.cms.review.model.Review;
+import org.testimonials.cms.review.model.ReviewStatus;
 import org.testimonials.cms.review.repository.IReviewRepository;
 import org.testimonials.cms.review.service.IReviewService;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
 import org.testimonials.cms.testimonial.model.Testimonial;
+import org.testimonials.cms.testimonial.model.TestimonialStatus;
 import org.testimonials.cms.testimonial.repository.ITestimonialRepository;
 
 import java.util.List;
@@ -33,16 +35,23 @@ public class ReviewServiceImpl implements IReviewService {
     @Override
     @Transactional
     public ReviewResponseDTO createReview(CustomUserPrincipal customUserPrincipal, ReviewRequestDTO reviewRequestDTO) {
-        Testimonial testimonial = testimonialRepository.findById(reviewRequestDTO.testimonial())
-                .orElseThrow(() -> TestimonialNotFound.of(reviewRequestDTO.testimonial()));
-        if (reviewRepository.existsByTestimonialAndReviewer(testimonial, customUserPrincipal.user()))
-            throw ReviewAlreadyExists.of(testimonial.getId());
+        Testimonial testimonialFound = testimonialRepository.findById(reviewRequestDTO.idTestimonial())
+                .orElseThrow(() -> TestimonialNotFound.of(reviewRequestDTO.idTestimonial()));
+        if (reviewRepository.existsByTestimonialAndReviewer(testimonialFound, customUserPrincipal.user()))
+            throw ReviewAlreadyExists.of(testimonialFound.getId());
+
+        if (reviewRequestDTO.status() == ReviewStatus.APPROVED) {
+            testimonialFound.setStatus(TestimonialStatus.PUBLISHED);
+        } else {
+            testimonialFound.setStatus(TestimonialStatus.REJECTED);
+        }
 
         Review review = reviewMapper.toReview(reviewRequestDTO);
-        review.setTestimonial(testimonial);
+        review.setTestimonial(testimonialFound);
         review.setReviewer(customUserPrincipal.user());
         review.setOrganization(new Organization(customUserPrincipal.organizationId()));
         Review newReview = reviewRepository.save(review);
+
         return reviewMapper.toReviewDTO(newReview);
     }
 

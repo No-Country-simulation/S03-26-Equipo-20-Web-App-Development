@@ -105,6 +105,21 @@ public class TestimonialController implements DefaultApiResponses {
     }
 
     @GetMapping("/all")
+    @Operation(
+            summary = "Listar todos los testimonios con visitantes y medios",
+            description = "Obtiene una lista de todos los testimonios",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de testimonios obtenida exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = TestimonialResponseDTO.class)
+                            )
+                    )
+            }
+    )
     public ResponseEntity<Page<ListTestimonialsDTO>> getTestimonials(@RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
@@ -134,6 +149,28 @@ public class TestimonialController implements DefaultApiResponses {
         TestimonialResponseDTO testimonialResponseDTO = testimonialService.listTestimonial(idTestimonial);
 
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
+    }
+
+    @GetMapping("/all/{idTestimonial}")
+    @Operation(
+            summary = "Obtener un testimonio con visitante y medio",
+            description = "Obtiene los detalles de un testimonio por su ID",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Testimonio obtenido exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = TestimonialResponseDTO.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<ListTestimonialsDTO> listTestimonialById(@PathVariable UUID idTestimonial) {
+        ListTestimonialsDTO listTestimonialsDTO = testimonialService.getAllTestimonialsById(idTestimonial);
+
+        return ResponseEntity.status(HttpStatus.OK).body(listTestimonialsDTO);
     }
 
     @PutMapping("/{idTestimonial}")

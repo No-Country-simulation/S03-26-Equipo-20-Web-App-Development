@@ -41,4 +41,18 @@ public interface TestimonialMapper {
     // Mapeo de Media (Tomando el primer elemento de la lista 'medias')
     @Mapping(target = "media.url", expression = "java(testimonial.getMedias() != null && !testimonial.getMedias().isEmpty() ? testimonial.getMedias().get(0).getUrl() : null)")
     ListTestimonialsDTO toListTestimonialsDTO(Testimonial testimonial);
+
+    @Mapping(target = "id", source = "id")
+    // Mapeo de campos directos a TestimonialResponseDTO
+    @Mapping(target = "testimonial.title", source = "title")
+    @Mapping(target = "testimonial.content", source = "content")
+    @Mapping(target = "testimonial.status", source = "status")
+    @Mapping(target = "testimonial.createdAt", source = "createdAt")
+
+    @Mapping(target = "visitor.name", source = "visitor.name")
+    @Mapping(target = "visitor.email", source = "visitor.email")
+
+    // Mapeo de Media (Tomando el primer elemento de la lista 'medias')
+    @Mapping(target = "media.url", expression = "java(testimonial.getMedias() != null && !testimonial.getMedias().isEmpty() ? testimonial.getMedias().get(0).getUrl() : null)")
+    ListTestimonialsDTO toListTestimonialDTO(Testimonial testimonial);
 }
