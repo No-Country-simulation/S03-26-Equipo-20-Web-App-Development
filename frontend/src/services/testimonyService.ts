@@ -193,17 +193,26 @@ export async function createTestimonial(
   const formData = new FormData();
   formData.append("testimonial.title", value.testimonial.title);
   formData.append("testimonial.content", value.testimonial.content);
-  if (value.media.url) {
-    formData.append("media.url", value.media.url);
-  }
-  formData.append("visitor.name", value.visitor.name);
-  formData.append("visitor.mail", value.visitor.email);
 
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/testimonials/register`, {
-    method: "POST",
-    body: formData,
-    credentials: "include",
-  });
+  if (value.visitor.name) {
+    formData.append("visitor.name", value.visitor.name);
+  }
+  if (value.visitor.email) {
+    formData.append("visitor.email", value.visitor.email);
+  }
+
+  if (value.media.type === "image" && value.media.imageFile) {
+    formData.append("media.imageFile", value.media.imageFile);
+  } else if (value.media.type === "youtube" && value.media.youtubeUrl) {
+    formData.append("media.youtubeUrl", value.media.youtubeUrl);
+  }
+
+  formData.append("shareCode", value.shareCode);
+
+  const res = await fetch(
+    `${import.meta.env.VITE_BASE_URL}/testimonials/public/register`,
+    { method: "POST", body: formData }
+  );
 
   if (!res.ok) {
     const errorData = await res.json();

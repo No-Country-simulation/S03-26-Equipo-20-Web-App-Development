@@ -28,10 +28,6 @@ function App() {
         <Route element={<ProtectedRouteOwner />}>
           <Route path="/products" element={<ProductsListPage />} />
           <Route path="/products/:idProduct" element={<DetailProductPage />} />
-          <Route
-            path="/testimonials/submit"
-            element={<SubmitTestimonyPage />}
-          />
           <Route path="/moderation" element={<PendingTestimonialsPage />} />
           <Route path="/wall-of-love" element={<WallOfLovePage />} />
 
@@ -40,6 +36,9 @@ function App() {
           <Route path="/tags" element={<TagsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
+
+        {/* Formulario público de testimonios (sin auth) */}
+        <Route path="/testimonials/submit" element={<SubmitTestimonyPage isPublic={true} />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />
