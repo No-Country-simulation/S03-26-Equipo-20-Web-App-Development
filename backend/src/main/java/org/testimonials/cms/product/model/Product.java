@@ -19,7 +19,16 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "Product")
-@Table(name = "products")
+@Table(
+        name = "products",
+        indexes = {
+                @Index(name = "idx_products_org", columnList = "organization_id"),
+                @Index(name = "idx_products_org_share", columnList = "organization_id, share_code")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_org_share_code", columnNames = {"organization_id", "share_code"})
+        }
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -28,6 +37,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(name = "name", nullable = false)
     private String name;
     private String description;
     private String picture;
@@ -49,7 +59,11 @@ public class Product {
     @JoinTable(
             name = "product_tags",
             joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
+            inverseJoinColumns = @JoinColumn(name = "tag_id"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_product_tag", columnNames = {"product_id", "tag_id"}),
+            indexes = {
+                    @Index(name = "idx_product_tags_tag", columnList = "tag_id")
+            }
     )
     private List<Tag> tags = new ArrayList<>();
     @CreatedDate

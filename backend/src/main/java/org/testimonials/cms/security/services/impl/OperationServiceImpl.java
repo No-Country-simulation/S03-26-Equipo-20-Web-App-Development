@@ -1,6 +1,7 @@
 package org.testimonials.cms.security.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.security.dto.PublicOperationDTO;
@@ -14,17 +15,22 @@ import java.util.List;
 public class OperationServiceImpl implements IOperationService {
     private final IOperationRepository operationRepository;
 
-    //Implementar Cache
+
     @Override
     @Transactional(readOnly = true)
+    @Cacheable("publicOperations")
     public List<PublicOperationDTO> getPublicOperations() {
+
         return operationRepository.findAllByPermitAllIsTrue()
                 .stream()
-                .map(op ->
-                        new PublicOperationDTO(
-                                op.getModule().getBasePath(),
-                                op.getPath(),
-                                op.getHttpMethod().name())
-                ).toList();
+                .map(op -> new PublicOperationDTO(
+                        buildFullPath(op.getModule().getBasePath(), op.getPath()),
+                        op.getHttpMethod().name()
+                ))
+                .toList();
+    }
+
+    private String buildFullPath(String base, String path) {
+        return (base + path).replaceAll("//+", "/");
     }
 }

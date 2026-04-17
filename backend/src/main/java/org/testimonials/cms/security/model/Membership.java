@@ -2,7 +2,9 @@ package org.testimonials.cms.security.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,6 +16,10 @@ import java.util.*;
 
 @Entity
 @Table(name = "memberships",
+        indexes = {
+                @Index(name = "idx_memberships_user", columnList = "user_id"),
+                @Index(name = "idx_memberships_org", columnList = "organization_id")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"user_id", "organization_id"})
         })
@@ -42,20 +48,23 @@ public class Membership {
     @JoinTable(
             name = "membership_roles",
             joinColumns = @JoinColumn(name = "membership_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"membership_id", "role_id"})
+            }
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "membership_status", nullable = false)
     private MembershipStatus status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "type", columnDefinition = "membership_type", nullable = false)
     private MembershipType type;
 
     @CreatedDate
-    @Column(name = "joined_at")
+    @Column(name = "joined_at", nullable = false, updatable = false)
     private LocalDateTime joinedAt;
 
     public Collection<GrantedAuthority> buildAuthorities() {
@@ -74,7 +83,7 @@ public class Membership {
                             ? operation.getPath()
                             : "";
 
-                    String fullPath = (basePath + path).toLowerCase().trim();
+                    String fullPath = (basePath + path).trim();
 
                     authorities.add(
                             new SimpleGrantedAuthority(

@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
     @Mapping(target = "picture", ignore = true)
+    @Mapping(target = "tags", ignore = true)
     Product toProduct(ProductRequestDTO productRequestDTO);
 
     ProductResponseDTO toProductDTO(Product product);
