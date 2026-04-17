@@ -20,6 +20,7 @@ public interface ITestimonialService {
 
     List<TestimonialResponseDTO> listAllTestimonials();
     Page<ListTestimonialsDTO> getAllTestimonials(Pageable pageable);
+    ListTestimonialsDTO getAllTestimonialsById(UUID idTestimonial);
     TestimonialResponseDTO listTestimonial(UUID idTestimonial);
     TestimonialResponseDTO updateTestimonial(UUID idTestimonial, EditTestimonialRequestDTO editTestimonialRequestDTO);
     void deleteTestimonial(UUID idTestimonial);
