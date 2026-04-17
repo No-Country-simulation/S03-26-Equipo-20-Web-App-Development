@@ -17,6 +17,7 @@ import type {
   //ShowTestimonial,
   SubmitTestimonial,
   SubmitTestimonyPayload,
+  TestimonialPage,
   Testimony,
 } from "../types/testimony";
 
@@ -211,6 +212,55 @@ export async function createTestimonial(
       "Error en el servidor: " +
       (errorData.message || "No se pudo registrar el testimonio"),
     );
+  }
+}
+
+// Lista todos los testimonios del usuario quien inició sesión
+export async function listAllTestimonials(page: number = 0,
+  size: number = 10,
+  sort: string = "createdAt,desc"): Promise<TestimonialPage> {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/testimonials/all?page=${page}&size=${size}&sort=${sort}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      const testimonials = await response.json();
+      return testimonials;
+    } else {
+      console.error("Error al obtener los productos");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error de conexión:", error);
+    return [];
+  }
+}
+
+export async function listAllVisitors() {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/visitors`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      const visitors = await response.json();
+      return visitors;
+    } else {
+      console.error("Error al obtener los visitantes");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error de conexión:", error);
+    return [];
   }
 }
 

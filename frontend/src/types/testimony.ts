@@ -37,6 +37,13 @@ export interface Testimonial {
   content: string;
 };
 
+export interface ShowTestimonial {
+  title: string;
+  content: string;
+  status: string;
+  createdAt: Date;
+};
+
 // Payload sobre Visitante
 export interface Visitor {
   name: string;
@@ -45,7 +52,7 @@ export interface Visitor {
 
 // Payload sobre Media de multimedia
 export interface Media {
-  url: null;
+  url: null | string;
 };
 
 // Payload sobre guardar el tesimonio
@@ -55,8 +62,8 @@ export interface SubmitTestimonial {
   media: Media;
 };
 
-// Payload para listar testimonios
-export interface ShowTestimonial {
+// Payload para listar un testimonio
+export interface ListTestimonial {
   id: string;
   testimonial: Testimonial;
   visitor: Visitor;
@@ -65,19 +72,36 @@ export interface ShowTestimonial {
 
 // Payload para listar testimonios
 export interface ListTestimonials {
-  id: string;
-  testimonial: Testimonial;
+  id?: string;
+  testimonial: ShowTestimonial;
   visitor: Visitor;
   media: Media;
-};
-
-// Props para el componente de tarjeta de testimonios
-export interface ListTestimonialsCardProps {
-  testimonial: ListTestimonials;
 };
 
 // Payload para moderar (aprobar/rechazar) un testimonio
 export interface ModerateTestimonyPayload {
   status: "APPROVED" | "REJECTED";
   reason?: string;
+}
+
+// Props para las tarjetas de testimonios
+export interface TestimonyCardProps {
+  testimonials: ListTestimonials;
+  isExpanded: boolean;
+  onToggle: () => void;
+  // onApprove: () => void;
+  // onReject: () => void;
+  // moderating: boolean;
+}
+
+export interface TestimonialPage {
+  content: ListTestimonials[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+  numberOfElements: number;
 }
