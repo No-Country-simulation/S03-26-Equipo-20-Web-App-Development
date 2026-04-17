@@ -17,10 +17,21 @@ public class TestimonialExceptionHandler {
     ProblemDetail handleTestimonialNotFoundException(TestimonialNotFound e, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
         problemDetail.setTitle("Testimonial not found");
-        problemDetail.setType(URI.create("http://localhost:8080/errors/testimonial-not-found"));
+        problemDetail.setType(URI.create("/errors/testimonial-not-found"));
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperty("errorCategory", "Repository");
         problemDetail.setProperty("errorCode", "TESTIMONIAL_NOT_FOUND");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+    @ExceptionHandler(Exception.class)
+    ProblemDetail handleAllExceptions(Exception e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        problemDetail.setTitle("Internal server error");
+        problemDetail.setType(URI.create("/errors/internal-server-error"));
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        problemDetail.setProperty("errorCategory", "Repository");
+        problemDetail.setProperty("errorCode", "INTERNAL_SERVER_ERROR");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }

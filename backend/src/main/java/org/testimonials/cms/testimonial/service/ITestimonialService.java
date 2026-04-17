@@ -15,6 +15,9 @@ import java.util.UUID;
 public interface ITestimonialService {
     CreateTestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal,
                                                    CreateTestimonialRequestDTO createTestimonialRequestDTO);
+
+    CreateTestimonialResponseDTO createPublicTestimonial(CreateTestimonialRequestDTO createTestimonialRequestDTO);
+
     List<TestimonialResponseDTO> listAllTestimonials();
     Page<ListTestimonialsDTO> getAllTestimonials(Pageable pageable);
     TestimonialResponseDTO listTestimonial(UUID idTestimonial);

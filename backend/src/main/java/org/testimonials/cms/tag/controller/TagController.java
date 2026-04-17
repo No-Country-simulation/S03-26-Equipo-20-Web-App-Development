@@ -21,6 +21,7 @@ import org.testimonials.cms.tag.dto.TagRequestDTO;
 import org.testimonials.cms.tag.dto.TagResponseDTO;
 import org.testimonials.cms.tag.service.ITagService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -76,6 +77,23 @@ public class TagController implements DefaultApiResponses {
         Page<TagResponseDTO> page = tagService.listAllTags(customUserPrincipal, pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(page);
+    }
+
+    @GetMapping("/top")
+    @Operation(
+            summary = "Obtener tags más usados",
+            description = "Retorna los tags más usados ordenados por usageCount",
+            security = @SecurityRequirement(name = "cookieAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Tags obtenidos exitosamente")
+            }
+    )
+    public ResponseEntity<List<TagResponseDTO>> getTopTags(
+            @RequestParam(defaultValue = "10") int limit,
+            @AuthenticationPrincipal CustomUserPrincipal customUserPrincipal) {
+        List<TagResponseDTO> topTags = tagService.findTopTags(
+                customUserPrincipal.organizationId(), limit);
+        return ResponseEntity.ok(topTags);
     }
 
     @GetMapping("/{idTag}")

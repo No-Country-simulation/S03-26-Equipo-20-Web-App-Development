@@ -59,6 +59,29 @@ public class TestimonialController implements DefaultApiResponses {
         return ResponseEntity.status(HttpStatus.CREATED).body(testimonialResponseDTO);
     }
 
+    @PostMapping("/public/register")
+    @Operation(
+            summary = "Crear testimonio público",
+            description = "Crea un testimonio sin autenticación usando shareCode del producto",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Testimonio creado exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CreateTestimonialResponseDTO.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<CreateTestimonialResponseDTO> createPublicTestimonial(
+            @ModelAttribute @Valid CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+        CreateTestimonialResponseDTO testimonialResponseDTO = testimonialService.createPublicTestimonial(
+                createTestimonialRequestDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(testimonialResponseDTO);
+    }
+
     @GetMapping
     @Operation(
             summary = "Listar todos los testimonios",

@@ -108,12 +108,11 @@ CREATE TABLE products (
                           description VARCHAR(1000),
                           picture VARCHAR(500),
                           public_id VARCHAR(255),
-                          share_code VARCHAR(255) NOT NULL,
+                          share_code VARCHAR(255) NOT NULL UNIQUE,
                           created_by UUID REFERENCES users(id) ON DELETE SET NULL,
                           organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                          CONSTRAINT unique_organization_share_code UNIQUE (organization_id, share_code)
+                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 11. Tags
@@ -141,6 +140,7 @@ CREATE TABLE testimonials (
                               status testimonial_status DEFAULT 'PENDING',
                               visitor_id UUID REFERENCES visitors(id) ON DELETE SET NULL,
                               organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+                              product_id UUID REFERENCES products(id) ON DELETE SET NULL,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -193,6 +193,7 @@ CREATE INDEX idx_membership_roles_role_id ON membership_roles(role_id);
 
 -- Products indexes
 CREATE INDEX idx_products_organization_id ON products(organization_id);
+CREATE INDEX idx_products_share_code ON products(share_code);
 
 -- Tags indexes
 CREATE INDEX idx_tags_organization_id ON tags(organization_id);
@@ -202,6 +203,7 @@ CREATE INDEX idx_product_tags_tag_id ON product_tags(tag_id);
 
 -- Testimonials indexes
 CREATE INDEX idx_testimonials_organization_id ON testimonials(organization_id);
+CREATE INDEX idx_testimonials_product_id ON testimonials(product_id);
 
 -- Reviews indexes
 CREATE INDEX idx_reviews_organization_id ON reviews(organization_id);
