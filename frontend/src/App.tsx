@@ -12,6 +12,7 @@ import AppProvider from "./provider/AppProvider";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { ProtectedRouteOwner } from "./routes/ProtectedRouteOwner";
 import { Toaster } from "react-hot-toast";
+import ModerationPage from "./pages/reviewer/ModerationPage";
 
 function App() {
   return (
@@ -29,6 +30,10 @@ function App() {
           <Route path="/products" element={<ProductsListPage />} />
           <Route path="/products/:idProduct" element={<DetailProductPage />} />
           <Route path="/moderation" element={<PendingTestimonialsPage />} />
+          <Route
+            path="/moderation/:idTestimonial"
+            element={<ModerationPage />}
+          />
           <Route path="/wall-of-love" element={<WallOfLovePage />} />
 
           {/* TODO: <Route path="/dashboard" element={<DashboardPage />} /> */}
@@ -38,7 +43,10 @@ function App() {
         </Route>
 
         {/* Formulario público de testimonios (sin auth) */}
-        <Route path="/testimonials/submit" element={<SubmitTestimonyPage isPublic={true} />} />
+        <Route
+          path="/testimonials/submit"
+          element={<SubmitTestimonyPage isPublic={true} />}
+        />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" replace />} />

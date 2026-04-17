@@ -23,10 +23,16 @@ export default function ProductsListPage() {
   const [listProducts, setListProducts] = useState<ListProducts[]>([]);
 
   // Delete modal state
-  const [deleteModalProduct, setDeleteModalProduct] = useState<{ id: string; name: string } | null>(null);
+  const [deleteModalProduct, setDeleteModalProduct] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   // Share modal state
-  const [shareModalProduct, setShareModalProduct] = useState<{ shareCode: string; name: string } | null>(null);
+  const [shareModalProduct, setShareModalProduct] = useState<{
+    shareCode: string;
+    name: string;
+  } | null>(null);
 
   // Stats states
   const [totalProducts, setTotalProducts] = useState(0);
@@ -48,7 +54,7 @@ export default function ProductsListPage() {
     try {
       const [products, topTagsData] = await Promise.all([
         listAllProducts(),
-        getTopTags(10)
+        getTopTags(10),
       ]);
 
       setTotalProducts(products.length);
@@ -63,13 +69,16 @@ export default function ProductsListPage() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastTagRef = useRef<HTMLDivElement | null>(null);
 
-  const filteredTags = availableTags.filter(tag =>
-    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
+  const filteredTags = availableTags.filter((tag) =>
+    tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase()),
   );
 
-  const searchNotExists = tagSearchQuery.trim() &&
-    !availableTags.some(t => t.name.toLowerCase() === tagSearchQuery.toLowerCase()) &&
-    !selectedTags.some(t => t.toLowerCase() === tagSearchQuery.toLowerCase());
+  const searchNotExists =
+    tagSearchQuery.trim() &&
+    !availableTags.some(
+      (t) => t.name.toLowerCase() === tagSearchQuery.toLowerCase(),
+    ) &&
+    !selectedTags.some((t) => t.toLowerCase() === tagSearchQuery.toLowerCase());
 
   const loadTags = async (page: number = 0, append: boolean = false) => {
     if (page === 0) {
@@ -82,7 +91,7 @@ export default function ProductsListPage() {
       const tagData: TagPage = await listTags(page, TAGS_PAGE_SIZE, "name,asc");
 
       if (append) {
-        setAvailableTags(prev => [...prev, ...tagData.content]);
+        setAvailableTags((prev) => [...prev, ...tagData.content]);
       } else {
         setAvailableTags(tagData.content);
       }
@@ -107,11 +116,16 @@ export default function ProductsListPage() {
     if (!observerRef.current) {
       observerRef.current = new IntersectionObserver(
         (entries) => {
-          if (entries[0].isIntersecting && hasMoreTags && !isLoadingMore && !tagSearchQuery) {
+          if (
+            entries[0].isIntersecting &&
+            hasMoreTags &&
+            !isLoadingMore &&
+            !tagSearchQuery
+          ) {
             loadMoreTags();
           }
         },
-        { threshold: 0.1 }
+        { threshold: 0.1 },
       );
     }
 
@@ -142,7 +156,7 @@ export default function ProductsListPage() {
 
   const toggleTag = (tagName: string) => {
     if (selectedTags.includes(tagName)) {
-      setSelectedTags(selectedTags.filter(t => t !== tagName));
+      setSelectedTags(selectedTags.filter((t) => t !== tagName));
     } else {
       setSelectedTags([...selectedTags, tagName]);
     }
@@ -168,7 +182,7 @@ export default function ProductsListPage() {
         const nuevoProducto = await createProduct(
           { ...values, tags: selectedTags },
           setIsModalOpen,
-          resetForm
+          resetForm,
         );
         setListProducts([nuevoProducto, ...listProducts]);
         setSelectedTags([]);
@@ -228,13 +242,13 @@ export default function ProductsListPage() {
                 className="text-[#cc97ff] font-bold uppercase tracking-widest text-xs"
                 style={{ fontFamily: "Manrope, sans-serif" }}
               >
-                Catalog Management
+                Catálogo de Productos
               </span>
               <h2
                 className="text-4xl md:text-5xl font-extrabold text-[#f9f5f8] tracking-tight"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Product Ecosystem
+                Gestión de Productos
               </h2>
             </div>
             <button
@@ -256,7 +270,7 @@ export default function ProductsListPage() {
               flex items-center justify-center gap-2"
             >
               <CirclePlus />
-              Register New Product
+              Registrar nuevo producto
             </button>
           </section>
 
@@ -265,7 +279,9 @@ export default function ProductsListPage() {
             {/* Total Products */}
             <div className="bg-[#131315] p-6 rounded-lg border-l-4 border-[#9333ea] flex flex-col justify-between min-h-[180px]">
               <div>
-                <p className="text-sm text-[#adaaad] mb-2">Total Products</p>
+                <p className="text-sm text-[#adaaad] mb-2">
+                  Total de Productos
+                </p>
                 {isLoadingStats ? (
                   <Loader2 className="animate-spin text-[#9333ea]" size={32} />
                 ) : (
@@ -281,13 +297,13 @@ export default function ProductsListPage() {
                 <div className="w-10 h-10 rounded-lg bg-[#9333ea]/20 flex items-center justify-center">
                   <Package className="text-[#9333ea]" size={20} />
                 </div>
-                <p className="text-[#adaaad] text-sm">products in catalog</p>
+                <p className="text-[#adaaad] text-sm">productos en catálogo</p>
               </div>
             </div>
 
             {/* Top Tags */}
             <div className="bg-[#131315] p-6 rounded-lg border-l-4 border-[#cc97ff] min-h-[180px]">
-              <p className="text-sm text-[#adaaad] mb-4">Top 10 Tags</p>
+              <p className="text-sm text-[#adaaad] mb-4">Top 10 Etiquetas</p>
               {isLoadingStats ? (
                 <div className="flex items-center justify-center h-[calc(100%-2rem)]">
                   <Loader2 className="animate-spin text-[#9333ea]" size={24} />
@@ -300,12 +316,16 @@ export default function ProductsListPage() {
                       className="px-3 py-1.5 bg-[#9333ea]/20 text-[#cc97ff] rounded-full text-sm font-medium flex items-center gap-1.5 border border-[#9333ea]/30"
                     >
                       {tag.name}
-                      <span className="text-xs opacity-60">({tag.usageCount})</span>
+                      <span className="text-xs opacity-60">
+                        ({tag.usageCount})
+                      </span>
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-[#adaaad]/60 text-sm">No tags available</p>
+                <p className="text-[#adaaad]/60 text-sm">
+                  Etiquetas no disponibles
+                </p>
               )}
             </div>
           </section>
@@ -317,7 +337,9 @@ export default function ProductsListPage() {
                 key={product.id}
                 product={product}
                 onDelete={() => handleDelete(product.id, product.name)}
-                onGenerateLink={(shareCode, name) => setShareModalProduct({ shareCode, name })}
+                onGenerateLink={(shareCode, name) =>
+                  setShareModalProduct({ shareCode, name })
+                }
               />
             ))}
           </div>
@@ -328,9 +350,12 @@ export default function ProductsListPage() {
       {deleteModalProduct && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[#131315] p-6 rounded-xl w-full max-w-sm border border-[#262528]">
-            <h3 className="text-xl font-bold text-[#f9f5f8] mb-2">¿Eliminar producto?</h3>
+            <h3 className="text-xl font-bold text-[#f9f5f8] mb-2">
+              ¿Eliminar producto?
+            </h3>
             <p className="text-[#adaaad] mb-6">
-              ¿Estás seguro de eliminar "{deleteModalProduct.name}"? Esta acción no se puede deshacer.
+              ¿Estás seguro de eliminar "{deleteModalProduct.name}"? Esta acción
+              no se puede deshacer.
             </p>
             <div className="flex gap-3">
               <button
@@ -364,7 +389,9 @@ export default function ProductsListPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-[#131315] p-6 rounded-xl w-full max-w-lg border border-[#262528] max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-[#f9f5f8]">Nuevo producto</h3>
+              <h3 className="text-xl font-bold text-[#f9f5f8]">
+                Nuevo producto
+              </h3>
               <button
                 onClick={handleCloseModal}
                 className="text-[#adaaad] hover:text-[#f9f5f8] transition-colors"
@@ -388,7 +415,9 @@ export default function ProductsListPage() {
                   onChange={formik.handleChange}
                 />
                 {formik.touched.name && formik.errors.name && (
-                  <p className="text-red-400 text-xs mt-1">{formik.errors.name}</p>
+                  <p className="text-red-400 text-xs mt-1">
+                    {formik.errors.name}
+                  </p>
                 )}
               </div>
 
@@ -406,7 +435,9 @@ export default function ProductsListPage() {
                   onChange={formik.handleChange}
                 />
                 {formik.touched.description && formik.errors.description && (
-                  <p className="text-red-400 text-xs mt-1">{formik.errors.description}</p>
+                  <p className="text-red-400 text-xs mt-1">
+                    {formik.errors.description}
+                  </p>
                 )}
               </div>
 
@@ -427,7 +458,9 @@ export default function ProductsListPage() {
                   }}
                 />
                 {formik.touched.picture && formik.errors.picture && (
-                  <p className="text-red-400 text-xs mt-1">{formik.errors.picture}</p>
+                  <p className="text-red-400 text-xs mt-1">
+                    {formik.errors.picture}
+                  </p>
                 )}
               </div>
 
@@ -439,14 +472,19 @@ export default function ProductsListPage() {
                   </label>
                   {totalTags > 0 && (
                     <span className="text-xs text-[#adaaad]/60">
-                      {tagSearchQuery ? `${filteredTags.length} resultado(s)` : `${availableTags.length} de ${totalTags}`}
+                      {tagSearchQuery
+                        ? `${filteredTags.length} resultado(s)`
+                        : `${availableTags.length} de ${totalTags}`}
                     </span>
                   )}
                 </div>
 
                 {/* Buscador */}
                 <div className="relative mb-3">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#adaaad]/50" size={16} />
+                  <Search
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#adaaad]/50"
+                    size={16}
+                  />
                   <input
                     type="text"
                     className="w-full pl-10 pr-4 py-2.5 bg-[#1f1f22] border border-[#262528] rounded-lg text-[#f9f5f8] text-sm focus:border-[#9333ea] focus:outline-none transition-colors placeholder:text-[#adaaad]/40"
@@ -469,7 +507,10 @@ export default function ProductsListPage() {
                 <div className="max-h-48 overflow-y-auto mb-3 scrollbar-thin scrollbar-thumb-[#262528] scrollbar-track-transparent">
                   {isLoadingTags ? (
                     <div className="flex items-center justify-center py-8">
-                      <Loader2 className="animate-spin text-[#9333ea]" size={24} />
+                      <Loader2
+                        className="animate-spin text-[#9333ea]"
+                        size={24}
+                      />
                     </div>
                   ) : filteredTags.length === 0 && !searchNotExists ? (
                     <div className="text-center py-6 text-[#adaaad]/60 text-sm">
@@ -493,7 +534,9 @@ export default function ProductsListPage() {
                           )}
                           {tag.name}
                           {tag.usageCount > 0 && (
-                            <span className="text-xs opacity-60">({tag.usageCount})</span>
+                            <span className="text-xs opacity-60">
+                              ({tag.usageCount})
+                            </span>
                           )}
                         </button>
                       ))}
@@ -508,7 +551,10 @@ export default function ProductsListPage() {
                   {/* Loading more */}
                   {isLoadingMore && (
                     <div className="flex items-center justify-center py-4">
-                      <Loader2 className="animate-spin text-[#9333ea]/60" size={20} />
+                      <Loader2
+                        className="animate-spin text-[#9333ea]/60"
+                        size={20}
+                      />
                     </div>
                   )}
                 </div>
@@ -529,14 +575,18 @@ export default function ProductsListPage() {
                 {selectedTags.length > 0 && (
                   <div className="mt-4 p-3 bg-[#1f1f22] rounded-lg border border-[#262528]">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-[#adaaad] font-medium">Tags seleccionadas</span>
+                      <span className="text-xs text-[#adaaad] font-medium">
+                        Etiquetas seleccionadas
+                      </span>
                       <span className="px-1.5 py-0.5 bg-[#9333ea]/20 text-[#cc97ff] rounded text-xs font-bold">
                         {selectedTags.length}
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {selectedTags.map((tagName) => {
-                        const isNew = !availableTags.some(t => t.name === tagName);
+                        const isNew = !availableTags.some(
+                          (t) => t.name === tagName,
+                        );
                         return (
                           <span
                             key={tagName}
@@ -546,7 +596,9 @@ export default function ProductsListPage() {
                                 : "bg-[#9333ea]/20 text-[#cc97ff]"
                             }`}
                           >
-                            {isNew && <span className="w-1.5 h-1.5 bg-[#22c55e] rounded-full" />}
+                            {isNew && (
+                              <span className="w-1.5 h-1.5 bg-[#22c55e] rounded-full" />
+                            )}
                             {tagName}
                             <button
                               type="button"

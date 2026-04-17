@@ -11,12 +11,19 @@ import {
 } from "lucide-react";
 import type { TestimonyCardProps } from "../../types/testimony";
 import { formatDate, truncar } from "../../utils/formatters";
+import { NavLink } from "react-router-dom";
 
 export default function TestimonyCard({
   testimonials,
   isExpanded,
   onToggle,
 }: TestimonyCardProps) {
+  const style = {
+    color: "white",
+    cursor: "pointer",
+    textDecoration: "none",
+  };
+
   return (
     <article className="bg-[#131315] rounded-xl border border-[#262528] overflow-hidden transition-all hover:border-[#9333ea]/30 group">
       {/* Encabezado de la tarjeta */}
@@ -75,15 +82,14 @@ export default function TestimonyCard({
             Rechazar
           </button>
         </div> */}
-        <button
-          id={`aprobar-${testimonials.id}`}
+        <NavLink
+          to={`/moderation/${testimonials.id}`}
+          style={style}
           className="px-3 py-3
               bg-gradient-to-br from-[#aa3bff] to-[#7c3aed]
-              text-white
               rounded-[10px]
               text-[15px]
               font-semibold
-              cursor-pointer
               transition-all duration-200
               shadow-[0_4px_18px_rgba(170,59,255,0.35)]
               relative
@@ -95,7 +101,7 @@ export default function TestimonyCard({
         >
           Revisar testimonio
           <ArrowRight />
-        </button>
+        </NavLink>
       </div>
 
       {/* Previsualización / texto expandido */}
@@ -127,7 +133,7 @@ export default function TestimonyCard({
         )}
       </div>
 
-      {/* Link de video */}
+      {/* Link de la foto */}
       {testimonials.media.url && (
         <div className="px-5 pb-4">
           <a
