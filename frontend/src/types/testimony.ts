@@ -59,7 +59,12 @@ export interface Media {
 export interface SubmitTestimonial {
   testimonial: Testimonial;
   visitor: Visitor;
-  media: Media;
+  media: {
+    type: "image" | "youtube" | null;
+    imageFile?: File | null;
+    youtubeUrl?: string;
+  };
+  shareCode: string;
 };
 
 // Payload para listar un testimonio

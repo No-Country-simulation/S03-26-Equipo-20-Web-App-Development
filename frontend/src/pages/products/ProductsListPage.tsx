@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import { CirclePlus, Plus, X, Search, Loader2, Package } from "lucide-react";
 import Header from "../../components/Header";
 import ProductCard from "../../components/products/ProductCard";
+import { ShareLinkModal } from "../../components/ShareLinkModal";
 import { useFormik } from "formik";
 import { productValidationSchema } from "../../utils/validationSchemas";
 import {
@@ -23,6 +24,9 @@ export default function ProductsListPage() {
 
   // Delete modal state
   const [deleteModalProduct, setDeleteModalProduct] = useState<{ id: string; name: string } | null>(null);
+
+  // Share modal state
+  const [shareModalProduct, setShareModalProduct] = useState<{ shareCode: string; name: string } | null>(null);
 
   // Stats states
   const [totalProducts, setTotalProducts] = useState(0);
@@ -313,6 +317,7 @@ export default function ProductsListPage() {
                 key={product.id}
                 product={product}
                 onDelete={() => handleDelete(product.id, product.name)}
+                onGenerateLink={(shareCode, name) => setShareModalProduct({ shareCode, name })}
               />
             ))}
           </div>
@@ -343,6 +348,15 @@ export default function ProductsListPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal Compartir Enlace */}
+      {shareModalProduct && (
+        <ShareLinkModal
+          shareCode={shareModalProduct.shareCode}
+          productName={shareModalProduct.name}
+          onClose={() => setShareModalProduct(null)}
+        />
       )}
 
       {/* Modal Crear Producto */}

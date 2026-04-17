@@ -1,5 +1,5 @@
 import { toast } from "react-hot-toast";
-import type { ListProducts, Product } from "../types/product";
+import type { ListProducts, Product, ProductPublic } from "../types/product";
 
 // Servicio para crear un nuevo producto
 export async function createProduct(values: Product, setIsModalOpen: (isOpen: boolean) => void, resetForm: () => void): Promise<ListProducts> {
@@ -130,5 +130,18 @@ export async function deleteProduct(idProduct: string): Promise<void> {
         }
     } catch (error) {
         console.error("Error de conexión:", error);
+    }
+}
+
+export async function getProductByShareCode(shareCode: string): Promise<ProductPublic | null> {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/products/public/${shareCode}`);
+        if (response.ok) {
+            return response.json();
+        }
+        return null;
+    } catch (error) {
+        console.error("Error al obtener producto por shareCode:", error);
+        return null;
     }
 }

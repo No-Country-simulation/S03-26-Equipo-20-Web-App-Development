@@ -1,23 +1,22 @@
-import { useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
   BadgeCheck,
-  //FileVideo,
   Mail,
   Quote,
   User,
   CheckCircle2,
   AlertCircle,
   FileImage,
+  Video,
 } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import {
   createTestimonial,
-  // submitTestimony,
 } from "../../services/testimonyService";
-// import type { SubmitTestimonyPayload } from "../../types/testimony";
+import { getProductByShareCode, type ProductPublic } from "../../services/productService";
 import { useFormik } from "formik";
 import { createTestimonialValidationSchema } from "../../utils/validationSchemas";
 
@@ -57,20 +56,36 @@ import { createTestimonialValidationSchema } from "../../utils/validationSchemas
 //   return errors;
 // }
 
+// ─── Props Interface ───────────────────────────────────────────────────────────
+
+interface Props {
+  isPublic?: boolean;
+}
+
 // ─── Componente ────────────────────────────────────────────────────────────────
 
-export default function SubmitTestimonyPage() {
-  // const navigate = useNavigate();
+export default function SubmitTestimonyPage({ isPublic = false }: Props) {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  // const [form, setForm] = useState<FormState>({
-  //   headline: "",
-  //   story: "",
-  //   videoUrl: "",
-  //   fullName: "",
-  //   email: "",
-  // });
+  const [product, setProduct] = useState<ProductPublic | null>(null);
+  const isEmbedded = typeof window !== "undefined" && window.self !== window.top;
 
-  // const [errors, setErrors] = useState<FormErrors>({});
+  // Validar share_code y cargar producto en modo público
+  useEffect(() => {
+    if (isPublic) {
+      const shareCode = searchParams.get("share_code");
+      if (!shareCode) {
+        navigate("/", { replace: true });
+        return;
+      }
+      // Cargar producto solo si NO está embebido (en pestaña nueva)
+      if (!isEmbedded) {
+        getProductByShareCode(shareCode).then(setProduct);
+      }
+    }
+  }, [isPublic, searchParams, navigate, isEmbedded]);
+
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -87,7 +102,9 @@ export default function SubmitTestimonyPage() {
         email: "",
       },
       media: {
-        url: null,
+        type: null as "image" | "youtube" | null,
+        imageFile: null as File | null,
+        youtubeUrl: "",
       },
     },
     validationSchema: createTestimonialValidationSchema,
@@ -95,8 +112,13 @@ export default function SubmitTestimonyPage() {
       setStatus("loading");
       setServerError(null);
 
+      const shareCode = searchParams.get("share_code") || "";
+
       try {
-        await createTestimonial(values);
+        await createTestimonial({
+          ...values,
+          shareCode,
+        });
         setStatus("success");
       } catch (error) {
         setServerError(
@@ -149,53 +171,321 @@ export default function SubmitTestimonyPage() {
   // ── Estado de éxito ───────────────────────────────────────────────────────────
 
   if (status === "success") {
+    const successContent = (
+      <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
+        <div className="mx-auto w-20 h-20 rounded-full bg-[#9333ea]/20 flex items-center justify-center">
+          <CheckCircle2 className="w-10 h-10 text-[#9333ea]" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-extrabold text-[#f9f5f8]">
+            ¡Testimonio enviado!
+          </h2>
+          <p className="text-[#adaaad]">
+            Gracias por compartir tu experiencia. Tu testimonio está en
+            revisión y se publicará una vez que sea aprobado.
+          </p>
+        </div>
+      </div>
+    );
+
+    if (isPublic) {
+      return (
+        <div className="min-h-screen bg-[#0e0e10] text-white flex items-center justify-center p-6">
+          {successContent}
+        </div>
+      );
+    }
+
     return (
       <div className="flex bg-[#0e0e10] text-white min-h-screen">
         <Sidebar />
         <main className="md:ml-64 min-h-screen flex-1 flex items-center justify-center p-8">
-          <div className="max-w-md w-full text-center space-y-6 animate-fade-in">
-            <div className="mx-auto w-20 h-20 rounded-full bg-[#9333ea]/20 flex items-center justify-center">
-              <CheckCircle2 className="w-10 h-10 text-[#9333ea]" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-3xl font-extrabold text-[#f9f5f8]">
-                ¡Testimonio enviado!
-              </h2>
-              <p className="text-[#adaaad]">
-                Gracias por compartir tu experiencia. Tu testimonio está en
-                revisión y se publicará una vez que sea aprobado.
-              </p>
-            </div>
-            {/* <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <button
-                onClick={() => {
-                  setForm({
-                    headline: "",
-                    story: "",
-                    videoUrl: "",
-                    fullName: "",
-                    email: "",
-                  });
-                  setStatus("idle");
-                }}
-                className="px-5 py-2.5 bg-[#1f1f22] text-[#f9f5f8] rounded-lg font-semibold hover:bg-[#2a2a2e] transition-colors"
-              >
-                Enviar otro
-              </button>
-              <button
-                onClick={() => navigate("/moderation")}
-                className="px-5 py-2.5 bg-gradient-to-br from-[#aa3bff] to-[#7c3aed] text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              >
-                Ver pendientes
-              </button>
-            </div> */}
-          </div>
+          {successContent}
         </main>
       </div>
     );
   }
 
-  // ── Estado normal ─────────────────────────────────────────────────────────────
+  // ── Estado normal - Modo público ────────────────────────────────────────────
+
+  if (isPublic) {
+    return (
+      <div className="min-h-screen bg-[#0e0e10] text-white flex items-center justify-center p-6">
+        <div className="w-full max-w-2xl">
+          {/* Banner de producto - Solo mostrar si NO está embebido y hay producto */}
+          {!isEmbedded && product && (
+            <div className="mb-8 bg-[#131315] rounded-xl overflow-hidden border border-[#262528]">
+              <div className="flex items-center gap-6">
+                {product.picture && (
+                  <div className="w-32 h-32 flex-shrink-0">
+                    <img
+                      src={product.picture}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 py-4 pr-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#9333ea] mb-1">
+                    Producto
+                  </p>
+                  <h3 className="text-xl font-extrabold text-[#f9f5f8] leading-tight">
+                    {product.name}
+                  </h3>
+                  {product.description && (
+                    <p className="text-[#adaaad] text-sm mt-2 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Encabezado */}
+          <section className="mb-10 text-center">
+            <span className="text-[#cc97ff] font-bold uppercase tracking-widest text-xs">
+              Compartí tu experiencia
+            </span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#f9f5f8] mt-2 tracking-tight">
+              Enviar testimonio
+            </h2>
+            <p className="text-[#adaaad] mt-4 max-w-xl mx-auto">
+              Tu opinión ayuda a miles de investigadores y profesionales a
+              encontrar las herramientas correctas. Compartí tu experiencia con
+              la comunidad.
+            </p>
+          </section>
+
+          {/* Formulario */}
+          <form
+            id="submit-testimony-form"
+            onSubmit={formik.handleSubmit}
+            className="space-y-6"
+          >
+            {/* Banner de error del servidor */}
+            {status === "error" && serverError && (
+              <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {serverError}
+              </div>
+            )}
+
+            {/* Titular */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                Titular del testimonio
+              </label>
+              <div className="relative">
+                <Quote className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                <input
+                  type="text"
+                  name="testimonial.title"
+                  value={formik.values.testimonial.title}
+                  onChange={formik.handleChange}
+                  placeholder="Ej: Transformó por completo nuestro laboratorio"
+                  className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                />
+              </div>
+              {formik.touched.testimonial?.title && formik.errors.testimonial?.title && (
+                <div className="bg-red-500 text-white p-2 rounded">
+                  <span>{formik.errors.testimonial?.title}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Historia */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                Tu historia
+              </label>
+              <textarea
+                name="testimonial.content"
+                value={formik.values.testimonial.content}
+                onChange={formik.handleChange}
+                rows={6}
+                placeholder="¿Cómo impactó este producto en tu flujo de trabajo? Sé lo más específico posible."
+                className="w-full px-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none resize-none transition-all"
+              />
+              <div className="flex items-center justify-between">
+                {formik.touched.testimonial?.content && formik.errors.testimonial?.content && (
+                  <div className="bg-red-500 text-white p-2 rounded">
+                    <span>{formik.errors.testimonial?.content}</span>
+                  </div>
+                )}
+                <span
+                  className={`text-xs tabular-nums ml-auto ${
+                    formik.values.testimonial.content.length < 30
+                      ? "text-[#adaaad]/50"
+                      : "text-[#9333ea]"
+                  }`}
+                >
+                  {formik.values.testimonial.content.length} caracteres
+                </span>
+              </div>
+            </div>
+
+            {/* Selector de medios */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                Medios{" "}
+                <span className="normal-case font-normal text-[#adaaad]/50">
+                  (opcional)
+                </span>
+              </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    formik.setFieldValue("media.type", "image");
+                    formik.setFieldValue("media.youtubeUrl", "");
+                  }}
+                  className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
+                    formik.values.media.type === "image"
+                      ? "bg-[#9333ea] border-[#9333ea] text-white"
+                      : "bg-[#1f1f22] border-[#262528] text-[#adaaad] hover:border-[#9333ea]"
+                  }`}
+                >
+                  <FileImage size={18} className="inline mr-2" />
+                  Imagen
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    formik.setFieldValue("media.type", "youtube");
+                    formik.setFieldValue("media.imageFile", null);
+                  }}
+                  className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
+                    formik.values.media.type === "youtube"
+                      ? "bg-[#9333ea] border-[#9333ea] text-white"
+                      : "bg-[#1f1f22] border-[#262528] text-[#adaaad] hover:border-[#9333ea]"
+                  }`}
+                >
+                  <Video size={18} className="inline mr-2" />
+                  YouTube
+                </button>
+              </div>
+            </div>
+
+            {/* Campo condicional según tipo de media */}
+            {formik.values.media.type === "image" && (
+              <div className="relative">
+                <FileImage className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => {
+                    const file = event.currentTarget.files
+                      ? event.currentTarget.files[0]
+                      : null;
+                    formik.setFieldValue("media.imageFile", file);
+                  }}
+                  className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                />
+              </div>
+            )}
+
+            {formik.values.media.type === "youtube" && (
+              <div className="relative">
+                <Video className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                <input
+                  type="url"
+                  placeholder="https://www.youtube.com/watch?v=example"
+                  value={formik.values.media.youtubeUrl}
+                  onChange={(event) => {
+                    formik.setFieldValue("media.youtubeUrl", event.target.value);
+                  }}
+                  className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                />
+              </div>
+            )}
+
+              {/* Nombre + Email */}
+              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                  Nombre completo
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                  <input
+                    type="text"
+                    name="visitor.name"
+                    value={formik.values.visitor.name}
+                    onChange={formik.handleChange}
+                    placeholder="Dra. Ana García"
+                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                  />
+                </div>
+                {formik.touched.visitor?.name && formik.errors.visitor?.name && (
+                  <div className="bg-red-500 text-white p-2 rounded">
+                    <span>{formik.errors.visitor?.name}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                  <input
+                    type="email"
+                    name="visitor.email"
+                    value={formik.values.visitor.email}
+                    onChange={formik.handleChange}
+                    placeholder="ana.garcia@universidad.edu.ar"
+                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                  />
+                </div>
+                {formik.touched.visitor?.email && formik.errors.visitor?.email && (
+                  <div className="bg-red-500 text-white p-2 rounded">
+                    <span>{formik.errors.visitor?.email}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Botón de envío */}
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-xl font-bold text-base
+                bg-gradient-to-br from-[#aa3bff] to-[#7c3aed] text-white
+                shadow-[0_4px_24px_rgba(170,59,255,0.4)]
+                hover:shadow-[0_4px_32px_rgba(170,59,255,0.6)]
+                hover:opacity-90
+                active:scale-[0.98]
+                transition-all duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+            >
+              {status === "loading" ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Enviando…
+                </>
+              ) : (
+                <>
+                  Publicar mi testimonio
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
+
+            <p className="text-center text-[10px] text-[#adaaad]/50 uppercase tracking-widest">
+              Al enviar, aceptás nuestras{" "}
+              <a href="#" className="text-[#9333ea] hover:underline">
+                Pautas editoriales
+              </a>
+            </p>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Estado normal - Modo CMS ─────────────────────────────────────────────────
 
   return (
     <div className="flex bg-[#0e0e10] text-white min-h-screen">
@@ -329,68 +619,80 @@ export default function SubmitTestimonyPage() {
                   </span>
                 </div>
               </div>
-              {/*${
-                      errors.story
-                        ? "border-red-500/60 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                        : "border-[#262528] focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                    }*/}
 
-              {/* Video URL */}
-              {/* <div className="space-y-2">
-                <label
-                  htmlFor="videoUrl"
-                  className="text-xs font-bold uppercase tracking-widest text-[#adaaad]"
-                >
-                  Experiencia en video{" "}
+              {/* Selector de medios */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
+                  Medios{" "}
                   <span className="normal-case font-normal text-[#adaaad]/50">
                     (opcional)
                   </span>
                 </label>
-                <div className="relative">
-                  <FileVideo className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
-                  <input
-                    id="videoUrl"
-                    name="videoUrl"
-                    type="url"
-                    value={form.videoUrl}
-                    onChange={handleChange}
-                    placeholder="Pegá un link de YouTube o Vimeo"
-                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
-                  />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      formik.setFieldValue("media.type", "image");
+                      formik.setFieldValue("media.youtubeUrl", "");
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
+                      formik.values.media.type === "image"
+                        ? "bg-[#9333ea] border-[#9333ea] text-white"
+                        : "bg-[#1f1f22] border-[#262528] text-[#adaaad] hover:border-[#9333ea]"
+                    }`}
+                  >
+                    <FileImage size={18} className="inline mr-2" />
+                    Imagen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      formik.setFieldValue("media.type", "youtube");
+                      formik.setFieldValue("media.imageFile", null);
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
+                      formik.values.media.type === "youtube"
+                        ? "bg-[#9333ea] border-[#9333ea] text-white"
+                        : "bg-[#1f1f22] border-[#262528] text-[#adaaad] hover:border-[#9333ea]"
+                    }`}
+                  >
+                    <Video size={18} className="inline mr-2" />
+                    YouTube
+                  </button>
                 </div>
-              </div> */}
+              </div>
 
-              <div className="space-y-2">
-                <label
-                  htmlFor="imagen"
-                  className="text-xs font-bold uppercase tracking-widest text-[#adaaad]"
-                >
-                  Experiencia en imagen
-                </label>
+              {formik.values.media.type === "image" && (
                 <div className="relative">
                   <FileImage className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
                   <input
-                    // id="videoUrl"
-                    // name="videoUrl"
                     type="file"
-                    // value={form.videoUrl}
-                    // onChange={handleChange}
+                    accept="image/*"
                     onChange={(event) => {
                       const file = event.currentTarget.files
                         ? event.currentTarget.files[0]
                         : null;
-                      formik.setFieldValue("media.url", file);
+                      formik.setFieldValue("media.imageFile", file);
                     }}
-                    placeholder="Pegá una imagen"
-                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20"
+                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                   />
                 </div>
-                {formik.touched.media?.url && formik.errors.media?.url && (
-                  <div className="bg-red-500 text-white p-2 rounded mb-3">
-                    <span>{formik.errors.media?.url}</span>
-                  </div>
-                )}
-              </div>
+              )}
+
+              {formik.values.media.type === "youtube" && (
+                <div className="relative">
+                  <Video className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />
+                  <input
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=example"
+                    value={formik.values.media.youtubeUrl}
+                    onChange={(event) => {
+                      formik.setFieldValue("media.youtubeUrl", event.target.value);
+                    }}
+                    className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
+                  />
+                </div>
+              )}
 
               {/* Nombre + Email */}
               <div className="grid sm:grid-cols-2 gap-4">

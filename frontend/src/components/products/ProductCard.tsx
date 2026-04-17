@@ -1,8 +1,8 @@
-import { Info, Link, Trash } from "lucide-react";
+import { Info, Link as LinkIcon, Trash } from "lucide-react";
 import type { ListProductsCardProps } from "../../types/product";
 import { NavLink } from "react-router-dom";
 
-function ProductCard({ product, onDelete }: ListProductsCardProps) {
+function ProductCard({ product, onDelete, onGenerateLink }: ListProductsCardProps) {
   const style = {
     color: "black",
     cursor: "pointer",
@@ -60,8 +60,11 @@ function ProductCard({ product, onDelete }: ListProductsCardProps) {
 
       {/* Botones */}
       <div className="relative z-10 flex gap-2 mt-6">
-        <button className="bg-[#1f1f22] text-[#f9f5f8] px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_4px_18px_rgba(170,59,255,0.35)] transition-all duration-350 hover:bg-[#9333ea] hover:text-white hover:shadow-lg active:scale-95 active:shadow-none active:translate-y-0.5 flex-1">
-          <Link size={18} />
+        <button
+          onClick={() => onGenerateLink?.(product.shareCode, product.name)}
+          className="bg-[#1f1f22] text-[#f9f5f8] px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_4px_18px_rgba(170,59,255,0.35)] transition-all duration-350 hover:bg-[#9333ea] hover:text-white hover:shadow-lg active:scale-95 active:shadow-none active:translate-y-0.5 flex-1"
+        >
+          <LinkIcon size={18} />
           <span className="hidden sm:inline">Generar enlace</span>
         </button>
         <NavLink
