@@ -29,9 +29,24 @@ export interface AuthUser {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: AuthUser;
+  id?: string;
+  name: string;
+  logo: string;
+  userEmail: string;
+  userName: string;
+  role: string;
 }
+
+export interface AuthMeUser {
+  userName: string;
+  role: string;
+};
+
+export interface AuthUserResponse {
+  id?: string;
+  userName: string;
+  role: string;
+};
 
 export interface AuthError {
   message: string;

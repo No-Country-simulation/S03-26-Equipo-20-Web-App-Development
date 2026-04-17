@@ -1,3 +1,90 @@
 spring:
   application:
     name: cms
+  profiles:
+    active: prod
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=10m
+
+# JWT KEYS
+jwt:
+  key:
+    signer:
+      public: ${JWT_KEY_SIGNER_PUBLIC}
+      private: ${JWT_KEY_SIGNER_PRIVATE}
+  token:
+    expiration-in-minutes: ${JWT_TOKEN_EXPIRATION}
+cookie:
+  jwt:
+    expiration-in-days: ${COOKIE_JWT_EXPIRATION}
+
+# - Configuración swagger
+springdoc:
+  swagger-ui:
+    path: /docs/swagger-ui.html
+    operationsSorter: method
+    display-request-duration: true
+  api-docs:
+    path: /docs/v3/api-docs
+
+# Información compartida para Actuator Info y Swagger
+info:
+  app:
+    name: Testimonial CMS API
+    version: 1.0.0
+    description: Backend para Gestión de Testimonios (Edtech)
+    server: ${server.servlet.context-path}
+  
+# Configuración del JWT (Para que coincida con tu filtro manual)
+auth:
+  cookie:
+    name: jwt
+
+# Cloudinary Config
+cloudinary:
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+
+# Spring Cloud OpenFeign Resilience4j
+feign:
+  circuitbreaker:
+    enabled: true
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+    instances:
+      cloudinary-client:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 2s
+    instances:
+      cloudinary-client:
+        baseConfig: default
