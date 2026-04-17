@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { createTestimonial } from "../../services/testimonyService";
 import {
-  createTestimonial,
-} from "../../services/testimonyService";
-import { getProductByShareCode, type ProductPublic } from "../../services/productService";
+  getProductByShareCode,
+  type ProductPublic,
+} from "../../services/productService";
 import { useFormik } from "formik";
 import { createTestimonialValidationSchema } from "../../utils/validationSchemas";
 
@@ -69,7 +70,8 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<ProductPublic | null>(null);
-  const isEmbedded = typeof window !== "undefined" && window.self !== window.top;
+  const isEmbedded =
+    typeof window !== "undefined" && window.self !== window.top;
 
   // Validar share_code y cargar producto en modo público
   useEffect(() => {
@@ -181,8 +183,8 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
             ¡Testimonio enviado!
           </h2>
           <p className="text-[#adaaad]">
-            Gracias por compartir tu experiencia. Tu testimonio está en
-            revisión y se publicará una vez que sea aprobado.
+            Gracias por compartir tu experiencia. Tu testimonio está en revisión
+            y se publicará una vez que sea aprobado.
           </p>
         </div>
       </div>
@@ -287,11 +289,12 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                   className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                 />
               </div>
-              {formik.touched.testimonial?.title && formik.errors.testimonial?.title && (
-                <div className="bg-red-500 text-white p-2 rounded">
-                  <span>{formik.errors.testimonial?.title}</span>
-                </div>
-              )}
+              {formik.touched.testimonial?.title &&
+                formik.errors.testimonial?.title && (
+                  <div className="bg-red-500 text-white p-2 rounded">
+                    <span>{formik.errors.testimonial?.title}</span>
+                  </div>
+                )}
             </div>
 
             {/* Historia */}
@@ -308,11 +311,12 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                 className="w-full px-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none resize-none transition-all"
               />
               <div className="flex items-center justify-between">
-                {formik.touched.testimonial?.content && formik.errors.testimonial?.content && (
-                  <div className="bg-red-500 text-white p-2 rounded">
-                    <span>{formik.errors.testimonial?.content}</span>
-                  </div>
-                )}
+                {formik.touched.testimonial?.content &&
+                  formik.errors.testimonial?.content && (
+                    <div className="bg-red-500 text-white p-2 rounded">
+                      <span>{formik.errors.testimonial?.content}</span>
+                    </div>
+                  )}
                 <span
                   className={`text-xs tabular-nums ml-auto ${
                     formik.values.testimonial.content.length < 30
@@ -393,15 +397,18 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                   placeholder="https://www.youtube.com/watch?v=example"
                   value={formik.values.media.youtubeUrl}
                   onChange={(event) => {
-                    formik.setFieldValue("media.youtubeUrl", event.target.value);
+                    formik.setFieldValue(
+                      "media.youtubeUrl",
+                      event.target.value,
+                    );
                   }}
                   className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                 />
               </div>
             )}
 
-              {/* Nombre + Email */}
-              <div className="grid sm:grid-cols-2 gap-4">
+            {/* Nombre + Email */}
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
                   Nombre completo
@@ -417,11 +424,12 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                     className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                   />
                 </div>
-                {formik.touched.visitor?.name && formik.errors.visitor?.name && (
-                  <div className="bg-red-500 text-white p-2 rounded">
-                    <span>{formik.errors.visitor?.name}</span>
-                  </div>
-                )}
+                {formik.touched.visitor?.name &&
+                  formik.errors.visitor?.name && (
+                    <div className="bg-red-500 text-white p-2 rounded">
+                      <span>{formik.errors.visitor?.name}</span>
+                    </div>
+                  )}
               </div>
 
               <div className="space-y-2">
@@ -439,11 +447,12 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                     className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                   />
                 </div>
-                {formik.touched.visitor?.email && formik.errors.visitor?.email && (
-                  <div className="bg-red-500 text-white p-2 rounded">
-                    <span>{formik.errors.visitor?.email}</span>
-                  </div>
-                )}
+                {formik.touched.visitor?.email &&
+                  formik.errors.visitor?.email && (
+                    <div className="bg-red-500 text-white p-2 rounded">
+                      <span>{formik.errors.visitor?.email}</span>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -623,10 +632,7 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
               {/* Selector de medios */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
-                  Medios{" "}
-                  <span className="normal-case font-normal text-[#adaaad]/50">
-                    (opcional)
-                  </span>
+                  Medios
                 </label>
                 <div className="flex gap-2">
                   <button
@@ -687,7 +693,10 @@ export default function SubmitTestimonyPage({ isPublic = false }: Props) {
                     placeholder="https://www.youtube.com/watch?v=example"
                     value={formik.values.media.youtubeUrl}
                     onChange={(event) => {
-                      formik.setFieldValue("media.youtubeUrl", event.target.value);
+                      formik.setFieldValue(
+                        "media.youtubeUrl",
+                        event.target.value,
+                      );
                     }}
                     className="w-full pl-10 pr-4 py-3 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] placeholder:text-[#adaaad]/40 outline-none transition-all"
                   />

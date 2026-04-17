@@ -52,7 +52,7 @@ export default function DashboardPage() {
           <StatCard />
 
           {/* Activity Feed */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-surface-container-low rounded-3xl overflow-hidden">
               <div className="p-8 border-b border-white/5 flex justify-between items-center">
                 <h2 className="text-xl font-extrabold text-white">
@@ -62,7 +62,7 @@ export default function DashboardPage() {
                   View All
                 </button>
               </div>
-              {/* <div className="divide-y divide-white/5">
+              <div className="divide-y divide-white/5">
                 {activities.map((item) => (
                   <div
                     key={item.id}
@@ -98,9 +98,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 ))}
-              </div> */}
+              </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>

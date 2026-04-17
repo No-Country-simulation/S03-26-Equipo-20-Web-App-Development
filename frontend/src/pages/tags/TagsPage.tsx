@@ -4,7 +4,12 @@ import Header from "../../components/Header";
 import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useFormik } from "formik";
 import { tagValidationSchema } from "../../utils/validationSchemas";
-import { createTag, listTags, updateTag, deleteTag } from "../../services/tagService";
+import {
+  createTag,
+  listTags,
+  updateTag,
+  deleteTag,
+} from "../../services/tagService";
 import type { Tag, TagPage } from "../../types/tag";
 
 const TAGS_CLOUD_STYLES = [
@@ -94,12 +99,10 @@ export default function TagsPage() {
 
   const mostUsedTag = tagPage?.content.reduce(
     (max, tag) => (tag.usageCount > max.usageCount ? tag : max),
-    tagPage.content[0]
+    tagPage.content[0],
   );
 
-  const startItem = tagPage
-    ? tagPage.number * tagPage.size + 1
-    : 0;
+  const startItem = tagPage ? tagPage.number * tagPage.size + 1 : 0;
   const endItem = tagPage
     ? Math.min(startItem + tagPage.numberOfElements - 1, tagPage.totalElements)
     : 0;
@@ -116,13 +119,14 @@ export default function TagsPage() {
           <section className="flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-2">
               <span className="text-[#cc97ff] font-extrabold text-xs tracking-[0.2em] uppercase">
-                Taxonomy Management
+                Panel de Gestión
               </span>
               <h1 className="text-4xl font-black tracking-tight text-white">
-                Tag Management System
+                Gestión de Etiquetas
               </h1>
               <p className="text-[#adaaad] max-w-xl font-medium">
-                Organize your testimonials using classification tags. Manage global tags across your organization.
+                Organice sus testimonios utilizando etiquetas de clasificación.
+                Administre sus etiquetas globales en toda la organización.
               </p>
             </div>
             <button
@@ -134,7 +138,7 @@ export default function TagsPage() {
               className="px-6 py-2.5 bg-[#9333ea] text-white rounded-lg font-black text-sm shadow-xl shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2"
             >
               <Plus size={18} />
-              Create New Tag
+              Crear nueva etiqueta
             </button>
           </section>
 
@@ -148,16 +152,18 @@ export default function TagsPage() {
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-1.5 h-6 bg-[#9e41f5] rounded-full" />
                 <h3 className="text-xl font-bold text-white">
-                  Tags Cloud Visualization
+                  Visualización de etiquetas en la nube
                 </h3>
               </div>
               {isLoading ? (
                 <div className="flex flex-wrap gap-4 items-center justify-center min-h-[240px]">
-                  <span className="text-[#adaaad]">Loading tags...</span>
+                  <span className="text-[#adaaad]">Cargando etiquetas...</span>
                 </div>
               ) : tagPage?.content.length === 0 ? (
                 <div className="flex flex-wrap gap-4 items-center justify-center min-h-[240px]">
-                  <span className="text-[#adaaad]">No tags yet. Create your first tag!</span>
+                  <span className="text-[#adaaad]">
+                    Aún no hay etiquetas. ¡Crea tu primera etiqueta!
+                  </span>
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-4 items-center justify-center min-h-[240px]">
@@ -178,25 +184,26 @@ export default function TagsPage() {
             <div className="md:col-span-4 grid grid-rows-2 gap-6">
               <div className="bg-[#9333ea] p-6 rounded-lg text-white flex flex-col justify-between overflow-hidden relative">
                 <p className="text-xs font-bold uppercase tracking-widest opacity-80">
-                  Total Active Tags
+                  Total de Etiquetas Activas
                 </p>
                 <h4 className="text-6xl font-black tracking-tighter">
                   {tagPage?.totalElements ?? 0}
                 </h4>
                 <div className="flex items-center gap-2 text-white text-xs font-bold mt-2">
-                  <span>📈</span>
-                  Across organization
+                  <span>📈</span>A través de la organización
                 </div>
               </div>
               <div className="bg-[#1f1f22] p-6 rounded-lg border border-[#262528] flex flex-col justify-between">
                 <p className="text-xs font-bold uppercase tracking-widest text-[#adaaad]">
-                  Most Used Label
+                  Etiquetas más usadas
                 </p>
                 <h4 className="text-2xl font-black tracking-tight text-[#cc97ff]">
                   {mostUsedTag?.name ?? "-"}
                 </h4>
                 <p className="text-xs font-medium text-[#adaaad] mt-2">
-                  {mostUsedTag ? `Applied to ${mostUsedTag.usageCount} items` : "No data"}
+                  {mostUsedTag
+                    ? `Applied to ${mostUsedTag.usageCount} items`
+                    : "No data"}
                 </p>
               </div>
             </div>
@@ -205,7 +212,9 @@ export default function TagsPage() {
           {/* Table Section */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-black text-white">System Taxonomy</h3>
+              <h3 className="text-2xl font-black text-white">
+                Tabla de Etiquetas
+              </h3>
             </div>
 
             <div className="bg-[#131315] rounded-lg overflow-hidden border border-[#1f1f22]">
@@ -213,39 +222,50 @@ export default function TagsPage() {
                 <thead>
                   <tr className="bg-[#1f1f22]/50 border-b border-[#1f1f22]">
                     <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#adaaad]">
-                      Tag Identity
+                      Identidad de la etiqueta
                     </th>
                     <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#adaaad] text-center">
-                      Usage Count
+                      Conteo de uso
                     </th>
                     <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#adaaad]">
-                      Created At
+                      Creado en
                     </th>
                     <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#adaaad] text-right">
-                      Actions
+                      Acciones
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1f1f22]">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-[#adaaad]">
-                        Loading...
+                      <td
+                        colSpan={4}
+                        className="px-6 py-8 text-center text-[#adaaad]"
+                      >
+                        Cargando...
                       </td>
                     </tr>
                   ) : tagPage?.content.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-[#adaaad]">
-                        No tags found
+                      <td
+                        colSpan={4}
+                        className="px-6 py-8 text-center text-[#adaaad]"
+                      >
+                        Etiquetas no encontradas
                       </td>
                     </tr>
                   ) : (
                     tagPage?.content.map((tag) => (
-                      <tr key={tag.id} className="hover:bg-[#1f1f22]/30 transition-colors">
+                      <tr
+                        key={tag.id}
+                        className="hover:bg-[#1f1f22]/30 transition-colors"
+                      >
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-3">
                             <div className="w-2.5 h-2.5 rounded-full bg-[#9333ea]" />
-                            <span className="font-bold text-[#f9f5f8]">{tag.name}</span>
+                            <span className="font-bold text-[#f9f5f8]">
+                              {tag.name}
+                            </span>
                           </div>
                         </td>
                         <td className="px-6 py-5 text-center font-black text-[#cc97ff]">
@@ -280,7 +300,8 @@ export default function TagsPage() {
               {tagPage && tagPage.totalPages > 1 && (
                 <div className="px-6 py-4 bg-[#1f1f22]/20 border-t border-[#1f1f22] flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-widest text-[#adaaad]">
-                    Showing {startItem}-{endItem} of {tagPage.totalElements} results
+                    Mostrando {startItem}-{endItem} of {tagPage.totalElements}{" "}
+                    resultados
                   </span>
                   <div className="flex gap-2">
                     <button
@@ -313,11 +334,11 @@ export default function TagsPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-[#131315] p-6 rounded-lg w-full max-w-md border border-[#262528]">
             <h3 className="text-xl font-bold mb-4 text-white">
-              {editingTag ? "Edit Tag" : "Create New Tag"}
+              {editingTag ? "Editar etiqueta" : "Crear nueva etiqueta"}
             </h3>
             <form onSubmit={formik.handleSubmit}>
               <label className="block text-sm font-medium text-[#adaaad] mb-2">
-                Tag Name
+                Nombre de la etiqueta
               </label>
               <input
                 type="text"
@@ -343,13 +364,13 @@ export default function TagsPage() {
                   }}
                   className="flex-1 bg-[#1f1f22] p-3 rounded-lg text-[#adaaad] font-semibold hover:bg-[#262528] transition-colors"
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   type="submit"
                   className="flex-1 bg-[#9333ea] p-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
                 >
-                  {editingTag ? "Update" : "Create"}
+                  {editingTag ? "Actualizar" : "Crear"}
                 </button>
               </div>
             </form>

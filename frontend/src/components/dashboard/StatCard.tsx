@@ -25,7 +25,8 @@ function StatCard() {
 
     async function getAllTestimonials() {
       try {
-        const testimonials: ListTestimonials[] = await listAllTestimonials();
+        const response = await listAllTestimonials();
+        const testimonials: ListTestimonials[] = response.content || [];
         console.log("Todos los testimonios: ", testimonials);
 
         console.log("Lista de testimonios: ", listTestimonials);

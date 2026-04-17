@@ -13,6 +13,7 @@
 // ============================================================
 
 import type {
+  ListTestimonial,
   ModerateTestimonyPayload,
   //ShowTestimonial,
   SubmitTestimonial,
@@ -250,9 +251,10 @@ export async function listAllTestimonials(page: number = 0,
   }
 }
 
-export async function listAllVisitors() {
+// Lista todos los testimonios del usuario quien inició sesión
+export async function listOneTestimonial(idTestimonial: string): Promise<ListTestimonial | null> {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/visitors`, {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/testimonials/all/${idTestimonial}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -261,15 +263,16 @@ export async function listAllVisitors() {
     });
 
     if (response.ok) {
-      const visitors = await response.json();
-      return visitors;
+      const testimonial = await response.json();
+      console.log("Info de testimonio en testimonyService: ", testimonial);
+      return testimonial;
     } else {
-      console.error("Error al obtener los visitantes");
-      return [];
+      console.error("Error al obtener los productos");
+      return null;
     }
   } catch (error) {
     console.error("Error de conexión:", error);
-    return [];
+    return null;
   }
 }
 
