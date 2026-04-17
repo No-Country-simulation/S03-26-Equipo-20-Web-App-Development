@@ -8,6 +8,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +22,7 @@ import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
+import org.testimonials.cms.testimonial.dtos.dtosFull.ListTestimonialsDTO;
 import org.testimonials.cms.testimonial.service.ITestimonialService;
 
 import java.util.List;
@@ -74,6 +79,16 @@ public class TestimonialController implements DefaultApiResponses {
         List<TestimonialResponseDTO> testimonialResponseDTO = testimonialService.listAllTestimonials();
 
         return ResponseEntity.status(HttpStatus.OK).body(testimonialResponseDTO);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<ListTestimonialsDTO>> getTestimonials(@RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<ListTestimonialsDTO> response = testimonialService.getAllTestimonials(pageable);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{idTestimonial}")
