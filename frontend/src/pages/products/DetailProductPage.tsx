@@ -1,10 +1,10 @@
-import { Pencil, X, Plus, Search, Loader2 } from "lucide-react";
+import { Pencil, X, Plus, Search, Loader2, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "../../components/Header";
 import { useEffect, useState} from "react";
 import { getProductById, updateProduct } from "../../services/productService";
 import { listTags } from "../../services/tagService";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { editProductValidationSchema } from "../../utils/validationSchemas";
 import { useFormik } from "formik";
 import ProductDetailCard from "../../components/products/ProductDetailCard";
@@ -18,6 +18,7 @@ function DetailProductPage() {
   const [product, setProduct] = useState<ListProducts | null>(null);
 
   const { idProduct } = useParams();
+  const navigate = useNavigate();
 
   // Tags states
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
@@ -138,7 +139,7 @@ function DetailProductPage() {
     }
 
     getProduct();
-  }, [idProduct, formik]);
+  }, [idProduct]);
 
   return (
     <div className="flex bg-[#0e0e10] text-white min-h-screen">
@@ -157,13 +158,22 @@ function DetailProductPage() {
                 Detalle del producto
               </h2>
             </div>
-            <button
-              onClick={handleOpenModal}
-              className="bg-[#FFD63B] text-black w-auto px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_4px_18px_rgba(220,38,38,0.35)] transition-all duration-350 hover:bg-[#ffc107] hover:text-black"
-            >
-              <Pencil size={18} />
-              Editar
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/products")}
+                className="bg-[#262528] text-[#adaaad] w-auto px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-[#323238] transition-colors"
+              >
+                <ArrowLeft size={18} />
+                Atrás
+              </button>
+              <button
+                onClick={handleOpenModal}
+                className="bg-[#FFD63B] text-black w-auto px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_4px_18px_rgba(220,38,38,0.35)] transition-all duration-350 hover:bg-[#ffc107] hover:text-black"
+              >
+                <Pencil size={18} />
+                Editar
+              </button>
+            </div>
           </section>
 
           {/* Product Detail Card */}

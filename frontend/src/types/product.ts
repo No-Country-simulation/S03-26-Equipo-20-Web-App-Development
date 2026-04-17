@@ -19,6 +19,13 @@ export interface ListProducts {
   description: string;
   picture: string;
   tags: { id: string; name: string; usageCount: number }[];
+  shareCode: string;
+};
+
+export interface ProductPublic {
+  name: string;
+  picture: string;
+  description: string;
 };
 
 export interface ProductDetail {
@@ -41,6 +48,7 @@ export interface ListProductsCardProps {
   // updateTime: string;
   // picture: string;
   onDelete?: () => void;
+  onGenerateLink?: (shareCode: string, productName: string) => void;
 };
 
 export interface ProductDetailCardProps {
