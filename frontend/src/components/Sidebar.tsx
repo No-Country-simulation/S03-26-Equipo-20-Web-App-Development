@@ -1,11 +1,4 @@
-import {
-  Archive,
-  Gavel,
-  Heart,
-  LayoutDashboard,
-  Quote,
-  Tag,
-} from "lucide-react";
+import { Archive, Gavel, Heart, LayoutDashboard, Tag } from "lucide-react";
 import SidebarItem from "./SidebarItem";
 
 function Sidebar() {
@@ -17,7 +10,7 @@ function Sidebar() {
         </div>
         <div>
           <h1 className="text-xl font-bold text-[#cc97ff] tracking-tighter leading-none">
-            Panel de Gestión
+            TestimonialCMS
           </h1>
           <p className="text-[10px] uppercase tracking-widest text-[#adaaad] font-bold">
             Plataforma de Testimonios
@@ -32,11 +25,6 @@ function Sidebar() {
           label="Panel de Control"
         />
         <SidebarItem icon={<Archive />} route="/products" label="Productos" />
-        <SidebarItem
-          icon={<Quote />}
-          route="/testimonials"
-          label="Testimonios"
-        />
         <SidebarItem
           icon={<Heart />}
           route="/wall-of-love"

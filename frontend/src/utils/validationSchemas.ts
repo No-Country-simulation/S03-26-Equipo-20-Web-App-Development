@@ -59,3 +59,9 @@ export const tagValidationSchema = Yup.object().shape({
         .min(2, "Mínimo 2 caracteres")
         .required("El nombre es obligatorio"),
 });
+
+export const reviewValidationSchema = Yup.object().shape({
+    idTestimonial: Yup.string().required("El id del testimonio es requerido"),
+    status: Yup.string().oneOf(["APPROVED", "REJECTED"], "Tipo de estado inválido"),
+    comment: Yup.string().min(5, "Mínimo 5 caracteres").required("El comentario es requerido")
+});

@@ -36,7 +36,7 @@ export default function PendingTestimonialsPage() {
     [],
   );
   const [statusFilter, setStatusFilter] = useState<
-    "ALL" | "PENDING" | "APPROVED" | "REJECTED"
+    "ALL" | "PENDING" | "PUBLISHED" | "REJECTED"
   >("ALL");
   const [testimonialPage, setTestimonialPage] =
     useState<TestimonialPage | null>(null);
@@ -173,14 +173,14 @@ export default function PendingTestimonialsPage() {
       const status = testimonial.testimonial.status;
       if (
         status === "PENDING" ||
-        status === "APPROVED" ||
+        status === "PUBLISHED" ||
         status === "REJECTED"
       ) {
         acc[status]++;
       }
       return acc;
     },
-    { PENDING: 0, APPROVED: 0, REJECTED: 0 },
+    { PENDING: 0, PUBLISHED: 0, REJECTED: 0 },
   );
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -213,13 +213,6 @@ export default function PendingTestimonialsPage() {
                 publiquen. Los cambios son inmediatos.
               </p>
             </div>
-
-            <button
-              onClick={() => navigate("/testimonials/submit")}
-              className="px-4 py-3 bg-gradient-to-br from-[#aa3bff] to-[#7c3aed] text-white rounded-[10px] text-sm font-semibold cursor-pointer transition-all duration-200 shadow-[0_4px_18px_rgba(170,59,255,0.35)] hover:opacity-90 active:scale-95 flex items-center gap-2 whitespace-nowrap self-start md:self-auto"
-            >
-              + Enviar nuevo
-            </button>
           </section>
 
           {/* Barra de estadísticas */}
@@ -231,8 +224,8 @@ export default function PendingTestimonialsPage() {
                 color: "border-yellow-400",
               },
               {
-                label: "Aprobados",
-                value: statusCounts.APPROVED,
+                label: "Aprobados/Publicados",
+                value: statusCounts.PUBLISHED,
                 color: "border-green-400",
               },
               {
@@ -279,7 +272,7 @@ export default function PendingTestimonialsPage() {
                     e.target.value as
                       | "ALL"
                       | "PENDING"
-                      | "APPROVED"
+                      | "PUBLISHED"
                       | "REJECTED",
                   )
                 }
@@ -287,7 +280,7 @@ export default function PendingTestimonialsPage() {
               >
                 <option value="ALL">Todos</option>
                 <option value="PENDING">Pendientes</option>
-                <option value="APPROVED">Aprobados</option>
+                <option value="APPROVED">Aprobados/Publicados</option>
                 <option value="REJECTED">Rechazados</option>
               </select>
             </div>
