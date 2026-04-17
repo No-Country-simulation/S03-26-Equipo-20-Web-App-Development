@@ -1,5 +1,6 @@
 package org.testimonials.cms.product.service;
 
+import org.testimonials.cms.product.dtos.ProductPublicDTO;
 import org.testimonials.cms.product.dtos.ProductRequestDTO;
 import org.testimonials.cms.product.dtos.ProductResponseDTO;
 import org.testimonials.cms.product.dtos.ProductUpdateDTO;
@@ -14,4 +15,5 @@ public interface IProductService {
     ProductResponseDTO listProduct(UUID idProduct);
     ProductResponseDTO updateProduct(UUID idProduct, ProductUpdateDTO productUpdateDTO);
     void deleteProduct(UUID idProduct);
+    ProductPublicDTO getProductByShareCode(String shareCode);
 }

@@ -1,10 +1,12 @@
 package org.testimonials.cms.testimonial.service.impl;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.testimonials.cms.cloudinary.dto.CloudinaryUploadResponseDTO;
 import org.testimonials.cms.cloudinary.service.CloudinaryService;
 import org.testimonials.cms.media.enums.MediaProvider;
@@ -13,6 +15,8 @@ import org.testimonials.cms.media.mapper.MediaMapper;
 import org.testimonials.cms.media.model.Media;
 import org.testimonials.cms.media.repository.IMediaRepository;
 import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.product.model.Product;
+import org.testimonials.cms.product.repository.IProductRepository;
 import org.testimonials.cms.security.model.CustomUserPrincipal;
 import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
@@ -25,6 +29,7 @@ import org.testimonials.cms.testimonial.model.Testimonial;
 import org.testimonials.cms.testimonial.model.TestimonialStatus;
 import org.testimonials.cms.testimonial.repository.ITestimonialRepository;
 import org.testimonials.cms.testimonial.service.ITestimonialService;
+import org.testimonials.cms.visitor.dtos.VisitorRequestDTO;
 import org.testimonials.cms.visitor.mapper.VisitorMapper;
 import org.testimonials.cms.visitor.model.Visitor;
 import org.testimonials.cms.visitor.repository.IVisitorRepository;
@@ -50,6 +55,8 @@ public class TestimonialServiceImpl implements ITestimonialService {
 
     private final CloudinaryService cloudinaryService;
 
+    private final IProductRepository productRepository;
+
     @Override
     @Transactional
     public CreateTestimonialResponseDTO createTestimonial(CustomUserPrincipal customUserPrincipal,
@@ -63,27 +70,121 @@ public class TestimonialServiceImpl implements ITestimonialService {
         testimonial.setVisitor(newVisitor);
         Testimonial newTestimonial = testimonialRepository.save(testimonial);
 
-        Media media = mediaMapper.toMedia(createTestimonialRequestDTO.getMedia());
-        media.setTestimonial(newTestimonial);
-        media.setOrganizationId(customUserPrincipal.organizationId());
-        media.setOrganization(new Organization(customUserPrincipal.organizationId()));
-        media.setType(MediaType.IMAGE);
-        media.setProvider(MediaProvider.CLOUDINARY);
+        Media newMedia = createAndSaveMedia(createTestimonialRequestDTO, newTestimonial, customUserPrincipal.organizationId());
 
-        if (createTestimonialRequestDTO.getMedia().getUrl() != null && !createTestimonialRequestDTO.getMedia().getUrl().isEmpty()) {
+        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor, newMedia);
+    }
+
+    @Override
+    @Transactional
+    public CreateTestimonialResponseDTO createPublicTestimonial(CreateTestimonialRequestDTO createTestimonialRequestDTO) {
+        String shareCode = createTestimonialRequestDTO.getShareCode();
+        if (shareCode == null || shareCode.isBlank()) {
+            throw new RuntimeException("El código del producto es requerido");
+        }
+
+        UUID organizationId = productRepository.findOrganizationIdByShareCode(shareCode)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con shareCode: " + shareCode));
+
+        Product product = productRepository.findProductByShareCodeNative(shareCode)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        Visitor visitor = createVisitor(createTestimonialRequestDTO);
+
+        visitorRepository.insertVisitor(visitor.getName(), visitor.getEmail());
+        Visitor newVisitor = visitorRepository.findByEmailNative(visitor.getEmail());
+
+        testimonialRepository.insertTestimonial(
+                createTestimonialRequestDTO.getTestimonial().getTitle(),
+                createTestimonialRequestDTO.getTestimonial().getContent(),
+                newVisitor.getId(),
+                organizationId,
+                product.getId()
+        );
+        Testimonial newTestimonial = testimonialRepository.findByVisitorIdNative(newVisitor.getId());
+
+        Media newMedia = createAndSaveMediaPublic(createTestimonialRequestDTO, newTestimonial.getId(), organizationId);
+
+        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor, newMedia);
+    }
+
+    private Visitor createVisitor(CreateTestimonialRequestDTO dto) {
+        VisitorRequestDTO visitorDTO = dto.getVisitor();
+
+        if (visitorDTO != null &&
+                StringUtils.hasText(visitorDTO.getName()) &&
+                StringUtils.hasText(visitorDTO.getEmail())) {
+            return visitorMapper.toVisitor(visitorDTO);
+        }
+
+        String nanoId = NanoIdUtils.randomNanoId();
+        Visitor anonymousVisitor = new Visitor();
+        anonymousVisitor.setName("user_" + nanoId);
+        anonymousVisitor.setEmail(nanoId + "@anonymous.com");
+        return anonymousVisitor;
+    }
+
+    private Media createAndSaveMedia(CreateTestimonialRequestDTO dto, Testimonial testimonial, UUID organizationId) {
+        if (dto.getMedia() == null) {
+            return null;
+        }
+
+        Media media = new Media();
+        media.setTestimonial(testimonial);
+        media.setOrganizationId(organizationId);
+        media.setOrganization(new Organization(organizationId));
+
+        if (dto.getMedia().getImageFile() != null && !dto.getMedia().getImageFile().isEmpty()) {
+            media.setType(MediaType.IMAGE);
+            media.setProvider(MediaProvider.CLOUDINARY);
             try {
-                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(createTestimonialRequestDTO.getMedia().getUrl());
-
+                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(dto.getMedia().getImageFile());
                 media.setUrl(response.secureUrl());
                 media.setPublicId(response.publicId());
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Error al subir la imagen", e);
             }
+        } else if (StringUtils.hasText(dto.getMedia().getYoutubeUrl())) {
+            media.setType(MediaType.VIDEO);
+            media.setProvider(MediaProvider.YOUTUBE);
+            media.setUrl(dto.getMedia().getYoutubeUrl());
+        } else {
+            return null;
         }
 
-        Media newMedia = mediaRepository.save(media);
+        return mediaRepository.save(media);
+    }
 
-        return testimonialMapper.toCreateTestimonialDTO(newTestimonial, newVisitor, newMedia);
+    private Media createAndSaveMediaPublic(CreateTestimonialRequestDTO dto, UUID testimonialId, UUID organizationId) {
+        if (dto.getMedia() == null) {
+            return null;
+        }
+
+        String url;
+        String publicId = null;
+        String type;
+        String provider;
+
+        if (dto.getMedia().getImageFile() != null && !dto.getMedia().getImageFile().isEmpty()) {
+            type = "IMAGE";
+            provider = "CLOUDINARY";
+            try {
+                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(dto.getMedia().getImageFile());
+                url = response.secureUrl();
+                publicId = response.publicId();
+            } catch (Exception e) {
+                throw new RuntimeException("Error al subir la imagen", e);
+            }
+        } else if (StringUtils.hasText(dto.getMedia().getYoutubeUrl())) {
+            type = "VIDEO";
+            provider = "YOUTUBE";
+            url = dto.getMedia().getYoutubeUrl();
+        } else {
+            return null;
+        }
+
+        mediaRepository.insertMedia(type, provider, url, publicId, testimonialId, organizationId);
+        return null;
     }
 
     @Override

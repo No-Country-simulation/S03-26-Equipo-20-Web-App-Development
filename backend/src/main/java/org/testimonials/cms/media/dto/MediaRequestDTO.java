@@ -10,6 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MediaRequestDTO {
-    @NotNull(message = "La URL es requerida")
-    private MultipartFile url;
+    private MultipartFile imageFile;
+    private String youtubeUrl;
 }

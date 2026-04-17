@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.testimonials.cms.media.model.Media;
 import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.product.model.Product;
 import org.testimonials.cms.review.model.Review;
 import org.testimonials.cms.visitor.model.Visitor;
 
@@ -23,7 +24,8 @@ import java.util.UUID;
 @Table(
         name = "testimonials",
         indexes = {
-                @Index(name = "idx_testimonials_org", columnList = "organization_id")
+                @Index(name = "idx_testimonials_org", columnList = "organization_id"),
+                @Index(name = "idx_testimonials_product", columnList = "product_id")
         }
 )
 @AllArgsConstructor
@@ -51,6 +53,9 @@ public class Testimonial {
     @JoinColumn(name = "visitor_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Visitor visitor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
     @OneToMany(mappedBy = "testimonial", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Media> medias;
     @CreatedDate

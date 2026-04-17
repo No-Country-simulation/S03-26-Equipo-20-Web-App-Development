@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VisitorRequestDTO {
-    @NotBlank(message = "Name is required")
     private String name;
-    @Email
-    @NotBlank(message = "email is required")
     private String email;
 }

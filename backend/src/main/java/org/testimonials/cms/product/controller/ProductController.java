@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.testimonials.cms.product.dtos.ProductPublicDTO;
 import org.testimonials.cms.product.dtos.ProductRequestDTO;
 import org.testimonials.cms.product.dtos.ProductResponseDTO;
 import org.testimonials.cms.product.dtos.ProductUpdateDTO;
@@ -50,6 +51,26 @@ public class ProductController implements DefaultApiResponses {
         ProductResponseDTO productResponseDTO = productService.createProduct(customUserPrincipal, productRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(productResponseDTO);
+    }
+
+    @GetMapping("/public/{shareCode}")
+    @Operation(
+            summary = "Obtener producto por shareCode",
+            description = "Endpoint público para obtener producto sin autenticación",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Producto obtenido exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ProductPublicDTO.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<ProductPublicDTO> getProductByShareCode(@PathVariable String shareCode) {
+        ProductPublicDTO product = productService.getProductByShareCode(shareCode);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping

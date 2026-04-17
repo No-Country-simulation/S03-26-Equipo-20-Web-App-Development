@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.cloudinary.dto.CloudinaryUploadResponseDTO;
 import org.testimonials.cms.cloudinary.service.CloudinaryService;
 import org.testimonials.cms.organization.model.Organization;
+import org.testimonials.cms.product.dtos.ProductPublicDTO;
 import org.testimonials.cms.product.dtos.ProductRequestDTO;
 import org.testimonials.cms.product.dtos.ProductResponseDTO;
 import org.testimonials.cms.product.dtos.ProductUpdateDTO;
@@ -61,8 +62,13 @@ public class ProductServiceImpl implements IProductService {
             }
         }
 
-        // 4. Seteamos createdBy y organization_id, y los guardamos
-        product.setShareCode(NanoIdUtils.randomNanoId());
+        String shareCode;
+        boolean exists;
+        do {
+            shareCode = NanoIdUtils.randomNanoId();
+            exists = productRepository.existsByShareCode(shareCode);
+        } while (exists);
+
         product.setCreatedBy(customUserPrincipal.user());
         product.setOrganization(new Organization(customUserPrincipal.organizationId()));
 
@@ -177,5 +183,13 @@ public class ProductServiceImpl implements IProductService {
         }
 
         productRepository.deleteById(idProduct);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProductPublicDTO getProductByShareCode(String shareCode) {
+        return productRepository.findPublicByShareCodeNative(shareCode)
+                .map(p -> new ProductPublicDTO(p.getName(), p.getPicture(), p.getDescription()))
+                .orElseThrow();
     }
 }

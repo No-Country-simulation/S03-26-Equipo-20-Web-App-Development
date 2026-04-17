@@ -22,11 +22,8 @@ import java.util.UUID;
 @Table(
         name = "products",
         indexes = {
-                @Index(name = "idx_products_org", columnList = "organization_id"),
-                @Index(name = "idx_products_org_share", columnList = "organization_id, share_code")
-        },
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_org_share_code", columnNames = {"organization_id", "share_code"})
+                @Index(name = "idx_products_organization_id", columnList = "organization_id"),
+                @Index(name = "idx_products_share_code", columnList = "share_code")
         }
 )
 @AllArgsConstructor
@@ -43,7 +40,7 @@ public class Product {
     private String picture;
     @Column(name = "public_id")
     private String publicId;
-    @Column(name = "share_code", nullable = false)
+    @Column(name = "share_code", nullable = false, unique = true)
     private String shareCode;
     @JoinColumn(name = "created_by")
     @ManyToOne(fetch = FetchType.LAZY)

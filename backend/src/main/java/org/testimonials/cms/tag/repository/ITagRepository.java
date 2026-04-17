@@ -40,22 +40,6 @@ public interface ITagRepository extends JpaRepository<Tag, UUID> {
                 )
                 FROM Tag t
                 LEFT JOIN t.products p
-                WHERE t.organizationId = :organizationId
-                GROUP BY t.id, t.name, t.createdAt, t.updatedAt
-                ORDER BY COUNT(p.id) DESC
-            """)
-    List<TagResponseDTO> findTopTagsOrderedByCount(UUID organizationId, Pageable pageable);
-
-    @Query("""
-                SELECT new org.testimonials.cms.tag.dto.TagResponseDTO(
-                    t.id,
-                    t.name,
-                    COUNT(p.id),
-                    t.createdAt,
-                    t.updatedAt
-                )
-                FROM Tag t
-                LEFT JOIN t.products p
                 WHERE t.id = :tagId
                   AND t.organizationId = :organizationId
                 GROUP BY t.id, t.name, t.createdAt, t.updatedAt
@@ -77,4 +61,20 @@ public interface ITagRepository extends JpaRepository<Tag, UUID> {
                 GROUP BY t.id, t.name, t.createdAt, t.updatedAt
             """)
     Optional<TagResponseDTO> findByNameWithCount(String name, UUID organizationId);
+
+    @Query("""
+                SELECT new org.testimonials.cms.tag.dto.TagResponseDTO(
+                    t.id,
+                    t.name,
+                    COUNT(p.id),
+                    t.createdAt,
+                    t.updatedAt
+                )
+                FROM Tag t
+                LEFT JOIN t.products p
+                WHERE t.organizationId = :organizationId
+                GROUP BY t.id, t.name, t.createdAt, t.updatedAt
+                ORDER BY COUNT(p.id) DESC
+            """)
+    List<TagResponseDTO> findTopTagsOrderedByCount(UUID organizationId, Pageable pageable);
 }
