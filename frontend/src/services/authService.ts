@@ -105,6 +105,6 @@ export async function logout(): Promise<void> {
 
   if (res.ok) {
     localStorage.removeItem("auth_user");
-    window.location.href = "/login";
+    window.location.href = "/";
   }
 }

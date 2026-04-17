@@ -3,9 +3,14 @@ import StatCardItem from "./StatCardItem";
 import { Archive, ClipboardClock, MessagesSquare } from "lucide-react";
 import type { ListProducts } from "../../types/product";
 import { listAllProducts } from "../../services/productService";
+import type { ListTestimonials } from "../../types/testimony";
+import { listAllTestimonials } from "../../services/testimonyService";
 
 function StatCard() {
   const [listProducts, setListProducts] = useState<ListProducts[]>();
+  const [listTestimonials, setListTestimonials] = useState<ListTestimonials[]>(
+    [],
+  );
 
   useEffect(() => {
     // Aquí se llama al servicio para listar los productos al cargar la página
@@ -18,6 +23,19 @@ function StatCard() {
       }
     }
 
+    async function getAllTestimonials() {
+      try {
+        const testimonials: ListTestimonials[] = await listAllTestimonials();
+        console.log("Todos los testimonios: ", testimonials);
+
+        console.log("Lista de testimonios: ", listTestimonials);
+        setListTestimonials(testimonials);
+      } catch (error) {
+        console.error("Error al obtener los testimonios:", error);
+      }
+    }
+
+    getAllTestimonials();
     getAllProducts();
   }, []);
 
@@ -25,7 +43,11 @@ function StatCard() {
     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-6 mb-8">
       <StatCardItem
         label="Total de Testimonios"
-        value={2482}
+        value={
+          listTestimonials && listTestimonials?.length > 0
+            ? listTestimonials?.length
+            : "Ninguno"
+        }
         icon={<MessagesSquare />}
       />
       <StatCardItem

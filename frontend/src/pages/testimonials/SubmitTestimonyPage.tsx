@@ -365,10 +365,7 @@ export default function SubmitTestimonyPage() {
                   htmlFor="imagen"
                   className="text-xs font-bold uppercase tracking-widest text-[#adaaad]"
                 >
-                  Experiencia en imagen{" "}
-                  <span className="normal-case font-normal text-[#adaaad]/50">
-                    (opcional)
-                  </span>
+                  Experiencia en imagen
                 </label>
                 <div className="relative">
                   <FileImage className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50" />

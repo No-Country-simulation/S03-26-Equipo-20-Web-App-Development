@@ -1,230 +1,135 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  CheckCircle2,
-  XCircle,
-  Clock,
-  PlayCircle,
-  ChevronDown,
-  ChevronUp,
-  Filter,
-  Search,
-  Loader2,
-  AlertCircle,
-  Quote,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Search } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import {
-  getPendingTestimonials,
-  moderateTestimony,
+  //getPendingTestimonials,
+  listAllTestimonials,
+  //moderateTestimony,
 } from "../../services/testimonyService";
-import type { Testimony } from "../../types/testimony";
-
-// ─── Helpers ───────────────────────────────────────────────────────────────────
-
-function tiempoAtras(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const h = Math.floor(diff / 3_600_000);
-  const d = Math.floor(diff / 86_400_000);
-  if (h < 1) return "Hace un momento";
-  if (h < 24) return `Hace ${h}h`;
-  if (d === 1) return "Ayer";
-  return `Hace ${d} días`;
-}
-
-function truncar(texto: string, max: number) {
-  return texto.length > max ? texto.slice(0, max) + "…" : texto;
-}
-
-// ─── Sub-componentes ───────────────────────────────────────────────────────────
-
-interface TestimonyCardProps {
-  testimony: Testimony;
-  isExpanded: boolean;
-  onToggle: () => void;
-  onApprove: () => void;
-  onReject: () => void;
-  moderating: boolean;
-}
-
-function TestimonyCard({
-  testimony,
-  isExpanded,
-  onToggle,
-  onApprove,
-  onReject,
-  moderating,
-}: TestimonyCardProps) {
-  return (
-    <article className="bg-[#131315] rounded-xl border border-[#262528] overflow-hidden transition-all hover:border-[#9333ea]/30 group">
-      {/* Encabezado de la tarjeta */}
-      <div className="p-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-        <div className="space-y-1 min-w-0 flex-1">
-          {/* Badge de producto + tiempo */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {testimony.productName && (
-              <span className="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider bg-[#9333ea]/15 text-[#cc97ff] border border-[#9333ea]/20">
-                {testimony.productName}
-              </span>
-            )}
-            <span className="flex items-center gap-1 text-[#adaaad] text-xs">
-              <Clock className="w-3 h-3" />
-              {tiempoAtras(testimony.submittedAt)}
-            </span>
-          </div>
-
-          {/* Titular */}
-          <h3 className="text-[#f9f5f8] font-bold text-base leading-snug group-hover:text-[#cc97ff] transition-colors">
-            {testimony.headline}
-          </h3>
-
-          {/* Autor */}
-          <p className="text-[#adaaad] text-xs">
-            <span className="font-semibold text-[#f9f5f8]/70">
-              {testimony.fullName}
-            </span>
-            {" · "}
-            {testimony.email}
-          </p>
-        </div>
-
-        {/* Botones de acción */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            id={`aprobar-${testimony.id}`}
-            onClick={onApprove}
-            disabled={moderating}
-            title="Aprobar testimonio"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {moderating ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            )}
-            Aprobar
-          </button>
-          <button
-            id={`rechazar-${testimony.id}`}
-            onClick={onReject}
-            disabled={moderating}
-            title="Rechazar testimonio"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-semibold hover:bg-red-500/20 hover:border-red-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <XCircle className="w-3.5 h-3.5" />
-            Rechazar
-          </button>
-        </div>
-      </div>
-
-      {/* Previsualización / texto expandido */}
-      <div className="px-5 pb-3">
-        <div className="relative">
-          <Quote className="absolute -left-1 -top-1 w-4 h-4 text-[#9333ea]/30" />
-          <p className="text-[#adaaad] text-sm leading-relaxed pl-4 italic">
-            {isExpanded ? testimony.story : truncar(testimony.story, 180)}
-          </p>
-        </div>
-
-        {testimony.story.length > 180 && (
-          <button
-            onClick={onToggle}
-            className="mt-2 flex items-center gap-1 text-[#9333ea] text-xs font-semibold hover:underline transition-all"
-          >
-            {isExpanded ? (
-              <>
-                Ver menos <ChevronUp className="w-3 h-3" />
-              </>
-            ) : (
-              <>
-                Leer más <ChevronDown className="w-3 h-3" />
-              </>
-            )}
-          </button>
-        )}
-      </div>
-
-      {/* Link de video */}
-      {testimony.videoUrl && (
-        <div className="px-5 pb-4">
-          <a
-            href={testimony.videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs text-[#9333ea] font-semibold border border-[#9333ea]/30 px-3 py-1.5 rounded-lg hover:bg-[#9333ea]/10 transition-colors"
-          >
-            <PlayCircle className="w-4 h-4" />
-            Ver testimonio en video
-          </a>
-        </div>
-      )}
-    </article>
-  );
-}
+import type { ListTestimonials, TestimonialPage } from "../../types/testimony";
+import TestimonyCard from "../../components/testimonial/TestimonyCard";
+//import TestimonyCard from "../../components/testimonial/TestimonyCard";
 
 // ─── Página principal ──────────────────────────────────────────────────────────
 
 export default function PendingTestimonialsPage() {
   const navigate = useNavigate();
 
-  const [testimonials, setTestimonials] = useState<Testimony[]>([]);
+  // const [testimonials, setTestimonials] = useState<Testimony[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const [moderatingId, setModeratingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<{
-    id: string;
-    accion: "aprobado" | "rechazado";
-  } | null>(null);
+  // const [moderatingId, setModeratingId] = useState<string | null>(null);
+  // const [toast, setToast] = useState<{
+  //   id: string;
+  //   accion: "aprobado" | "rechazado";
+  // } | null>(null);
 
   const [busqueda, setBusqueda] = useState("");
-  const [filtroProd, setFiltroProd] = useState<string>("todos");
+  // const [filtroProd, setFiltroProd] = useState<string>("todos");
+  const [listTestimonials, setListTestimonials] = useState<ListTestimonials[]>(
+    [],
+  );
+  const [statusFilter, setStatusFilter] = useState<
+    "ALL" | "PENDING" | "APPROVED" | "REJECTED"
+  >("ALL");
+  const [testimonialPage, setTestimonialPage] =
+    useState<TestimonialPage | null>(null);
 
   // ── Carga de testimonios ────────────────────────────────────────────────────
 
+  // useEffect(() => {
+  //   let cancelado = false;
+  //   setLoading(true);
+  //   setFetchError(null);
+
+  //   getPendingTestimonials()
+  //     .then((data) => {
+  //       if (!cancelado) setTestimonials(data);
+  //     })
+  //     .catch((err) => {
+  //       if (!cancelado)
+  //         setFetchError(
+  //           err instanceof Error
+  //             ? err.message
+  //             : "Error al cargar los testimonios.",
+  //         );
+  //     })
+  //     .finally(() => {
+  //       if (!cancelado) setLoading(false);
+  //     });
+
+  //   return () => {
+  //     cancelado = true;
+  //   };
+  // }, []);
+
+  // Aquí se llama al servicio para listar los testimonios al cargar la página
+  async function getAllTestimonials(page: number = 0) {
+    try {
+      const testimonials = await listAllTestimonials(
+        page,
+        10,
+        "createdAt,desc",
+      );
+      console.log("Lista de testimonios: ", testimonials);
+      setTestimonialPage(testimonials);
+      setListTestimonials(testimonials.content);
+    } catch (error) {
+      console.error("Error al obtener los testimonios:", error);
+      setFetchError(
+        error instanceof Error
+          ? error.message
+          : "Error al cargar los testimonios.",
+      );
+    }
+  }
+
   useEffect(() => {
-    let cancelado = false;
     setLoading(true);
     setFetchError(null);
 
-    getPendingTestimonials()
-      .then((data) => {
-        if (!cancelado) setTestimonials(data);
-      })
-      .catch((err) => {
-        if (!cancelado)
-          setFetchError(
-            err instanceof Error
-              ? err.message
-              : "Error al cargar los testimonios.",
-          );
-      })
-      .finally(() => {
-        if (!cancelado) setLoading(false);
-      });
-
-    return () => {
-      cancelado = true;
-    };
+    getAllTestimonials();
   }, []);
+
+  const handlePageChange = (newPage: number) => {
+    if (
+      testimonialPage &&
+      newPage >= 0 &&
+      newPage < testimonialPage.totalPages
+    ) {
+      getAllTestimonials(newPage);
+    }
+  };
+
+  const startItem = testimonialPage
+    ? testimonialPage.number * testimonialPage.size + 1
+    : 0;
+  const endItem = testimonialPage
+    ? Math.min(
+        startItem + testimonialPage.numberOfElements - 1,
+        testimonialPage.totalElements,
+      )
+    : 0;
 
   // ── Datos derivados ─────────────────────────────────────────────────────────
 
-  const productos = Array.from(
-    new Set(testimonials.map((t) => t.productName).filter(Boolean)),
-  ) as string[];
+  // const productos = Array.from(
+  //   new Set(testimonials.map((t) => t.productName).filter(Boolean)),
+  // ) as string[];
 
-  const filtrados = testimonials.filter((t) => {
-    const coincideBusqueda =
-      t.headline.toLowerCase().includes(busqueda.toLowerCase()) ||
-      t.fullName.toLowerCase().includes(busqueda.toLowerCase()) ||
-      t.story.toLowerCase().includes(busqueda.toLowerCase());
-    const coincideProd = filtroProd === "todos" || t.productName === filtroProd;
-    return coincideBusqueda && coincideProd;
-  });
+  // const filtrados = listTestimonials.filter((t) => {
+  //   const coincideBusqueda =
+  //     t.testimonial.title.toLowerCase().includes(busqueda.toLowerCase()) ||
+  //     t.visitor.name.toLowerCase().includes(busqueda.toLowerCase()) ||
+  //     t.testimonial.content.toLowerCase().includes(busqueda.toLowerCase());
+  //   return coincideBusqueda;
+  // });
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
@@ -236,22 +141,47 @@ export default function PendingTestimonialsPage() {
     });
   }
 
-  async function handleModerate(id: string, accion: "APPROVED" | "REJECTED") {
-    setModeratingId(id);
-    try {
-      await moderateTestimony(id, { status: accion });
-      setTestimonials((prev) => prev.filter((t) => t.id !== id));
-      setToast({
-        id,
-        accion: accion === "APPROVED" ? "aprobado" : "rechazado",
-      });
-      setTimeout(() => setToast(null), 3000);
-    } catch (err) {
-      console.error("Error al moderar:", err);
-    } finally {
-      setModeratingId(null);
-    }
-  }
+  // async function handleModerate(id: string, accion: "APPROVED" | "REJECTED") {
+  //   setModeratingId(id);
+  //   try {
+  //     await moderateTestimony(id, { status: accion });
+  //     setTestimonials((prev) => prev.filter((t) => t.id !== id));
+  //     setToast({
+  //       id,
+  //       accion: accion === "APPROVED" ? "aprobado" : "rechazado",
+  //     });
+  //     setTimeout(() => setToast(null), 3000);
+  //   } catch (err) {
+  //     console.error("Error al moderar:", err);
+  //   } finally {
+  //     setModeratingId(null);
+  //   }
+  // }
+
+  const filteredTestimonials = listTestimonials.filter((t) => {
+    const coincideBusqueda =
+      t.testimonial.title.toLowerCase().includes(busqueda.toLowerCase()) ||
+      t.visitor.name.toLowerCase().includes(busqueda.toLowerCase()) ||
+      t.testimonial.content.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideStatus =
+      statusFilter === "ALL" || t.testimonial.status === statusFilter;
+    return coincideBusqueda && coincideStatus;
+  });
+
+  const statusCounts = listTestimonials.reduce(
+    (acc, testimonial) => {
+      const status = testimonial.testimonial.status;
+      if (
+        status === "PENDING" ||
+        status === "APPROVED" ||
+        status === "REJECTED"
+      ) {
+        acc[status]++;
+      }
+      return acc;
+    },
+    { PENDING: 0, APPROVED: 0, REJECTED: 0 },
+  );
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
@@ -296,24 +226,19 @@ export default function PendingTestimonialsPage() {
           <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
-                label: "En revisión",
-                value: testimonials.length,
+                label: "Pendientes",
+                value: statusCounts.PENDING,
                 color: "border-yellow-400",
               },
               {
-                label: "Filtrados",
-                value: filtrados.length,
-                color: "border-purple-500",
+                label: "Aprobados",
+                value: statusCounts.APPROVED,
+                color: "border-green-400",
               },
               {
-                label: "Productos",
-                value: productos.length,
-                color: "border-purple-300",
-              },
-              {
-                label: "Con video",
-                value: testimonials.filter((t) => t.videoUrl).length,
-                color: "border-blue-400",
+                label: "Rechazados",
+                value: statusCounts.REJECTED,
+                color: "border-red-400",
               },
             ].map(({ label, value, color }) => (
               <div
@@ -347,23 +272,29 @@ export default function PendingTestimonialsPage() {
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#adaaad]/50 pointer-events-none" />
               <select
-                id="filtro-producto"
-                value={filtroProd}
-                onChange={(e) => setFiltroProd(e.target.value)}
+                id="filtro-testimonios"
+                value={statusFilter}
+                onChange={(e) =>
+                  setStatusFilter(
+                    e.target.value as
+                      | "ALL"
+                      | "PENDING"
+                      | "APPROVED"
+                      | "REJECTED",
+                  )
+                }
                 className="pl-10 pr-8 py-2.5 bg-[#131315] border border-[#262528] rounded-lg text-sm text-[#f9f5f8] outline-none focus:border-[#9333ea]/60 focus:ring-2 focus:ring-[#9333ea]/20 transition-all appearance-none cursor-pointer"
               >
-                <option value="todos">Todos los productos</option>
-                {productos.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
+                <option value="ALL">Todos</option>
+                <option value="PENDING">Pendientes</option>
+                <option value="APPROVED">Aprobados</option>
+                <option value="REJECTED">Rechazados</option>
               </select>
             </div>
           </section>
 
           {/* Contenido */}
-          {loading ? (
+          {/* {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <Loader2 className="w-8 h-8 text-[#9333ea] animate-spin" />
               <p className="text-[#adaaad] text-sm">Cargando testimonios…</p>
@@ -379,38 +310,72 @@ export default function PendingTestimonialsPage() {
                 Intentar de nuevo
               </button>
             </div>
-          ) : filtrados.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
-              <CheckCircle2 className="w-12 h-12 text-emerald-400/60" />
-              <h3 className="text-xl font-bold text-[#f9f5f8]">
-                ¡Todo al día!
-              </h3>
-              <p className="text-[#adaaad] max-w-sm">
-                {busqueda || filtroProd !== "todos"
-                  ? "Ningún testimonio coincide con los filtros actuales."
-                  : "No hay testimonios pendientes de revisión en este momento."}
-              </p>
-            </div>
           ) : (
             <div className="space-y-4">
-              {filtrados.map((t) => (
-                <TestimonyCard
-                  key={t.id}
-                  testimony={t}
-                  isExpanded={expandedIds.has(t.id)}
-                  onToggle={() => toggleExpand(t.id)}
-                  onApprove={() => handleModerate(t.id, "APPROVED")}
-                  onReject={() => handleModerate(t.id, "REJECTED")}
-                  moderating={moderatingId === t.id}
-                />
-              ))}
+              {listTestimonials.map(
+                (testimonial) =>
+                  testimonial.id && (
+                    <TestimonyCard
+                      key={testimonial.id}
+                      testimonials={testimonial}
+                      isExpanded={expandedIds.has(testimonial.id)}
+                      onToggle={() =>
+                        testimonial.id && toggleExpand(testimonial.id)
+                      }
+                    />
+                  ),
+              )}
+            </div>
+          )} */}
+          <div className="space-y-4">
+            {filteredTestimonials.map(
+              (testimonial) =>
+                testimonial.id && (
+                  <TestimonyCard
+                    key={testimonial.id}
+                    testimonials={testimonial}
+                    isExpanded={expandedIds.has(testimonial.id)}
+                    onToggle={() =>
+                      testimonial.id && toggleExpand(testimonial.id)
+                    }
+                  />
+                ),
+            )}
+          </div>
+
+          {/* Pagination */}
+          {testimonialPage && testimonialPage.totalPages > 1 && (
+            <div className="px-6 py-4 bg-[#1f1f22]/20 border-t border-[#1f1f22] flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#adaaad]">
+                Showing {startItem}-{endItem} of {testimonialPage.totalElements}{" "}
+                results
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handlePageChange(testimonialPage.number - 1)}
+                  disabled={testimonialPage.first}
+                  className="p-2 rounded-lg hover:bg-[#1f1f22] text-[#adaaad] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button className="px-3 py-1 rounded-lg bg-[#9333ea] text-white text-xs font-black">
+                  {testimonialPage.number + 1}
+                </button>
+                <button
+                  onClick={() => handlePageChange(testimonialPage.number + 1)}
+                  disabled={testimonialPage.last}
+                  className="p-2 rounded-lg hover:bg-[#1f1f22] text-[#adaaad] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
             </div>
           )}
         </div>
       </main>
 
       {/* Notificación toast */}
-      {toast && (
+      {/* {toast && (
         <div
           className={`fixed bottom-6 right-6 flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl text-sm font-semibold z-50 animate-slide-up
             ${
@@ -426,7 +391,7 @@ export default function PendingTestimonialsPage() {
           )}
           Testimonio {toast.accion} exitosamente.
         </div>
-      )}
+      )} */}
     </div>
   );
 }

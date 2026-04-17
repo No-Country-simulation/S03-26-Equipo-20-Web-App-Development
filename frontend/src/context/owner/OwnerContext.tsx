@@ -39,7 +39,6 @@ export const OwnerProvider = ({
   const authenticationMe = async () => {
     try {
       const res = await authMe();
-      console.log("Res de authMe: ", res);
       if (res) {
         setOwnerAuth({
           name: res.name,
@@ -49,8 +48,6 @@ export const OwnerProvider = ({
           role: res.role,
         });
       }
-
-      console.log("Res de authMe despues de setOwner: ", res);
       setIsAuthenticatedOwner(true);
     } catch (error) {
       console.error("No hay usuario autenticado:", error);
