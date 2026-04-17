@@ -12,6 +12,6 @@ public record ReviewRequestDTO(
         @NotBlank
         String comment,
         @NotNull
-        UUID testimonial
+        UUID idTestimonial
         ) {
 }
