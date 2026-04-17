@@ -14,4 +14,5 @@ public class CreateTestimonialRequestDTO {
     private TestimonialRequestDTO testimonial;
     private VisitorRequestDTO visitor;
     private MediaRequestDTO media;
+    private String shareCode;
 }

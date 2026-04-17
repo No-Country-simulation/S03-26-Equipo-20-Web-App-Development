@@ -32,13 +32,10 @@ public class MediaServiceImpl implements IMediaService {
     @Override
     @Transactional
     public MediaResponseDTO createMedia(CustomUserPrincipal customUserPrincipal, MediaRequestDTO mediaRequestDTO) {
-//        Testimonial testimonial = testimonialRepository.findById(mediaRequestDTO.testimonialId())
-//                .orElseThrow(() -> TestimonialNotFound.of(mediaRequestDTO.testimonialId()));
 
         Media media = mediaMapper.toMedia(mediaRequestDTO);
         media.setProvider(MediaProvider.CLOUDINARY);
         media.setType(MediaType.IMAGE);
-//        media.setTestimonial(testimonial);
         media.setOrganizationId(customUserPrincipal.organizationId());
 
         Media newMedia = mediaRepository.save(media);
@@ -61,20 +58,18 @@ public class MediaServiceImpl implements IMediaService {
 
     @Override
     @Transactional
-    public MediaResponseDTO updateMedia(UUID idMedia, MediaRequestDTO mediaRequestclassDTO) {
+    public MediaResponseDTO updateMedia(UUID idMedia, MediaRequestDTO mediaRequestDTO) {
         Media media = mediaRepository.findById(idMedia)
                 .orElseThrow(() -> MediaNotFound.of(idMedia));
 
-//        if (mediaRequestDTO.type() != null) media.setType(mediaRequestDTO.type());
-//        if (mediaRequestDTO.provider() != null) media.setProvider(mediaRequestDTO.provider());
 
-        if (mediaRequestclassDTO.getUrl() != null && mediaRequestclassDTO.getUrl().isEmpty()) {
+        if (mediaRequestDTO.getYoutubeUrl() != null && mediaRequestDTO.getYoutubeUrl().isEmpty()) {
             try {
                 if (media.getPublicId() != null) {
                     cloudinaryService.deleteFile(media.getPublicId());
                 }
 
-                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(mediaRequestclassDTO.getUrl());
+                CloudinaryUploadResponseDTO response = cloudinaryService.uploadImage(mediaRequestDTO.getImageFile());
 
                 media.setUrl(response.secureUrl());
                 media.setPublicId(response.publicId());
@@ -82,9 +77,6 @@ public class MediaServiceImpl implements IMediaService {
                 throw new RuntimeException(e);
             }
         }
-
-//        if (mediaRequestDTO.thumbnailUrl() != null) media.setThumbnailUrl(mediaRequestDTO.thumbnailUrl());
-//        if (mediaRequestDTO.duration() != null) media.setDuration(mediaRequestDTO.duration());
 
         Media updatedMedia = mediaRepository.save(media);
         return mediaMapper.toMediaDTO(updatedMedia);

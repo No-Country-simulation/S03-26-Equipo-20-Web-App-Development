@@ -54,6 +54,7 @@ FROM (
              ('product-get','GET','/*',false,'product'),
              ('product-update','PUT','/*',false,'product'),
              ('product-delete','DELETE','/*',false,'product'),
+             ('product-public','GET','/public/*',true,'product'),
 
              -- TAG
              ('tag-create','POST','/register',false,'tag'),
@@ -69,6 +70,7 @@ FROM (
              ('testimonial-get','GET','/*',false,'testimonial'),
              ('testimonial-update','PUT','/*',false,'testimonial'),
              ('testimonial-delete','DELETE','/*',false,'testimonial'),
+             ('testimonial-public','POST','/public/register',true,'testimonial'),
 
              -- REVIEW
              ('review-create','POST','/register',false,'review'),

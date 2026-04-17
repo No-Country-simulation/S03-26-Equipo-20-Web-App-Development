@@ -12,6 +12,7 @@ public record ProductResponseDTO(
         String description,
         String picture,
         String publicId,
+        String shareCode,
         List<TagResponseDTO> tags
 ) {
     public ProductResponseDTO(Product product) {
@@ -21,6 +22,7 @@ public record ProductResponseDTO(
                 product.getDescription(),
                 product.getPicture(),
                 product.getPublicId(),
+                product.getShareCode(),
                 product.getTags() != null
                         ? product.getTags().stream()
                           .map(t -> new TagResponseDTO(t.getId(), t.getName(), 0, t.getCreatedAt(), t.getUpdatedAt()))
