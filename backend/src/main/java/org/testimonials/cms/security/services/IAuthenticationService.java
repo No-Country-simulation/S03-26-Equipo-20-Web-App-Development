@@ -8,7 +8,7 @@ public interface IAuthenticationService {
 
     AuthResponseDTO registerOrganization(OrganizationRegisterDTO organizationRegisterDTO);
 
-    OrganizationAuthRoleResponseDTO me(CustomUserPrincipal userPrincipal);
+    OrganizationAuthResponseDTO me(CustomUserPrincipal userPrincipal);
 
     AddMembersResponseDTO registerMembers(AddMembersRequestDTO membersRequestDTO, CustomUserPrincipal principal);
 }
