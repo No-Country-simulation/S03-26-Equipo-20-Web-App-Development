@@ -1,6 +1,8 @@
 package org.testimonials.cms.testimonial.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.testimonials.cms.cloudinary.dto.CloudinaryUploadResponseDTO;
@@ -16,6 +18,7 @@ import org.testimonials.cms.testimonial.dtos.EditTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.TestimonialResponseDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialRequestDTO;
 import org.testimonials.cms.testimonial.dtos.dtosFull.CreateTestimonialResponseDTO;
+import org.testimonials.cms.testimonial.dtos.dtosFull.ListTestimonialsDTO;
 import org.testimonials.cms.testimonial.exception.TestimonialNotFound;
 import org.testimonials.cms.testimonial.mapper.TestimonialMapper;
 import org.testimonials.cms.testimonial.model.Testimonial;
@@ -87,6 +90,15 @@ public class TestimonialServiceImpl implements ITestimonialService {
     @Transactional(readOnly = true)
     public List<TestimonialResponseDTO> listAllTestimonials() {
         return testimonialMapper.toTestimonialListDTOs(testimonialRepository.findAll());
+    }
+
+    @Override
+    public Page<ListTestimonialsDTO> getAllTestimonials(Pageable pageable) {
+        // Traemos las entidades con sus relaciones cargadas
+        Page<Testimonial> testimonials = testimonialRepository.findAllWithRelationsPageable(pageable);
+
+        // Mapeamos cada entidad al DTO que espera el frontend
+        return testimonials.map(testimonialMapper::toListTestimonialsDTO);
     }
 
     @Override
