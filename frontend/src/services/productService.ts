@@ -26,6 +26,7 @@ export async function createProduct(values: Product, setIsModalOpen: (isOpen: bo
 
     if (response.ok) {
         const product = await response.json();
+        console.log("Info del producto: ", product);
         toast.success("Producto registrado exitosamente");
         setIsModalOpen(false);
         resetForm();

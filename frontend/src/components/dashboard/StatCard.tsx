@@ -4,13 +4,17 @@ import { Archive, ClipboardClock, MessagesSquare } from "lucide-react";
 import type { ListProducts } from "../../types/product";
 import { listAllProducts } from "../../services/productService";
 import type { ListTestimonials } from "../../types/testimony";
-import { listAllTestimonials } from "../../services/testimonyService";
+import {
+  listAllTestimonials,
+  getPendingTestimonials,
+} from "../../services/testimonyService";
 
 function StatCard() {
   const [listProducts, setListProducts] = useState<ListProducts[]>();
   const [listTestimonials, setListTestimonials] = useState<ListTestimonials[]>(
     [],
   );
+  const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
     // Aquí se llama al servicio para listar los productos al cargar la página
@@ -28,16 +32,24 @@ function StatCard() {
         const response = await listAllTestimonials();
         const testimonials: ListTestimonials[] = response.content || [];
         console.log("Todos los testimonios: ", testimonials);
-
-        console.log("Lista de testimonios: ", listTestimonials);
         setListTestimonials(testimonials);
       } catch (error) {
         console.error("Error al obtener los testimonios:", error);
       }
     }
 
+    async function getAllPending() {
+      try {
+        const pending = await getPendingTestimonials();
+        setPendingCount(pending.length);
+      } catch (error) {
+        console.error("Error al obtener los testimonios pendientes:", error);
+      }
+    }
+
     getAllTestimonials();
     getAllProducts();
+    getAllPending();
   }, []);
 
   return (
@@ -52,8 +64,8 @@ function StatCard() {
         icon={<MessagesSquare />}
       />
       <StatCardItem
-        label="Moderaciones Pendientes"
-        value={12}
+        label="Total de Moderaciones"
+        value={pendingCount}
         icon={<ClipboardClock />}
       />
       <StatCardItem

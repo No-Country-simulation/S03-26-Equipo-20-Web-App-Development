@@ -280,7 +280,7 @@ export default function PendingTestimonialsPage() {
               >
                 <option value="ALL">Todos</option>
                 <option value="PENDING">Pendientes</option>
-                <option value="APPROVED">Aprobados/Publicados</option>
+                <option value="PUBLISHED">Aprobados/Publicados</option>
                 <option value="REJECTED">Rechazados</option>
               </select>
             </div>

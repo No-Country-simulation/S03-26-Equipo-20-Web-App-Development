@@ -184,6 +184,7 @@ export default function ProductsListPage() {
           setIsModalOpen,
           resetForm,
         );
+        console.log("Nuevo producto: ", nuevoProducto);
         setListProducts([nuevoProducto, ...listProducts]);
         setSelectedTags([]);
         loadStats();

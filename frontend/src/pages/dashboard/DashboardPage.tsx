@@ -3,9 +3,34 @@ import Header from "../../components/Header";
 import { useOwner } from "../../context/owner/CreateUseOwner";
 import { saludar } from "../../utils/formatters";
 import StatCard from "../../components/dashboard/StatCard";
+import { useEffect, useState } from "react";
+import { getPendingTestimonials } from "../../services/testimonyService";
+import type { Testimony } from "../../types/testimony";
 
 export default function DashboardPage() {
   const { ownerAuth } = useOwner();
+  const [pendingTestimonials, setPendingTestimonials] = useState<Testimony[]>(
+    [],
+  );
+  const [pendingPage, setPendingPage] = useState(0);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    async function getPending() {
+      try {
+        const pending = await getPendingTestimonials();
+        setPendingTestimonials(pending);
+      } catch (error) {
+        console.error("Error al obtener testimonios pendientes:", error);
+      }
+    }
+    getPending();
+  }, []);
+
+  const start = pendingPage * itemsPerPage;
+  const end = start + itemsPerPage;
+  const displayedPending = pendingTestimonials.slice(start, end);
+  const totalPages = Math.ceil(pendingTestimonials.length / itemsPerPage);
 
   // const activities: ActivityItem[] = [
   //   {
@@ -51,7 +76,46 @@ export default function DashboardPage() {
           {/* KPI Cards Grid */}
           <StatCard />
 
-          {/* Activity Feed */}
+          {/* Pending Testimonials */}
+          <section className="bg-surface-container-low rounded-3xl overflow-hidden p-8">
+            <h3 className="text-xl font-extrabold text-white mb-4">
+              Testimonios Pendientes Recientes
+            </h3>
+            <div className="space-y-4">
+              {displayedPending.map((t) => (
+                <div key={t.id} className="bg-white/5 p-4 rounded-lg">
+                  <h4 className="text-white font-bold">{t.headline}</h4>
+                  <p className="text-on-surface-variant text-sm line-clamp-2">
+                    {t.story}
+                  </p>
+                  <p className="text-on-surface-variant text-xs mt-2">
+                    {t.fullName}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  onClick={() => setPendingPage((p) => p - 1)}
+                  disabled={pendingPage === 0}
+                  className="text-primary text-sm font-bold hover:underline disabled:opacity-50"
+                >
+                  Anterior
+                </button>
+                <span className="text-on-surface-variant text-sm">
+                  Página {pendingPage + 1} de {totalPages}
+                </span>
+                <button
+                  onClick={() => setPendingPage((p) => p + 1)}
+                  disabled={pendingPage === totalPages - 1}
+                  className="text-primary text-sm font-bold hover:underline disabled:opacity-50"
+                >
+                  Siguiente
+                </button>
+              </div>
+            )}
+          </section>
           {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-surface-container-low rounded-3xl overflow-hidden">
               <div className="p-8 border-b border-white/5 flex justify-between items-center">
